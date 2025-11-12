@@ -1,4 +1,4 @@
-package com.easycare
+package com.easycare.provider
 
 import android.app.Application
 import com.facebook.react.PackageList
