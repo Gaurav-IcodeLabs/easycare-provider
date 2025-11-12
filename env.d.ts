@@ -1,0 +1,19 @@
+declare module '@env' {
+  export const APP_ENV: string;
+  export const BASE_URL: string;
+  export const ONESIGNAL_APP_ID: string;
+  export const SHARETRIBE_SDK_CLIENT_ID: string;
+  export const SHARETRIBE_SDK_CLIENT_SECRET: string;
+  export const SHARETRIBE_SDK_BASE_URL: string;
+  export const SHARETRIBE_SDK_ASSET_CDN_BASE_URL: string;
+  export const SHARETRIBE_SDK_TRANSIT_VERBOSE: string;
+  export const SENTRY_DSN: string;
+  export const SHARETRIBE_USING_SSL: string;
+  export const MARKETPLACE_ROOT_URL: string;
+  export const IOS_GOOGLE_CLIENT_ID: string;
+  export const IOS_GOOGLE_CLIENT_ID_REVERSE: string;
+  export const GOOGLE_WEB_CLIENT_ID: string;
+  export const IOS_APPLE_CLIENT_ID: string;
+  export const MARKETPLACE_NAME: string;
+  export const FACEBOOK_APP_ID: string;
+}

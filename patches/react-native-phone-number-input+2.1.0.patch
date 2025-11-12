@@ -1,0 +1,65 @@
+diff --git a/node_modules/react-native-phone-number-input/lib/index.d.ts b/node_modules/react-native-phone-number-input/lib/index.d.ts
+index cd625e5..5f09666 100644
+--- a/node_modules/react-native-phone-number-input/lib/index.d.ts
++++ b/node_modules/react-native-phone-number-input/lib/index.d.ts
+@@ -1,4 +1,4 @@
+-import { Component } from "react";
++import { Component, ComponentType } from "react";
+ import { TextInputProps, StyleProp, TextStyle, ViewStyle } from "react-native";
+ import {
+   CountryCode,
+diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
+index b89c388..bcc7dc9 100644
+--- a/node_modules/react-native-phone-number-input/lib/index.js
++++ b/node_modules/react-native-phone-number-input/lib/index.js
+@@ -159,6 +159,7 @@ export default class PhoneInput extends PureComponent {
+       filterProps = {},
+       countryPickerButtonStyle,
+       layout = "first",
++      TextInputComponent,
+     } = this.props;
+     const { modalVisible, code, countryCode, number, disabled } = this.state;
+     return (
+@@ -191,7 +192,7 @@ export default class PhoneInput extends PureComponent {
+               disableNativeModal={disabled}
+               visible={modalVisible}
+               theme={withDarkTheme ? DARK_THEME : DEFAULT_THEME}
+-              renderFlagButton={this.renderFlagButton}
++              // renderFlagButton={this.renderFlagButton}
+               onClose={() => this.setState({ modalVisible: false })}
+               {...countryPickerProps}
+             />
+@@ -219,18 +220,21 @@ export default class PhoneInput extends PureComponent {
+                 style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
+               >{`+${code}`}</Text>
+             )}
+-            <TextInput
+-              style={[styles.numberText, textInputStyle ? textInputStyle : {}]}
+-              placeholder={placeholder ? placeholder : "Phone Number"}
+-              onChangeText={this.onChangeText}
+-              value={number}
+-              editable={disabled ? false : true}
+-              selectionColor="black"
+-              keyboardAppearance={withDarkTheme ? "dark" : "default"}
+-              keyboardType="number-pad"
+-              autoFocus={autoFocus}
+-              {...textInputProps}
+-            />
++            {React.createElement(
++              TextInputComponent || TextInput,
++              {
++                style: [styles.numberText, textInputStyle ? textInputStyle : {}],
++                placeholder: placeholder ? placeholder : "Phone Number",
++                onChangeText: this.onChangeText,
++                value: number,
++                editable: disabled ? false : true,
++                selectionColor: "black",
++                keyboardAppearance: withDarkTheme ? "dark" : "default",
++                keyboardType: "number-pad",
++                autoFocus: autoFocus,
++                ...textInputProps
++              }
++            )}
+           </View>
+         </View>
+       </CountryModalProvider>

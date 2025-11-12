@@ -1,0 +1,53 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Arimo-Bold.ttf",
+      "sha1": "921ac8bea808cb2fe56d373b4c9f17099cb96302"
+    },
+    {
+      "path": "src/assets/fonts/Arimo-BoldItalic.ttf",
+      "sha1": "7881c6b314083ce38d535c0c4237daf5d684d907"
+    },
+    {
+      "path": "src/assets/fonts/Arimo-Italic.ttf",
+      "sha1": "9ffe6df6cc2165e975966977efdbc4c92a35aec2"
+    },
+    {
+      "path": "src/assets/fonts/Arimo-Medium.ttf",
+      "sha1": "0c9a40b3ae27221aa9623328cfdced11c8330a87"
+    },
+    {
+      "path": "src/assets/fonts/Arimo-MediumItalic.ttf",
+      "sha1": "eee1e1a776aaa14115b9ed07e6ce249046b96aca"
+    },
+    {
+      "path": "src/assets/fonts/Arimo-Regular.ttf",
+      "sha1": "e50a6106cc613ec2bc21ced3f4a7d659e12a6316"
+    },
+    {
+      "path": "src/assets/fonts/Arimo-SemiBold.ttf",
+      "sha1": "a018ea3676ea871315c8bc13a2bc000f0320b1f9"
+    },
+    {
+      "path": "src/assets/fonts/Arimo-SemiBoldItalic.ttf",
+      "sha1": "27b337326e8152ca85be59ece0ddb1ad6547b8f3"
+    },
+    {
+      "path": "src/assets/fonts/Ubuntu-Bold.ttf",
+      "sha1": "020aaec9cdeb59aa8ebd2e4c693527cddb2d1577"
+    },
+    {
+      "path": "src/assets/fonts/Ubuntu-Light.ttf",
+      "sha1": "d060b0ff74b379dcc3d10ac2d024602af419d9f0"
+    },
+    {
+      "path": "src/assets/fonts/Ubuntu-Medium.ttf",
+      "sha1": "da662f767e6261491e20da197bd7ffbb7a7d122c"
+    },
+    {
+      "path": "src/assets/fonts/Ubuntu-Regular.ttf",
+      "sha1": "d4bf0c7dc189b7be2533a3c9b70082a5dd2b5414"
+    }
+  ]
+}
