@@ -10,7 +10,7 @@ import {
 import React, {useCallback, useState} from 'react';
 import {AppText, Button, ErrorMessage} from '../../components';
 import {useTranslation} from 'react-i18next';
-import {colors, primaryFont, AUTH} from '../../constants';
+import {colors, primaryFont, AUTH, secondaryFont} from '../../constants';
 import {fontScale, scale, topInset} from '../../utils';
 import OtpInputField from './components/OtpInputField';
 import {
@@ -21,7 +21,7 @@ import {
 import {VerifyOtpScreenProps} from '../../appTypes';
 import {KeyboardAvoidingView} from 'react-native-keyboard-controller';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
-import {mail} from '../../assets';
+import {backIcon, mail} from '../../assets';
 import {useLanguage} from '../../hooks';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {useAppSelector} from '../../store/setup';
@@ -32,7 +32,7 @@ export const VerifyOtp: React.FC = () => {
   const {isArabic} = useLanguage();
   const navigation = useNavigation<VerifyOtpScreenProps['navigation']>();
   const route = useRoute<VerifyOtpScreenProps['route']>();
-  const {token} = route.params;
+  const {token = ''} = route.params || {};
   const [otp, setOtp] = useState('');
   const [backendOtp, setBackendOtp] = useState('');
   const [isError, setIsError] = useState(false);
@@ -76,8 +76,8 @@ export const VerifyOtp: React.FC = () => {
     if (!isOtpValid) {
       return;
     }
-    console.log('OTP entered:', otp);
-    console.log('Phone number (token):', token);
+    // console.log('OTP entered:', otp);
+    // console.log('Phone number (token):', token);
     // TODO: Verify OTP with backend
     // After successful verification, navigate to OtpVerified screen
     navigation.navigate(AUTH.OTP_VERIFIED as never);
@@ -102,16 +102,16 @@ export const VerifyOtp: React.FC = () => {
       style={styles.outerContainer}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <ScreenHeader title={t('Signin.heading')} />
+          <ScreenHeader
+            leftIcon={backIcon}
+            renderCenter={() => (
+              <AppText style={styles.header}>{t('Signin.heading')}</AppText>
+            )}
+          />
           <View style={styles.section}>
-            <Image
-              style={{
-                alignSelf: 'center',
-                height: scale(110),
-                width: scale(110),
-              }}
-              source={mail}
-            />
+            <View style={styles.imageSection}>
+              <Image style={styles.image} source={mail} resizeMode="contain" />
+            </View>
             <AppText style={styles.heading}>{t('Signin.subheading')}</AppText>
             <AppText style={styles.text}>{t('Signin.message')}</AppText>
             <OtpInputField
@@ -162,17 +162,35 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: scale(20),
   },
+  header: {
+    fontSize: scale(18),
+    color: colors.textBlack,
+    ...primaryFont('400'),
+  },
   heading: {
-    color: colors.deepBlue,
+    color: colors.textBlack,
     fontSize: scale(26),
-    ...primaryFont('600'),
     textAlign: 'center',
     paddingBottom: scale(10),
     paddingTop: scale(24),
+    ...secondaryFont('600'),
   },
   section: {
     flex: 1,
     marginTop: scale(50),
+  },
+  imageSection: {
+    height: scale(170),
+    width: scale(170),
+    borderRadius: scale(100),
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: colors.blue,
+  },
+  image: {
+    height: scale(100),
+    width: scale(100),
   },
   text: {
     fontSize: scale(16),
@@ -184,9 +202,9 @@ const styles = StyleSheet.create({
   button: {
     marginTop: scale(60),
     marginBottom: scale(20),
-    backgroundColor: colors.deepBlue,
-    borderRadius: scale(12),
-    height: scale(56),
+    // backgroundColor: colors.deepBlue,
+    // borderRadius: scale(12),
+    // height: scale(56),
   },
   nototp: {
     textAlign: 'center',

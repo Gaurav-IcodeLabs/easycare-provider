@@ -1,6 +1,5 @@
-import React, {useRef, useMemo} from 'react';
+import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import BottomSheet from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
 import LoginForm from './components/LoginForm';
 import {LoginFormValues} from './helper';
@@ -10,15 +9,16 @@ import {scale, useToast} from '../../utils';
 import {logo} from '../../assets';
 import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
 import {login, loginInProgressSelector} from '../../slices/auth.slice';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useLanguage} from '../../hooks';
 
 export const Login: React.FC = () => {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
+  const {top} = useSafeAreaInsets();
   const loginInProgress = useTypedSelector(loginInProgressSelector);
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const {showToast} = useToast();
-
-  const snapPoints = useMemo(() => ['75%', '75%'], []);
+  const {isArabic} = useLanguage();
 
   const handleLogin = async (values: LoginFormValues) => {
     try {
@@ -56,36 +56,15 @@ export const Login: React.FC = () => {
     }
   };
 
-  const handleDismissKeyboard = () => {
-    bottomSheetRef.current?.snapToIndex(0);
-  };
-
   return (
     <View style={styles.container}>
-      <GradientWrapper
-        colors={[colors.deepBlue, colors.blue, colors.white, colors.white]}>
-        <View style={styles.topSection}>
-          <Image source={logo} style={styles.appIcon} />
-        </View>
-      </GradientWrapper>
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-        backgroundStyle={styles.bottomSheetBackground}
-        handleIndicatorStyle={styles.handleIndicator}
-        enablePanDownToClose={false}
-        enableOverDrag={false}
-        enableContentPanningGesture={false}
-        keyboardBehavior="extend"
-        keyboardBlurBehavior="none"
-        android_keyboardInputMode="adjustResize">
-        <LoginForm
-          onSubmit={handleLogin}
-          submitInProgress={loginInProgress}
-          onDismissKeyboard={handleDismissKeyboard}
+      <View style={[styles.topSection, {paddingTop: top}]}>
+        <Image
+          source={logo}
+          style={[styles.appIcon, isArabic && {transform: [{scaleX: -1}]}]}
         />
-      </BottomSheet>
+      </View>
+      <LoginForm onSubmit={handleLogin} submitInProgress={loginInProgress} />
     </View>
   );
 };
@@ -93,23 +72,15 @@ export const Login: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.white,
   },
   appIcon: {
-    height: scale(120),
-    width: scale(96),
-    alignSelf: 'center',
+    height: scale(40),
+    width: scale(120),
     resizeMode: 'contain',
   },
   topSection: {
     alignSelf: 'center',
     justifyContent: 'center',
-  },
-  bottomSheetBackground: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: scale(40),
-    borderTopRightRadius: scale(40),
-  },
-  handleIndicator: {
-    display: 'none',
   },
 });

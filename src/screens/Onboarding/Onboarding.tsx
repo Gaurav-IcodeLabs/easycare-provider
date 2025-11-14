@@ -22,7 +22,7 @@ import {
 } from '../../components';
 
 import {useLanguage} from '../../hooks';
-import {curveBg, onboardingPreview1, onboardingPreview2} from '../../assets';
+import {onboardingPreview1, onboardingPreview2} from '../../assets';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useAppDispatch} from '../../sharetribeSetup';
 import {updateAppState} from '../../slices/app.slice';
@@ -58,7 +58,8 @@ export const Onboarding: React.FC = () => {
   const currentIndexShared = useSharedValue(0);
   const dispatch = useAppDispatch();
 
-  // Sync shared value with state
+  const slideWidth = width - scale(30);
+
   useAnimatedReaction(
     () => currentIndexShared.value,
     (value, previous) => {
@@ -71,6 +72,7 @@ export const Onboarding: React.FC = () => {
         });
       }
     },
+    [isArabic],
   );
 
   // Reset animation when language changes
@@ -136,25 +138,25 @@ export const Onboarding: React.FC = () => {
     const interval = setInterval(() => {
       if (currentIndexShared.value !== currentIndex) {
         setCurrentIndex(currentIndexShared.value);
-        console.log('Index updated to:', currentIndexShared.value);
+        // console.log('Index updated to:', currentIndexShared.value);
       }
     }, 16);
     return () => clearInterval(interval);
   }, [currentIndex, currentIndexShared]);
 
-  // Debug logging
-  useEffect(() => {
-    console.log(
-      'Current index:',
-      currentIndex,
-      'TranslateX:',
-      translateX.value,
-    );
-  }, [currentIndex, translateX]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
+  const imageAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{translateX: translateX.value}],
   }));
+
+  // Separate animation for text using reduced width
+  const textAnimatedStyle = useAnimatedStyle(() => {
+    const textTranslateValue = isArabic
+      ? slideWidth * currentIndexShared.value
+      : -slideWidth * currentIndexShared.value;
+    return {
+      transform: [{translateX: textTranslateValue}],
+    };
+  });
 
   const isLast = currentIndex === OnBoardingData.length - 1;
 
@@ -162,16 +164,9 @@ export const Onboarding: React.FC = () => {
     <GradientWrapper>
       <GestureDetector gesture={gesture}>
         <View style={styles.wrapper}>
-          <TouchableOpacity
-            hitSlop={hitSlope(15)}
-            activeOpacity={0.5}
-            style={[styles.skipSection, isLast && styles.skipHidden]}
-            onPress={handleSkip}
-            disabled={isLast}>
-            <AppText style={styles.skipText}>{t('OnBoarding.skip')}</AppText>
-          </TouchableOpacity>
           <View style={styles.imageContainer} pointerEvents="none">
-            <Animated.View style={[styles.imageSlideWrapper, animatedStyle]}>
+            <Animated.View
+              style={[styles.imageSlideWrapper, imageAnimatedStyle]}>
               {OnBoardingData.map(item => (
                 <Image
                   key={`img-${item.id}`}
@@ -182,22 +177,20 @@ export const Onboarding: React.FC = () => {
               ))}
             </Animated.View>
           </View>
-          <View style={styles.bottomContainer} pointerEvents="box-none">
-            <View pointerEvents="none">
-              <Image
-                source={curveBg}
-                style={styles.curveBg}
-                resizeMode="cover"
-              />
-            </View>
+          <View
+            style={[
+              styles.bottomContainer,
+              {marginBottom: Math.max(scale(10), bottom)},
+            ]}
+            pointerEvents="box-none">
             <View
               style={[
                 styles.contentContainer,
-                {paddingBottom: Math.max(scale(10), bottom)},
+                {paddingBottom: Math.max(scale(30), 0)},
               ]}
               pointerEvents="box-none">
               <Animated.View
-                style={[styles.slideWrapper, animatedStyle]}
+                style={[styles.slideWrapper, textAnimatedStyle]}
                 pointerEvents="none">
                 {OnBoardingData.map(item => (
                   <View key={item.id} style={styles.bottomSection}>
@@ -206,13 +199,12 @@ export const Onboarding: React.FC = () => {
                   </View>
                 ))}
               </Animated.View>
-              <View style={styles.dotSection}>
-                <AnimatedDotsCarousel
-                  activeIndex={currentIndex}
-                  dataLength={OnBoardingData.length}
-                />
-                <LanguageChangeButton />
-              </View>
+
+              <AnimatedDotsCarousel
+                activeIndex={currentIndex}
+                dataLength={OnBoardingData.length}
+              />
+
               <Button
                 title={
                   isLast ? t('OnBoarding.getStarted') : t('OnBoarding.next')
@@ -220,6 +212,19 @@ export const Onboarding: React.FC = () => {
                 style={styles.button}
                 onPress={handleNext}
               />
+              <View style={styles.dotSection}>
+                <TouchableOpacity
+                  hitSlop={hitSlope(15)}
+                  activeOpacity={0.5}
+                  style={styles.skipSection}
+                  onPress={handleSkip}
+                  disabled={isLast}>
+                  <AppText style={styles.skipText}>
+                    {t('OnBoarding.skip')}
+                  </AppText>
+                </TouchableOpacity>
+                <LanguageChangeButton />
+              </View>
             </View>
           </View>
         </View>
@@ -239,18 +244,15 @@ const styles = StyleSheet.create({
     paddingBottom: bottomInset,
   },
   skipSection: {
-    position: 'absolute',
-    right: 0,
-    zIndex: 100,
-    paddingHorizontal: scale(20),
-    paddingVertical: scale(8),
+    paddingHorizontal: scale(10),
+    paddingVertical: scale(5),
   },
   skipHidden: {
-    opacity: 0,
+    // opacity: 0,
   },
   skipText: {
-    fontSize: scale(18),
-    color: colors.white,
+    fontSize: scale(16),
+    color: colors.textBlack,
     ...primaryFont('400'),
   },
   imageContainer: {
@@ -276,27 +278,33 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
+  contentContainer: {
+    backgroundColor: colors.white,
+    marginHorizontal: scale(15),
+    borderRadius: scale(30),
+    overflow: 'hidden',
+    minHeight: scale(250),
+  },
   slideWrapper: {
     flexDirection: 'row',
-    backgroundColor: colors.white,
-    width: width * OnBoardingData.length,
+    marginBottom: scale(25),
   },
   bottomSection: {
-    width: width,
+    width: width - scale(30),
     paddingHorizontal: scale(20),
   },
   title: {
-    fontSize: scale(32),
+    fontSize: scale(24),
     color: colors.textBlack,
-    textAlign: 'auto',
+    textAlign: 'center',
     marginTop: scale(30),
     marginBottom: scale(20),
     ...secondaryFont('500'),
   },
   desc: {
-    fontSize: scale(16),
+    fontSize: scale(14),
     color: colors.neutralDark,
-    textAlign: 'auto',
+    textAlign: 'center',
     ...primaryFont('400'),
   },
   button: {
@@ -309,13 +317,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: scale(16),
     paddingHorizontal: scale(20),
-  },
-  curveBg: {
-    width: width,
-    height: scale(69),
-    zIndex: 1,
-  },
-  contentContainer: {
-    backgroundColor: colors.white,
   },
 });

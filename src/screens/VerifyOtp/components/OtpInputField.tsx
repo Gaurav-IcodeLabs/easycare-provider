@@ -13,6 +13,8 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
+import type {SharedValue} from 'react-native-reanimated';
+
 import {colors} from '../../../constants';
 import {scale} from '../../../utils';
 
@@ -33,7 +35,7 @@ const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 interface OtpInputProps {
   digit: string;
   index: number;
-  focusedIndex: Animated.SharedValue<number>;
+  focusedIndex: SharedValue<number>;
   onChangeText: (text: string, idx: number) => void;
   onKeyPress: (
     event: NativeSyntheticEvent<TextInputKeyPressEventData>,
@@ -70,7 +72,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
 
     return {
       borderColor: withTiming(
-        isFocused ? colors.deepBlue : colors.lightGrey,
+        isFocused ? colors.blue : colors.lightGrey,
         {duration: 150}, // Reduced duration for faster response
       ),
       transform: [
@@ -85,7 +87,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
     const isFocused = focusedIndex.value === index;
 
     return {
-      color: withTiming(isFocused ? colors.black : colors.deepBlue, {
+      color: withTiming(isFocused ? colors.blue : colors.black, {
         duration: 150, // Reduced duration for faster response
       }),
     };
@@ -297,12 +299,12 @@ const styles = StyleSheet.create({
     width: scale(60),
     height: scale(60),
     marginHorizontal: scale(8),
-    borderRadius: scale(20),
+    borderRadius: scale(10),
     borderWidth: 1,
     borderColor: colors.lightGrey,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.lightGrey,
+    backgroundColor: colors.white,
   },
   input: {
     fontSize: scale(24),

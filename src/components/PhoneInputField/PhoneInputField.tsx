@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {StyleSheet, TextInput, View, ViewStyle} from 'react-native';
+import {StyleSheet, TextInput, TextStyle, View, ViewStyle} from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import {Control, Controller, FieldValues, Path} from 'react-hook-form';
 import {scale} from '../../utils';
@@ -8,6 +8,7 @@ import {useTranslation} from 'react-i18next';
 import {ErrorMessage} from '../ErrorMessage/ErrorMessage';
 import {AppText} from '../AppText/AppText';
 import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
+import {useLanguage} from '../../hooks';
 
 interface PhoneInputFieldProps<T extends FieldValues> {
   control: Control<T>;
@@ -17,7 +18,15 @@ interface PhoneInputFieldProps<T extends FieldValues> {
   insideBottomSheet?: boolean;
   setError: (name: Path<T>, error: {type: string; message?: string}) => void;
   clearErrors: (name: Path<T>) => void;
+  placeholderKey?: string;
 }
+
+const getInputStyle = (
+  isArabic: boolean,
+): (TextStyle | {textAlign: 'right' | 'left'})[] => [
+  styles.textInput,
+  {textAlign: isArabic ? 'right' : 'left'},
+];
 
 export const PhoneInputField = <T extends FieldValues>({
   control,
@@ -27,11 +36,15 @@ export const PhoneInputField = <T extends FieldValues>({
   insideBottomSheet = false,
   setError,
   clearErrors,
+  placeholderKey,
 }: PhoneInputFieldProps<T>) => {
   const {t} = useTranslation();
   const phoneInput = useRef<PhoneInput>(null);
+  const {isArabic} = useLanguage();
   const [isFocused, setIsFocused] = useState(false);
   const label = labelKey ? t(labelKey) : undefined;
+
+  const placeholderString = t(placeholderKey ?? '');
 
   const validatePhoneNumber = () => {
     if (!phoneInput.current) {
@@ -83,9 +96,10 @@ export const PhoneInputField = <T extends FieldValues>({
                 inputContainerStyles,
                 isFocused && styles.focused,
               ]}
+              placeholder={placeholderString}
               disableArrowIcon
               textContainerStyle={styles.textContainer}
-              textInputStyle={styles.textInput}
+              textInputStyle={getInputStyle(isArabic)}
               codeTextStyle={styles.codeText}
               flagButtonStyle={styles.flagButton}
               onChangeCountry={validatePhoneNumber}
@@ -129,7 +143,7 @@ const styles = StyleSheet.create({
   },
   phoneContainer: {
     width: '100%',
-    height: scale(52),
+    height: scale(48),
     borderWidth: scale(1),
     borderColor: colors.lightGrey || colors.neutralDark,
     backgroundColor: colors.white,
@@ -147,6 +161,7 @@ const styles = StyleSheet.create({
     height: scale(52),
     fontSize: scale(16),
     color: colors.black,
+    textAlign: 'right',
     ...primaryFont('400'),
   },
   codeText: {

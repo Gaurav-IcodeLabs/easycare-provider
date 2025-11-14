@@ -54,8 +54,8 @@ export const Button = React.memo((props: ButtonProps) => {
     rightIcon,
     leftIcon,
     iconStyle,
-    useGradient = true,
-    gradientColors = [colors.deepBlue, colors.blue],
+    useGradient = false,
+    gradientColors = [colors.blue, colors.deepBlue],
   } = props || {};
 
   const loaderOpacity = useSharedValue(loader ? 1 : 0);
@@ -147,11 +147,11 @@ export const Button = React.memo((props: ButtonProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: scale(50),
-    borderRadius: scale(10),
+    height: scale(48),
+    borderRadius: scale(100),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.deepBlue,
+    backgroundColor: colors.blue,
     overflow: 'hidden',
   },
   pressableContent: {

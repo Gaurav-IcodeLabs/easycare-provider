@@ -1,20 +1,13 @@
 import React from 'react';
-import {
-  Image,
-  Keyboard,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import {bottomInset, scale, width} from '../../../utils';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {scale, width} from '../../../utils';
 import {colors, primaryFont, AUTH, secondaryFont} from '../../../constants';
 import {
   Button,
   CheckBox,
   AppText,
-  BottomSheetTextInputField,
   PhoneInputField,
+  TextInputField,
 } from '../../../components';
 import {
   emailIcon,
@@ -26,22 +19,17 @@ import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {formSchemaSignup, SignupFormValues} from '../helper';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthStackParamList} from '../../../apptypes';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 
 interface SignupFormProps {
   onSubmit: (val: SignupFormValues) => void;
   submitInProgress: boolean;
-  onDismissKeyboard: () => void;
 }
 
-const SignupForm = ({
-  onSubmit,
-  submitInProgress,
-  onDismissKeyboard,
-}: SignupFormProps) => {
+const SignupForm = ({onSubmit, submitInProgress}: SignupFormProps) => {
   const {t} = useTranslation();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
@@ -70,137 +58,126 @@ const SignupForm = ({
     navigation.navigate(AUTH.LOGIN);
   };
 
-  const handleDismiss = () => {
-    Keyboard.dismiss();
-    onDismissKeyboard();
-  };
-
   return (
-    <BottomSheetScrollView
+    <KeyboardAwareScrollView
       style={styles.formContainer}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[
-        styles.scrollContainer,
-        {paddingBottom: bottomInset + scale(100)},
-      ]}>
-      <TouchableWithoutFeedback onPress={handleDismiss}>
-        <View style={{paddingBottom: scale(20)}}>
-          <View style={styles.inputSection}>
-            <View style={styles.headerContainer}>
-              <AppText style={styles.heading}>{t('Signup.heading')}</AppText>
-              <AppText style={styles.subheading}>
-                {t('Signup.subheading')}
-              </AppText>
-            </View>
-
-            <BottomSheetTextInputField
-              control={control}
-              name={'firstName'}
-              labelKey="Signup.firstNameLabel"
-              placeholder={'Signup.firstNamePlaceholder'}
-              leftIcon={lockIcon}
-              leftIconStyle={styles.iconStyle}
-              inputContainerStyles={styles.inputStyles}
-            />
-            <BottomSheetTextInputField
-              control={control}
-              name={'lastName'}
-              labelKey="Signup.lastNameLabel"
-              placeholder={'Signup.lastNamePlaceholder'}
-              leftIcon={lockIcon}
-              leftIconStyle={styles.iconStyle}
-              inputContainerStyles={styles.inputStyles}
-            />
-            <BottomSheetTextInputField
-              control={control}
-              name={'fullName'}
-              labelKey="Signup.fullNameLabel"
-              placeholder={'Signup.fullNamePlaceholder'}
-              leftIcon={lockIcon}
-              leftIconStyle={styles.iconStyle}
-              inputContainerStyles={styles.inputStyles}
-            />
-
-            <BottomSheetTextInputField
-              control={control}
-              name={'email'}
-              labelKey="Signup.emailLabel"
-              keyboardType="email-address"
-              placeholder={'Signup.emailPlaceholder'}
-              leftIcon={emailIcon}
-              leftIconStyle={styles.iconStyle}
-              inputContainerStyles={styles.inputStyles}
-            />
-
-            <PhoneInputField
-              control={control}
-              name={'phoneNumber'}
-              insideBottomSheet
-              setError={setError}
-              clearErrors={clearErrors}
-              labelKey="Signup.phoneLabel"
-              inputContainerStyles={styles.inputStyles}
-            />
-
-            <BottomSheetTextInputField
-              control={control}
-              name={'password'}
-              labelKey="Signup.passwordLabel"
-              isPassword
-              placeholder={'Signup.passwordPlaceholder'}
-              leftIcon={lockIcon}
-              leftIconStyle={styles.iconStyle}
-              inputContainerStyles={styles.inputStyles}
-              autoCapitalize="none"
-            />
-
-            <View style={styles.checkboxContainer}>
-              <CheckBox control={control} name={'agreeToTerms'} />
-              <AppText style={styles.termsText}>
-                {t('Signup.agreeToTerms')}
-                <AppText style={styles.termsLink}>
-                  {' '}
-                  {t('Signup.termsAndConditions')}
-                </AppText>
-              </AppText>
-            </View>
+      contentContainerStyle={styles.scrollContainer}>
+      <View>
+        <View style={styles.inputSection}>
+          <View style={styles.headerContainer}>
+            <AppText style={styles.heading}>{t('Signup.heading')}</AppText>
+            <AppText style={styles.subheading}>
+              {t('Signup.subheading')}
+            </AppText>
           </View>
 
-          <Button
-            disabled={!isValid || submitInProgress}
-            style={styles.button}
-            loader={submitInProgress}
-            title={'Signup.buttonText'}
-            onPress={handleSubmit(onSubmit)}
+          <TextInputField
+            control={control}
+            name={'firstName'}
+            labelKey="Signup.firstNameLabel"
+            placeholder={'Signup.firstNamePlaceholder'}
+            leftIcon={lockIcon}
+            leftIconStyle={styles.iconStyle}
+          />
+          <TextInputField
+            control={control}
+            name={'lastName'}
+            labelKey="Signup.lastNameLabel"
+            placeholder={'Signup.lastNamePlaceholder'}
+            leftIcon={lockIcon}
+            leftIconStyle={styles.iconStyle}
+          />
+          <TextInputField
+            control={control}
+            name={'fullName'}
+            labelKey="Signup.fullNameLabel"
+            placeholder={'Signup.fullNamePlaceholder'}
+            leftIcon={lockIcon}
+            leftIconStyle={styles.iconStyle}
           />
 
-          <View style={styles.orTextContainer}>
-            <View style={styles.orTextLine} />
-            <AppText style={styles.orText}>{t('Signup.orSignupWith')}</AppText>
-            <View style={styles.orTextLine} />
-          </View>
+          <TextInputField
+            control={control}
+            name={'email'}
+            labelKey="Signup.emailLabel"
+            keyboardType="email-address"
+            placeholder={'Signup.emailPlaceholder'}
+            leftIcon={emailIcon}
+            leftIconStyle={styles.iconStyle}
+          />
 
-          <View style={styles.socialContainer}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image source={googleIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image source={facebookIcon} />
-            </TouchableOpacity>
-          </View>
+          <PhoneInputField
+            control={control}
+            name={'phoneNumber'}
+            setError={setError}
+            clearErrors={clearErrors}
+            labelKey="Signup.phoneLabel"
+            placeholderKey="Signup.phoneLabel"
+          />
 
-          <View style={styles.TxtContainer}>
-            <AppText style={styles.dontTxt}>
-              {t('Signup.alreadyHaveAccount')}{' '}
+          <TextInputField
+            control={control}
+            name={'password'}
+            labelKey="Signup.passwordLabel"
+            isPassword
+            placeholder={'Signup.passwordPlaceholder'}
+            leftIcon={lockIcon}
+            autoCapitalize="none"
+          />
+
+          <View style={styles.checkboxContainer}>
+            <CheckBox control={control} name={'agreeToTerms'} />
+            <AppText style={styles.termsText}>
+              {t('Signup.agreeToTerms')}
+              <AppText style={styles.termsLink}>
+                {' '}
+                {t('Signup.termsAndConditions')}
+              </AppText>
             </AppText>
-            <TouchableOpacity onPress={handleLoginPress}>
-              <AppText style={styles.loginTxt}>{t('Signup.login')}</AppText>
-            </TouchableOpacity>
           </View>
         </View>
-      </TouchableWithoutFeedback>
-    </BottomSheetScrollView>
+
+        <Button
+          disabled={!isValid || submitInProgress}
+          style={styles.button}
+          loader={submitInProgress}
+          title={'Signup.buttonText'}
+          onPress={handleSubmit(onSubmit)}
+        />
+
+        <View style={styles.orTextContainer}>
+          <View style={styles.orTextLine} />
+          <AppText style={styles.orText}>{t('Signup.orSignupWith')}</AppText>
+          <View style={styles.orTextLine} />
+        </View>
+
+        <View style={styles.socialContainer}>
+          <Button
+            leftIcon={googleIcon}
+            style={styles.socialButton}
+            title={'Login.google'}
+            titleStyle={styles.socialButtonText}
+          />
+          <Button
+            leftIcon={facebookIcon}
+            style={styles.socialButton}
+            title={'Login.facebook'}
+            titleStyle={styles.socialButtonText}
+          />
+        </View>
+
+        <View style={styles.TxtContainer}>
+          <AppText style={styles.dontTxt}>
+            {t('Signup.alreadyHaveAccount')}{' '}
+          </AppText>
+          <TouchableOpacity onPress={handleLoginPress}>
+            <AppText style={styles.loginTxt}>{t('Signup.login')}</AppText>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -208,33 +185,30 @@ export default SignupForm;
 
 const styles = StyleSheet.create({
   formContainer: {
-    paddingHorizontal: scale(20),
+    // paddingHorizontal: scale(20),
   },
   scrollContainer: {
     flexGrow: 1,
+    paddingHorizontal: scale(20),
   },
   inputSection: {
     marginTop: scale(30),
   },
   headerContainer: {
-    alignItems: 'center',
     gap: scale(8),
     paddingBottom: scale(26),
   },
   heading: {
-    color: colors.deepBlue,
-    fontSize: scale(26),
-    ...secondaryFont('700'),
+    color: colors.textBlack,
+    fontSize: scale(32),
+    textAlign: 'left',
+    ...secondaryFont('500'),
   },
   subheading: {
     color: colors.neutralDark,
     fontSize: scale(16),
+    textAlign: 'left',
     ...primaryFont('400'),
-    textAlign: 'center',
-  },
-  inputStyles: {
-    borderRadius: scale(12),
-    height: scale(56),
   },
   iconStyle: {
     height: scale(20),
@@ -249,9 +223,10 @@ const styles = StyleSheet.create({
   termsText: {
     fontSize: scale(14),
     color: colors.neutralDark,
-    ...primaryFont('400'),
     marginLeft: scale(8),
     flex: 1,
+    textAlign: 'left',
+    ...primaryFont('400'),
   },
   termsLink: {
     color: colors.deepBlue,
@@ -260,9 +235,6 @@ const styles = StyleSheet.create({
   button: {
     marginTop: scale(30),
     marginBottom: scale(20),
-    backgroundColor: colors.deepBlue,
-    borderRadius: scale(12),
-    height: scale(56),
   },
   orTextContainer: {
     flexDirection: 'row',
@@ -283,25 +255,23 @@ const styles = StyleSheet.create({
     height: 1,
   },
   socialContainer: {
-    flexDirection: 'row',
     justifyContent: 'center',
-    gap: scale(16),
+    gap: scale(12),
     marginBottom: scale(30),
   },
   socialButton: {
-    width: scale(90),
-    height: scale(48),
-    borderRadius: scale(10),
-    justifyContent: 'center',
-    alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.lightGrey,
+    backgroundColor: colors.white,
+  },
+  socialButtonText: {
+    color: colors.textBlack,
   },
   TxtContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: scale(100),
+    marginBottom: scale(50),
   },
   dontTxt: {
     fontSize: scale(14),

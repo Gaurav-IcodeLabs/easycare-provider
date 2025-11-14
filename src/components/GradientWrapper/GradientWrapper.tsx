@@ -14,7 +14,7 @@ interface GradientBackgroundProps {
 
 export const GradientWrapper: React.FC<GradientBackgroundProps> = ({
   children,
-  colors = [COLORS.deepBlue, COLORS.blue],
+  colors = [COLORS.blue, COLORS.deepBlue],
   start = {x: 0.5, y: 0},
   end = {x: 0.5, y: 1},
 }) => {

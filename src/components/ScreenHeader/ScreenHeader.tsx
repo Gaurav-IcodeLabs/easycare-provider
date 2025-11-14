@@ -7,7 +7,7 @@ import {
   ImageSourcePropType,
 } from 'react-native';
 import React, {ReactNode} from 'react';
-import {hitSlope} from '../../utils';
+import {hitSlope, scale} from '../../utils';
 import {useNavigation} from '@react-navigation/native';
 import {useLanguage} from '../../hooks';
 
@@ -54,13 +54,17 @@ export const ScreenHeader = ({
         </TouchableOpacity>
       ) : null}
 
-      {renderCenter ? (
-        renderCenter()
-      ) : centerIcon ? (
-        <TouchableOpacity hitSlop={hitSlope(15)} onPress={centerIconPress}>
-          <Image source={centerIcon} resizeMode="contain" />
-        </TouchableOpacity>
-      ) : null}
+      <View style={styles.centerContainer}>
+        {renderCenter
+          ? renderCenter()
+          : centerIcon && (
+              <TouchableOpacity
+                hitSlop={hitSlope(15)}
+                onPress={centerIconPress}>
+                <Image source={centerIcon} resizeMode="contain" />
+              </TouchableOpacity>
+            )}
+      </View>
 
       {renderRight ? (
         renderRight()
@@ -77,6 +81,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: scale(20),
+  },
+  centerContainer: {
+    position: 'absolute', // ← ensures it's always visually centered
+    left: 0,
+    right: 0,
     alignItems: 'center',
   },
 });

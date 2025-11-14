@@ -83,9 +83,9 @@ export const LanguageChangeButton: React.FC<LanguageChangeButtonProps> = ({
       <Switch
         value={isArabic}
         onValueChange={handleLanguageSwitch}
-        trackColor={{false: colors.lightGrey, true: colors.blue}}
+        trackColor={{false: colors.lightGrey, true: colors.deepBlue}}
         thumbColor={colors.white}
-        style={[styles.switch, switchStyle]}
+        style={[styles.switch, isArabic && styles.switchRTL, switchStyle]}
       />
       <AppText
         style={[
@@ -111,6 +111,9 @@ const styles = StyleSheet.create({
   switch: {
     // borderWidth: 1,
     transform: [{scaleX: 0.8}, {scaleY: 0.8}],
+  },
+  switchRTL: {
+    transform: [{scaleX: -0.8}, {scaleY: 0.8}],
   },
   languageText: {
     fontSize: scale(14),

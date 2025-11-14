@@ -9,7 +9,7 @@ import Animated, {
 import {colors} from '../../constants';
 import {scale} from '../../utils';
 
-const DOT_ACTIVE_WIDTH = scale(16);
+const DOT_ACTIVE_WIDTH = scale(40);
 const DOT_INACTIVE_WIDTH = scale(6);
 
 type AnimatedDotsCarouselProps = {
@@ -29,7 +29,7 @@ const Dot = memo(({dotIndex, currentIndex}: DotProps) => {
       currentIndex.value === dotIndex ? DOT_ACTIVE_WIDTH : DOT_INACTIVE_WIDTH,
     ),
     backgroundColor:
-      currentIndex.value === dotIndex ? colors.deepBlue : colors.blue,
+      currentIndex.value === dotIndex ? colors.blue : colors.deepBlue,
   }));
 
   return <Animated.View style={[styles.dot, animatedStyle]} />;

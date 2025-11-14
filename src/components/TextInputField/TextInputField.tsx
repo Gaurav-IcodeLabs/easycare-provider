@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     paddingHorizontal: scale(16),
-    height: scale(52),
+    height: scale(48),
     borderWidth: scale(1),
     borderColor: colors.lightGrey || colors.neutralDark,
     backgroundColor: colors.white,

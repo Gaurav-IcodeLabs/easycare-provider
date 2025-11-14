@@ -11,7 +11,7 @@
     "descThree": "Enjoy the flexibility to check real-time availability and book your appointment at a time that works best for you."
   },
   "Login": {
-    "heading": "Here there 👋",
+    "heading": "Sign in to your \nAccount",
     "subheading": "The Easy Care app meets your home needs effortlessly.",
     "emailLabel": "Enter your Email",
     "emailPlaceholder": "Enter your email",
@@ -21,7 +21,7 @@
     "passwordIsRequired": "Password must be at least 8 characters",
     "forgetPassword": "Forgot Password ?",
     "buttonText": "Login",
-    "orLoginWith": "Or login with",
+    "orLoginWith": "Or",
     "dontHaveAccount": "Don't have an account?",
     "signUp": "Sign Up",
     "phoneLabel": "Phone Number",
@@ -34,7 +34,9 @@
     "errorDefault": "Login failed. Please try again.",
     "errorInvalidCredentials": "Invalid email or password",
     "errorAccountDisabled": "Account is disabled",
-    "errorTooManyAttempts": "Too many attempts. Please try again later"
+    "errorTooManyAttempts": "Too many attempts. Please try again later",
+    "facebook": "Continue with Facebook",
+    "google": "Continue with Google"
   },
   "Signin": {
     "heading": "Verify Code",
@@ -105,5 +107,8 @@
     "reportProblem": "Report a Problem",
     "contactUs": "Contact Us",
     "logout": "Logout"
+  },
+  "Editlisting": {
+    "heading": "Product Listing"
   }
 }

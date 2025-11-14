@@ -1,4 +1,4 @@
-import React, {useMemo, useRef} from 'react';
+import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
@@ -6,25 +6,25 @@ import SignupForm from './components/SignupForm';
 import {AUTH, colors} from '../../constants';
 import {AuthStackParamList, SignupParams} from '../../apptypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import BottomSheet from '@gorhom/bottom-sheet';
 import {scale, useToast} from '../../utils';
 import {GradientWrapper} from '../../components';
 import {logo} from '../../assets';
 import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
 import {signup, signUpInProgressSelector} from '../../slices/auth.slice';
 import {SignupFormValues} from './helper';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useLanguage} from '../../hooks';
 
 type SignupScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 export const Signup: React.FC = () => {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
+  const {top} = useSafeAreaInsets();
   const navigation = useNavigation<SignupScreenNavigationProp>();
   const signupInProgress = useTypedSelector(signUpInProgressSelector);
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const {showToast} = useToast();
-
-  const snapPoints = useMemo(() => ['75%', '75%'], []);
+  const {isArabic} = useLanguage();
 
   const handleSignup = async (values: SignupFormValues) => {
     try {
@@ -68,36 +68,15 @@ export const Signup: React.FC = () => {
     }
   };
 
-  const handleDismissKeyboard = () => {
-    bottomSheetRef.current?.snapToIndex(0);
-  };
-
   return (
     <View style={styles.container}>
-      <GradientWrapper
-        colors={[colors.deepBlue, colors.blue, colors.white, colors.white]}>
-        <View style={styles.topSection}>
-          <Image source={logo} style={styles.appIcon} />
-        </View>
-      </GradientWrapper>
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-        backgroundStyle={styles.bottomSheetBackground}
-        handleIndicatorStyle={styles.handleIndicator}
-        enablePanDownToClose={false}
-        enableOverDrag={false}
-        enableContentPanningGesture={false}
-        keyboardBehavior="extend"
-        keyboardBlurBehavior="none"
-        android_keyboardInputMode="adjustResize">
-        <SignupForm
-          onSubmit={handleSignup}
-          submitInProgress={signupInProgress}
-          onDismissKeyboard={handleDismissKeyboard}
+      <View style={[styles.topSection, {paddingTop: top}]}>
+        <Image
+          source={logo}
+          style={[styles.appIcon, isArabic && {transform: [{scaleX: -1}]}]}
         />
-      </BottomSheet>
+      </View>
+      <SignupForm onSubmit={handleSignup} submitInProgress={signupInProgress} />
     </View>
   );
 };
@@ -105,23 +84,16 @@ export const Signup: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.white,
   },
   appIcon: {
-    height: scale(120),
-    width: scale(96),
+    height: scale(40),
+    width: scale(120),
     alignSelf: 'center',
     resizeMode: 'contain',
   },
   topSection: {
     alignSelf: 'center',
     justifyContent: 'center',
-  },
-  bottomSheetBackground: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: scale(40),
-    borderTopRightRadius: scale(40),
-  },
-  handleIndicator: {
-    display: 'none',
   },
 });
