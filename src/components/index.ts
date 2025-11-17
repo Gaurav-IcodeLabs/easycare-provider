@@ -14,3 +14,4 @@ export * from './CustomCrossHandleForSheet/CustomCrossHandleForSheet';
 export * from './CustomBackDrop/CustomBackDrop';
 export * from './BottomSheetTextInputField/BottomSheetTextInputField';
 export * from './PhoneInputField/PhoneInputField';
+export * from './BiometricSettings/BiometricSettings';

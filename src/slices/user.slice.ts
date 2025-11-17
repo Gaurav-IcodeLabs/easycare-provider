@@ -135,7 +135,7 @@ export const fetchCurrentUser = createAsyncThunk<
       // Handle deleted user
       if (entities[0]?.attributes?.profile?.metadata?.isDeleted === true) {
         await sdk.logout();
-        dispatch(clearCurrentUser());
+        // dispatch(clearCurrentUser());
         return undefined;
       }
 
@@ -191,6 +191,9 @@ export const updateCurrentUser = createAsyncThunk<
 );
 
 export const {setCurrentUser, setShowVerifyEmailModal} = userSlice.actions;
+
+export const currentUserEmailSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.email;
 
 export default userSlice.reducer;
 

@@ -1,5 +1,11 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {scale, width} from '../../../utils';
 import {colors, primaryFont, AUTH, secondaryFont} from '../../../constants';
 import {AppText, Button, TextInputField} from '../../../components';
@@ -7,6 +13,7 @@ import {
   emailIcon,
   facebookIcon,
   googleIcon,
+  homeActive,
   lockIcon,
 } from '../../../assets/images';
 import {useForm} from 'react-hook-form';
@@ -19,11 +26,21 @@ import {AuthStackParamList} from '../../../apptypes';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 
 interface LoginFormProps {
-  onSubmit: (val: LoginFormValues) => void;
+  onSubmit: (val: LoginFormValues, shouldEnableBiometric?: boolean) => void;
   submitInProgress: boolean;
+  biometricAvailable: boolean;
+  biometricType: string;
+  biometricEnabled: boolean;
+  onBiometricLogin: () => void;
 }
 
-const LoginForm = ({onSubmit, submitInProgress}: LoginFormProps) => {
+const LoginForm = ({
+  onSubmit,
+  submitInProgress,
+  biometricType,
+  biometricEnabled,
+  onBiometricLogin,
+}: LoginFormProps) => {
   const {t} = useTranslation();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
@@ -39,6 +56,10 @@ const LoginForm = ({onSubmit, submitInProgress}: LoginFormProps) => {
     resolver: zodResolver(formSchemaLogin(t)),
     mode: 'onChange',
   });
+
+  const handleLoginSubmit = (values: LoginFormValues) => {
+    onSubmit(values, false);
+  };
 
   const handleForgotPassword = () => {
     // TODO: Navigate to forgot password screen when implemented
@@ -92,12 +113,26 @@ const LoginForm = ({onSubmit, submitInProgress}: LoginFormProps) => {
           </TouchableOpacity>
         </View>
 
+        {/* {biometricEnabled && ( */}
+        {true && (
+          <TouchableOpacity
+            style={styles.biometricButton}
+            onPress={onBiometricLogin}
+            disabled={submitInProgress}>
+            <Image
+              source={Platform.OS == 'android' ? homeActive : homeActive}
+              style={{height: scale(42)}}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
+
         <Button
           disabled={!isValid || submitInProgress}
           style={styles.button}
           loader={submitInProgress}
           title={'Login.buttonText'}
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(handleLoginSubmit)}
         />
 
         <View style={styles.orTextContainer}>
@@ -236,5 +271,14 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: colors.deepBlue,
     ...primaryFont('600'),
+  },
+  biometricButton: {
+    marginTop: scale(20),
+    marginBottom: scale(10),
+    backgroundColor: colors.white,
+    borderRadius: scale(12),
+    height: scale(42),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
