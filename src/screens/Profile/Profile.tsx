@@ -113,13 +113,11 @@ export const Profile: React.FC = () => {
             <View style={styles.optionIcon}>
               <Image
                 source={option.icon}
-                style={styles.iconPlaceholder}
+                style={[styles.iconPlaceholder, isRTL && styles.arrowIconRTL]}
                 {...(!isLastItem && {tintColor: colors.deepBlue})}
               />
             </View>
-            <AppText style={[styles.optionText, isRTL && {textAlign: 'left'}]}>
-              {t(option.title)}
-            </AppText>
+            <AppText style={styles.optionText}>{t(option.title)}</AppText>
           </View>
           <Image
             source={rightup}
@@ -142,7 +140,7 @@ export const Profile: React.FC = () => {
           />
 
           <ScrollView
-            style={styles.contentSection}
+            contentContainerStyle={styles.contentSection}
             showsVerticalScrollIndicator={false}>
             {renderWalletSection()}
 
@@ -186,8 +184,10 @@ const styles = StyleSheet.create({
     ...primaryFont('600'),
   },
   contentSection: {
-    flex: 1,
-    padding: scale(20),
+    flexGrow: 1,
+    paddingTop: scale(20),
+    paddingHorizontal: scale(20),
+    paddingBottom: scale(40),
   },
   walletContainer: {
     flexDirection: 'row',
@@ -237,8 +237,9 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: scale(16),
     color: colors.lightblack,
-    ...primaryFont('500'),
     flex: 1,
+    textAlign: 'left',
+    ...primaryFont('500'),
   },
   arrowIcon: {
     width: scale(24),

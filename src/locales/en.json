@@ -89,10 +89,11 @@
     "button": "Continue"
   },
   "Navigation": {
-    "home": "Home",
-    "myOrders": "My Orders",
+    "home": "Listings",
+    "myOrders": "Orders",
     "myLocation": "My Location",
-    "cart": "Cart"
+    "cart": "Cart",
+    "profile": "Profile"
   },
   "Profile": {
     "editProfile": "Edit Profile",

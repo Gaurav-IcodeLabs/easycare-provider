@@ -2,11 +2,11 @@ import {colors} from '../constants';
 const commonShadow = {
   shadowColor: colors.black,
   shadowOffset: {
-    width: 2,
-    height: 4,
+    width: 0,
+    height: 0,
   },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
+  shadowOpacity: 0.2,
+  shadowRadius: 6,
   elevation: 5,
 };
 

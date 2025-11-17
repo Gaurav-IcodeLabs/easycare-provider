@@ -1,12 +1,17 @@
 //bottom tab icons
 export const homeActive = require('./homeActive.png');
-export const ordersActive = require('./ordersActive.png');
-export const locationActive = require('./locationActive.png');
-export const cartActive = require('./cartActive.png');
 export const homeInactive = require('./homeInactive.png');
-export const ordersInactive = require('./ordersInactive.png');
+export const locationActive = require('./locationActive.png');
 export const locationInactive = require('./locationInactive.png');
+export const cartActive = require('./cartActive.png');
 export const cartInactive = require('./cartInactive.png');
+
+export const profileInactive = require('./profileInactive.png');
+export const profileActive = require('./profileActive.png');
+export const ordersInactive = require('./ordersInactive.png');
+export const ordersActive = require('./ordersActive.png');
+export const listingsInactive = require('./listingsInactive.png');
+export const listingsActive = require('./listingsActive.png');
 
 //other icons
 export const emailIcon = require('./email.png');

@@ -34,13 +34,13 @@ export type AuthStackParamList = {
 export type MainStackParamList = {
   [SCREENS.MAIN_TABS]: undefined;
   [SCREENS.PROFILE]: undefined;
+  [SCREENS.EDITLISTING]: undefined;
 };
 
 export type BottomTabParamList = {
   [SCREENS.HOME]: undefined;
   [SCREENS.MY_ORDERS]: undefined;
-  [SCREENS.MY_LOCATION]: undefined;
-  [SCREENS.CART]: undefined;
+  [SCREENS.PROFILE]: undefined;
 };
 
 export type OnBoardingScreenProps = NativeStackScreenProps<

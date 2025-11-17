@@ -1,6 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Home, Orders, Location, Cart} from '../screens';
+import {Home, Orders, Cart, Profile} from '../screens';
 import {SCREENS} from '../constants';
 import {BottomTabParamList} from '../apptypes';
 import {CustomTabBar} from '../components';
@@ -17,8 +17,7 @@ export const BottomTabNavigator = () => {
       }}>
       <Screen name={SCREENS.HOME} component={Home} />
       <Screen name={SCREENS.MY_ORDERS} component={Orders} />
-      <Screen name={SCREENS.MY_LOCATION} component={Location} />
-      <Screen name={SCREENS.CART} component={Cart} />
+      <Screen name={SCREENS.PROFILE} component={Profile} />
     </Navigator>
   );
 };

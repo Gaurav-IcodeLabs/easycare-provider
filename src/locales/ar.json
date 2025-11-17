@@ -89,10 +89,11 @@
     "button": "متابعة"
   },
   "Navigation": {
-    "home": "الرئيسية",
-    "myOrders": "طلباتي",
+    "home": "القوائم",
+    "myOrders": "الطلبات",
     "myLocation": "موقعي",
-    "cart": "السلة"
+    "cart": "السلة",
+    "profile": "الملف الشخصي"
   },
   "Profile": {
     "editProfile": "تعديل الملف الشخصي",
