@@ -49,7 +49,14 @@
     "invalidOtp": "Invalid OTP. Please try again.",
     "button": "Verify",
     "otpNotRecieved": "Dont receive code?",
-    "resend": "Resend"
+    "resend": "Resend",
+    "noPhoneHeading": "Add your phone number",
+    "noPhoneMessage": "Add a phone number so we can send you a verification code.",
+    "savePhoneButton": "Save & continue",
+    "phoneUpdateSuccessTitle": "Number saved",
+    "phoneUpdateSuccessMessage": "We sent a verification code to {{phone}}",
+    "phoneUpdateErrorTitle": "Unable to save number",
+    "phoneUpdateErrorMessage": "Please try again."
   },
   "Signup": {
     "heading": "Create New Account",

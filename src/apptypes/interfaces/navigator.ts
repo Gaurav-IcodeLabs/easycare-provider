@@ -1,5 +1,5 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {AUTH, SCREENS} from '../../constants';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AUTH, SCREENS } from '../../constants';
 
 export type AppStackParamList = {
   SignUp: undefined;
@@ -10,7 +10,7 @@ export type AppStackParamList = {
   InterestSelection: undefined;
   RequestLocation: undefined;
   RequestManuallLocation: undefined;
-  Listing: {id: string};
+  Listing: { id: string };
   TodaysHotDeals: undefined;
   CategoryScreen: undefined;
   MerchantProfile: {
@@ -28,13 +28,15 @@ export type AuthStackParamList = {
   [AUTH.ONBOARDING]: undefined;
   [AUTH.LOGIN]: undefined;
   [AUTH.SIGNUP]: undefined;
-  [AUTH.VERIFT_OTP]: {token: string};
+  [AUTH.VERIFT_OTP]: { token: string };
   [AUTH.OTP_VERIFIED]: undefined;
 };
 export type MainStackParamList = {
   [SCREENS.MAIN_TABS]: undefined;
   [SCREENS.PROFILE]: undefined;
   [SCREENS.EDITLISTING]: undefined;
+  [SCREENS.VERIFT_OTP]: { token: string };
+  [SCREENS.OTP_VERIFIED]: undefined;
 };
 
 export type BottomTabParamList = {

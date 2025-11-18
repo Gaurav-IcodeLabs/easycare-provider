@@ -49,7 +49,14 @@
     "invalidOtp": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
     "button": "تحقق",
     "otpNotRecieved": "لم تستلم الرمز؟",
-    "resend": "إعادة الإرسال"
+    "resend": "إعادة الإرسال",
+    "noPhoneHeading": "أضف رقم هاتفك",
+    "noPhoneMessage": "يرجى إضافة رقم هاتفك حتى نتمكن من إرسال رمز التحقق.",
+    "savePhoneButton": "حفظ والمتابعة",
+    "phoneUpdateSuccessTitle": "تم حفظ الرقم",
+    "phoneUpdateSuccessMessage": "أرسلنا رمز التحقق إلى {{phone}}",
+    "phoneUpdateErrorTitle": "تعذر حفظ الرقم",
+    "phoneUpdateErrorMessage": "يرجى المحاولة مرة أخرى."
   },
   "Signup": {
     "heading": "إنشاء حساب جديد",
