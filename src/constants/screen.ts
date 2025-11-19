@@ -13,4 +13,6 @@ export const SCREENS = {
   MY_LOCATION: 'MyLocation',
   CART: 'Cart',
   PROFILE: 'Profile',
+  VERIFT_OTP: 'VerifyOtp',
+  OTP_VERIFIED: 'OtpVerified',
 } as const;

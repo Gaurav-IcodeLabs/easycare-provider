@@ -53,6 +53,8 @@ export const splashImage = require('./splashImage.png');
 export const onboardingPreview1 = require('./onboardingPreview1.png');
 export const onboardingPreview2 = require('./onboardingPreview2.png');
 export const profileEditIcon = require('./profileEditIcon.png');
+export const fingerprint = require('./fingerprint.png');
+export const faceid = require('./faceid.png');
 
 export const profileMenuIcons = {
   about: require('./aboutIcon.png'),

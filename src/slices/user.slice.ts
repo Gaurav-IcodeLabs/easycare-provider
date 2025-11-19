@@ -1,10 +1,10 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {CurrentUser, Thunk, UserState} from '../apptypes';
-import {resetAllSlices, RootState} from '../sharetribeSetup';
-import {util as sdkUtil, storableError} from '../utils';
-import {authInfo} from './auth.slice';
-import {addMarketplaceEntities} from './marketplaceData.slice';
-import {denormalisedResponseEntities} from '../utils/data';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CurrentUser, Thunk, UserState } from '../apptypes';
+import { resetAllSlices, RootState } from '../sharetribeSetup';
+import { util as sdkUtil, storableError } from '../utils';
+import { authInfo } from './auth.slice';
+import { addMarketplaceEntities } from './marketplaceData.slice';
+import { denormalisedResponseEntities } from '../utils/data';
 
 const currentUserParameters = {
   include: ['profileImage', 'stripeAccount'],
@@ -74,10 +74,10 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setCurrentUser: (state, {payload}: PayloadAction<CurrentUser | null>) => {
+    setCurrentUser: (state, { payload }: PayloadAction<CurrentUser | null>) => {
       state.currentUser = mergeCurrentUser(state.currentUser, payload);
     },
-    setShowVerifyEmailModal: (state, {payload}: PayloadAction<boolean>) => {
+    setShowVerifyEmailModal: (state, { payload }: PayloadAction<boolean>) => {
       state.showVerifyEmailModal = payload;
     },
   },
@@ -126,16 +126,15 @@ export const fetchCurrentUser = createAsyncThunk<
   Thunk
 >(
   'user/fetchCurrentUser',
-  async (params = {}, {dispatch, extra: sdk, rejectWithValue}) => {
+  async (params = {}, { dispatch, extra: sdk, rejectWithValue }) => {
     try {
-      const parameters = {...currentUserParameters, ...params} as any;
+      const parameters = { ...currentUserParameters, ...params } as any;
       const response = await sdk.currentUser.show(parameters);
       const entities = denormalisedResponseEntities(response);
 
       // Handle deleted user
       if (entities[0]?.attributes?.profile?.metadata?.isDeleted === true) {
         await sdk.logout();
-        dispatch(clearCurrentUser());
         return undefined;
       }
 
@@ -165,13 +164,13 @@ export const updateCurrentUser = createAsyncThunk<
   Thunk
 >(
   'user/updateCurrentUser',
-  async (params, {dispatch, extra: sdk, rejectWithValue}) => {
+  async (params, { dispatch, extra: sdk, rejectWithValue }) => {
     try {
       const res = await sdk.currentUser.updateProfile(params as any, {
         expand: true,
       });
 
-      dispatch(addMarketplaceEntities({sdkResponse: res}));
+      dispatch(addMarketplaceEntities({ sdkResponse: res }));
 
       const entities = denormalisedResponseEntities(res);
       if (entities.length !== 1) {
@@ -190,7 +189,14 @@ export const updateCurrentUser = createAsyncThunk<
   },
 );
 
-export const {setCurrentUser, setShowVerifyEmailModal} = userSlice.actions;
+export const { setCurrentUser, setShowVerifyEmailModal } = userSlice.actions;
+
+export const currentUserEmailSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.email;
+export const currentUserPhoneNumberSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.profile.protectedData?.phoneNumber;
+export const phoneNumberVerifiedSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.profile.publicData?.phoneNumberVerified;
 
 export default userSlice.reducer;
 

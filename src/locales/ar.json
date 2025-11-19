@@ -36,7 +36,11 @@
     "errorAccountDisabled": "الحساب معطل",
     "errorTooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً",
     "facebook": "تابع باستخدام فيسبوك",
-    "google": "تابع باستخدام جوجل"
+    "google": "تابع باستخدام جوجل",
+    "loginWithBiometric": "تسجيل الدخول بالبصمة",
+    "loginWithBiometricType": "تسجيل الدخول باستخدام {type}",
+    "biometricPrompt": "المصادقة لتسجيل الدخول",
+    "biometricPromptWithType": "المصادقة باستخدام {type}"
   },
   "Signin": {
     "heading": "تحقق من الرمز",
@@ -45,7 +49,14 @@
     "invalidOtp": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
     "button": "تحقق",
     "otpNotRecieved": "لم تستلم الرمز؟",
-    "resend": "إعادة الإرسال"
+    "resend": "إعادة الإرسال",
+    "noPhoneHeading": "أضف رقم هاتفك",
+    "noPhoneMessage": "يرجى إضافة رقم هاتفك حتى نتمكن من إرسال رمز التحقق.",
+    "savePhoneButton": "حفظ والمتابعة",
+    "phoneUpdateSuccessTitle": "تم حفظ الرقم",
+    "phoneUpdateSuccessMessage": "أرسلنا رمز التحقق إلى {{phone}}",
+    "phoneUpdateErrorTitle": "تعذر حفظ الرقم",
+    "phoneUpdateErrorMessage": "يرجى المحاولة مرة أخرى."
   },
   "Signup": {
     "heading": "إنشاء حساب جديد",
@@ -108,5 +119,33 @@
     "reportProblem": "الإبلاغ عن مشكلة",
     "contactUs": "اتصل بنا",
     "logout": "تسجيل الخروج"
+  },
+  "BiometricSettings": {
+    "title": "تسجيل الدخول بالبصمة",
+    "titleWithType": "تسجيل الدخول باستخدام {type}",
+    "description": "استخدم المصادقة البيومترية لتسجيل الدخول بسرعة وأمان إلى حسابك",
+    "descriptionWithType": "استخدم {type} لتسجيل الدخول بسرعة وأمان إلى حسابك",
+    "disabledTitle": "تم تعطيل تسجيل الدخول بالبصمة",
+    "disabledMessage": "ستحتاج إلى تسجيل الدخول بكلمة المرور في المرة القادمة",
+    "enabledTitle": "تم تفعيل تسجيل الدخول بالبصمة",
+    "enabledMessage": "يمكنك الآن تسجيل الدخول باستخدام المصادقة البيومترية",
+    "enabledMessageWithType": "يمكنك الآن تسجيل الدخول باستخدام {type}",
+    "errorTitle": "خطأ",
+    "errorMessage": "فشل تحديث إعدادات البصمة",
+    "noUserEmail": "تعذر الحصول على البريد الإلكتروني للمستخدم. يرجى المحاولة مرة أخرى.",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "authenticatePrompt": "المصادقة لتفعيل تسجيل الدخول بالبصمة",
+    "authenticatePromptWithType": "المصادقة باستخدام {type} لتفعيل تسجيل الدخول بالبصمة",
+    "authFailedTitle": "فشلت المصادقة",
+    "authFailedMessage": "تم إلغاء المصادقة البيومترية أو فشلت",
+    "invalidCredentials": "كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+    "modalTitle": "تفعيل تسجيل الدخول بالبصمة",
+    "modalTitleWithType": "تفعيل تسجيل الدخول باستخدام {type}",
+    "modalDescription": "أدخل كلمة المرور الخاصة بك لتفعيل تسجيل الدخول بالبصمة بشكل آمن. ستتمكن من تسجيل الدخول بسرعة في المرة القادمة.",
+    "emailLabel": "عنوان البريد الإلكتروني",
+    "passwordLabel": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "cancel": "إلغاء",
+    "enable": "تفعيل"
   }
 }

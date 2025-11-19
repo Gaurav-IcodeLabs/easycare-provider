@@ -1,14 +1,18 @@
-import {StatusBar} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import { StatusBar } from 'react-native';
+import React, { useEffect, useRef } from 'react';
 import {
   NavigationContainer,
   NavigationContainerRef,
 } from '@react-navigation/native';
 import AuthStackNavigator from './AuthStackNavigator';
 import MainStackNavigator from './MainStackNavigator';
-import {useAppDispatch, useTypedSelector} from '../sharetribeSetup';
-import {isAuthenticatedSelector} from '../slices/auth.slice';
-import {fetchCurrentUser} from '../slices/user.slice';
+import {
+  resetAllSlices,
+  useAppDispatch,
+  useTypedSelector,
+} from '../sharetribeSetup';
+import { isAuthenticatedSelector } from '../slices/auth.slice';
+import { fetchCurrentUser } from '../slices/user.slice';
 
 const RootNavigator = () => {
   const navigationRef = useRef<NavigationContainerRef<any>>(null);

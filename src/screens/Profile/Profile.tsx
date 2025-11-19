@@ -12,7 +12,12 @@ import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import {runOnJS} from 'react-native-reanimated';
 import {scale} from '../../utils';
 import {colors, primaryFont} from '../../constants';
-import {AppText, GradientWrapper, LanguageChangeButton} from '../../components';
+import {
+  AppText,
+  BiometricSettings,
+  GradientWrapper,
+  LanguageChangeButton,
+} from '../../components';
 import {placeholder, profileEditIcon, rightup} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
@@ -144,6 +149,11 @@ export const Profile: React.FC = () => {
             showsVerticalScrollIndicator={false}>
             {renderWalletSection()}
 
+            {/* Biometric Settings Section */}
+            <View style={styles.biometricSection}>
+              <BiometricSettings />
+            </View>
+
             <View style={styles.optionsContainer}>
               {getProfileOptions()?.map((option, index, array) =>
                 renderOptionItem(option, index, array),
@@ -202,6 +212,9 @@ const styles = StyleSheet.create({
     fontSize: scale(24),
     color: colors.blue,
     ...primaryFont('600'),
+  },
+  biometricSection: {
+    marginBottom: scale(20),
   },
   optionsContainer: {
     flex: 1,

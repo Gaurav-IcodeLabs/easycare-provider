@@ -36,7 +36,11 @@
     "errorAccountDisabled": "Account is disabled",
     "errorTooManyAttempts": "Too many attempts. Please try again later",
     "facebook": "Continue with Facebook",
-    "google": "Continue with Google"
+    "google": "Continue with Google",
+    "loginWithBiometric": "Login with Biometric",
+    "loginWithBiometricType": "Login with {type}",
+    "biometricPrompt": "Authenticate to login",
+    "biometricPromptWithType": "Authenticate with {type}"
   },
   "Signin": {
     "heading": "Verify Code",
@@ -45,7 +49,14 @@
     "invalidOtp": "Invalid OTP. Please try again.",
     "button": "Verify",
     "otpNotRecieved": "Dont receive code?",
-    "resend": "Resend"
+    "resend": "Resend",
+    "noPhoneHeading": "Add your phone number",
+    "noPhoneMessage": "Add a phone number so we can send you a verification code.",
+    "savePhoneButton": "Save & continue",
+    "phoneUpdateSuccessTitle": "Number saved",
+    "phoneUpdateSuccessMessage": "We sent a verification code to {{phone}}",
+    "phoneUpdateErrorTitle": "Unable to save number",
+    "phoneUpdateErrorMessage": "Please try again."
   },
   "Signup": {
     "heading": "Create New Account",
@@ -108,6 +119,34 @@
     "reportProblem": "Report a Problem",
     "contactUs": "Contact Us",
     "logout": "Logout"
+  },
+  "BiometricSettings": {
+    "title": "Biometric Login",
+    "titleWithType": "{type} Login",
+    "description": "Use biometric authentication to quickly and securely login to your account",
+    "descriptionWithType": "Use {type} to quickly and securely login to your account",
+    "disabledTitle": "Biometric Login Disabled",
+    "disabledMessage": "You will need to login with your password next time",
+    "enabledTitle": "Biometric Login Enabled",
+    "enabledMessage": "You can now login using biometric authentication",
+    "enabledMessageWithType": "You can now login with {type}",
+    "errorTitle": "Error",
+    "errorMessage": "Failed to update biometric settings",
+    "noUserEmail": "Unable to get user email. Please try again.",
+    "passwordRequired": "Password is required",
+    "authenticatePrompt": "Authenticate to enable biometric login",
+    "authenticatePromptWithType": "Authenticate with {type} to enable biometric login",
+    "authFailedTitle": "Authentication Failed",
+    "authFailedMessage": "Biometric authentication was cancelled or failed",
+    "invalidCredentials": "Invalid password. Please try again.",
+    "modalTitle": "Enable Biometric Login",
+    "modalTitleWithType": "Enable {type} Login",
+    "modalDescription": "Enter your password to securely enable biometric login. You'll be able to login quickly next time.",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "cancel": "Cancel",
+    "enable": "Enable"
   },
   "Editlisting": {
     "heading": "Product Listing"

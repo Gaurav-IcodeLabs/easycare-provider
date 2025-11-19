@@ -1,36 +1,55 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {scale, width} from '../../../utils';
-import {colors, primaryFont, AUTH, secondaryFont} from '../../../constants';
-import {AppText, Button, TextInputField} from '../../../components';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { scale, width } from '../../../utils';
+import { colors, primaryFont, AUTH, secondaryFont } from '../../../constants';
+import { AppText, Button, TextInputField } from '../../../components';
 import {
   emailIcon,
   facebookIcon,
+  faceid,
+  fingerprint,
   googleIcon,
+  homeActive,
   lockIcon,
 } from '../../../assets/images';
-import {useForm} from 'react-hook-form';
-import {useTranslation} from 'react-i18next';
-import {formSchemaLogin, LoginFormValues} from '../helper';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {AuthStackParamList} from '../../../apptypes';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { formSchemaLogin, LoginFormValues } from '../helper';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../apptypes';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 interface LoginFormProps {
-  onSubmit: (val: LoginFormValues) => void;
+  onSubmit: (val: LoginFormValues, shouldEnableBiometric?: boolean) => void;
   submitInProgress: boolean;
+  biometricAvailable: boolean;
+  biometricType: string;
+  biometricEnabled: boolean;
+  onBiometricLogin: () => void;
 }
 
-const LoginForm = ({onSubmit, submitInProgress}: LoginFormProps) => {
-  const {t} = useTranslation();
+const LoginForm = ({
+  onSubmit,
+  submitInProgress,
+  biometricType,
+  biometricEnabled,
+  onBiometricLogin,
+}: LoginFormProps) => {
+  const { t } = useTranslation();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const {
     control,
     handleSubmit,
-    formState: {isValid},
+    formState: { isValid },
   } = useForm<LoginFormValues>({
     defaultValues: {
       email: '',
@@ -39,6 +58,10 @@ const LoginForm = ({onSubmit, submitInProgress}: LoginFormProps) => {
     resolver: zodResolver(formSchemaLogin(t)),
     mode: 'onChange',
   });
+
+  const handleLoginSubmit = (values: LoginFormValues) => {
+    onSubmit(values, false);
+  };
 
   const handleForgotPassword = () => {
     // TODO: Navigate to forgot password screen when implemented
@@ -92,12 +115,26 @@ const LoginForm = ({onSubmit, submitInProgress}: LoginFormProps) => {
           </TouchableOpacity>
         </View>
 
+        {biometricEnabled && (
+    
+          <TouchableOpacity
+            style={styles.biometricButton}
+            onPress={onBiometricLogin}
+            disabled={submitInProgress}>
+            <Image
+              source={Platform.OS == 'android' ? fingerprint : faceid}
+              style={{ height: scale(42) }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        )}
+
         <Button
           disabled={!isValid || submitInProgress}
           style={styles.button}
           loader={submitInProgress}
           title={'Login.buttonText'}
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(handleLoginSubmit)}
         />
 
         <View style={styles.orTextContainer}>
@@ -236,5 +273,16 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: colors.deepBlue,
     ...primaryFont('600'),
+  },
+  biometricButton: {
+    marginTop: scale(20),
+    marginBottom: scale(10),
+    backgroundColor: colors.white,
+    borderRadius: scale(12),
+    height: scale(42),
+    width: scale(50),
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf:'center'
   },
 });
