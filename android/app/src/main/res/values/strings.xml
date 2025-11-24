@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Easy Care Provider</string>
+    <string name="deep_link_host">easycareweb.icodestaging.in</string>
 </resources>
