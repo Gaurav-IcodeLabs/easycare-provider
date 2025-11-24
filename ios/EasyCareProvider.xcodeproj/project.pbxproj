@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C80B921A6F3F58F76C31292 /* libPods-EasyCareProvider.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-EasyCareProvider.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1C5B0F95D3A8417FB5DF910D /* Ubuntu-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7DF1BD7E14AF4A2BB30D2326 /* Ubuntu-Medium.ttf */; };
 		1C841653E9794F9FA59822FA /* Arimo-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8EB588A9CC0459A93A9914F /* Arimo-Medium.ttf */; };
@@ -22,33 +21,34 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8D48815213834BBF87EF20A2 /* Arimo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C3AC7AC7500943649E454D54 /* Arimo-Bold.ttf */; };
 		9A2C0C4206294BDBBA23878F /* Arimo-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BA9D235A50244EEFB0E3BCD3 /* Arimo-SemiBoldItalic.ttf */; };
+		A86A5D8D1F5BB8E3AE305026 /* libPods-EasyCareProvider.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 093EDEE8BFF91CDB6A2D6B1D /* libPods-EasyCareProvider.a */; };
 		E18DCFE18B36450DA0C425A8 /* Ubuntu-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 828940351A3B41249230864D /* Ubuntu-Light.ttf */; };
 		ED9D63824B4D4705BFFD18CF /* Arimo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0006200EECB449A589076E33 /* Arimo-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0006200EECB449A589076E33 /* Arimo-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-Regular.ttf"; path = "../src/assets/fonts/Arimo-Regular.ttf"; sourceTree = "<group>"; };
+		093EDEE8BFF91CDB6A2D6B1D /* libPods-EasyCareProvider.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyCareProvider.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E6F6FA696954B719CC65E06 /* Arimo-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-MediumItalic.ttf"; path = "../src/assets/fonts/Arimo-MediumItalic.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* EasyCareProvider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "EasyCareProvider.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "EasyCareProvider/Images.xcassets"; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "EasyCareProvider/Info.plist"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* EasyCareProvider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyCareProvider.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = EasyCareProvider/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = EasyCareProvider/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = EasyCareProvider/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1C4E5D8D1B224897AED745FB /* Arimo-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-Italic.ttf"; path = "../src/assets/fonts/Arimo-Italic.ttf"; sourceTree = "<group>"; };
 		2684AC1F3D154A92A5EDCAD6 /* Arimo-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-BoldItalic.ttf"; path = "../src/assets/fonts/Arimo-BoldItalic.ttf"; sourceTree = "<group>"; };
-		3B4392A12AC88292D35C810B /* Pods-EasyCareProvider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCareProvider.debug.xcconfig"; path = "Target Support Files/Pods-EasyCareProvider/Pods-EasyCareProvider.debug.xcconfig"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-EasyCareProvider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCareProvider.release.xcconfig"; path = "Target Support Files/Pods-EasyCareProvider/Pods-EasyCareProvider.release.xcconfig"; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-EasyCareProvider.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EasyCareProvider.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6BC7ED12CDED497AA4F3FCB2 /* Ubuntu-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Regular.ttf"; path = "../src/assets/fonts/Ubuntu-Regular.ttf"; sourceTree = "<group>"; };
+		6BC7ED12CDED497AA4F3FCB2 /* Ubuntu-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Regular.ttf"; path = "../src/assets/fonts/Ubuntu-Regular.ttf"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = EasyCareProvider/AppDelegate.swift; sourceTree = "<group>"; };
-		7DF1BD7E14AF4A2BB30D2326 /* Ubuntu-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Medium.ttf"; path = "../src/assets/fonts/Ubuntu-Medium.ttf"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "EasyCareProvider/LaunchScreen.storyboard"; sourceTree = "<group>"; };
-		828940351A3B41249230864D /* Ubuntu-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Light.ttf"; path = "../src/assets/fonts/Ubuntu-Light.ttf"; sourceTree = "<group>"; };
+		7DF1BD7E14AF4A2BB30D2326 /* Ubuntu-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Medium.ttf"; path = "../src/assets/fonts/Ubuntu-Medium.ttf"; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = EasyCareProvider/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		828940351A3B41249230864D /* Ubuntu-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Light.ttf"; path = "../src/assets/fonts/Ubuntu-Light.ttf"; sourceTree = "<group>"; };
 		8CA3ED80F07B4E52ABAC6E16 /* Arimo-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-SemiBold.ttf"; path = "../src/assets/fonts/Arimo-SemiBold.ttf"; sourceTree = "<group>"; };
-		B8D8C6721ADA425596C0EC1C /* Ubuntu-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Bold.ttf"; path = "../src/assets/fonts/Ubuntu-Bold.ttf"; sourceTree = "<group>"; };
+		B8D8C6721ADA425596C0EC1C /* Ubuntu-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Ubuntu-Bold.ttf"; path = "../src/assets/fonts/Ubuntu-Bold.ttf"; sourceTree = "<group>"; };
 		BA9D235A50244EEFB0E3BCD3 /* Arimo-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-SemiBoldItalic.ttf"; path = "../src/assets/fonts/Arimo-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		C3AC7AC7500943649E454D54 /* Arimo-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-Bold.ttf"; path = "../src/assets/fonts/Arimo-Bold.ttf"; sourceTree = "<group>"; };
 		E8EB588A9CC0459A93A9914F /* Arimo-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Arimo-Medium.ttf"; path = "../src/assets/fonts/Arimo-Medium.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F33A484B479B556D4D180256 /* Pods-EasyCareProvider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCareProvider.debug.xcconfig"; path = "Target Support Files/Pods-EasyCareProvider/Pods-EasyCareProvider.debug.xcconfig"; sourceTree = "<group>"; };
+		F78AB61A69315D6000DA256C /* Pods-EasyCareProvider.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCareProvider.release.xcconfig"; path = "Target Support Files/Pods-EasyCareProvider/Pods-EasyCareProvider.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-EasyCareProvider.a in Frameworks */,
+				A86A5D8D1F5BB8E3AE305026 /* libPods-EasyCareProvider.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +72,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = "EasyCareProvider";
+			name = EasyCareProvider;
 			sourceTree = "<group>";
 		};
 		1A91A37E39864A698E8D2AE0 /* Resources */ = {
@@ -98,7 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-EasyCareProvider.a */,
+				093EDEE8BFF91CDB6A2D6B1D /* libPods-EasyCareProvider.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -136,8 +136,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-EasyCareProvider.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-EasyCareProvider.release.xcconfig */,
+				F33A484B479B556D4D180256 /* Pods-EasyCareProvider.debug.xcconfig */,
+				F78AB61A69315D6000DA256C /* Pods-EasyCareProvider.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -149,20 +149,20 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "EasyCareProvider" */;
 			buildPhases = (
-				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				70F678BE5969E16EFAADA1F6 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
-				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+				6E3C841ED3DD6D67805F87D7 /* [CP] Embed Pods Frameworks */,
+				D77C9A81E248E7C500A3E0BA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "EasyCareProvider";
-			productName = "EasyCareProvider";
+			name = EasyCareProvider;
+			productName = EasyCareProvider;
 			productReference = 13B07F961A680F5B00A75B9A /* EasyCareProvider.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -239,7 +239,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+		6E3C841ED3DD6D67805F87D7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,7 +256,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EasyCareProvider/Pods-EasyCareProvider-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
+		70F678BE5969E16EFAADA1F6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -278,7 +278,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
+		D77C9A81E248E7C500A3E0BA /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -311,14 +311,15 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-EasyCareProvider.debug.xcconfig */;
+			baseConfigurationReference = F33A484B479B556D4D180256 /* Pods-EasyCareProvider.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3SK4P8C679;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "EasyCareProvider/Info.plist";
-             INFOPLIST_KEY_CFBundleDisplayName = "EasyCare Provider";
+				INFOPLIST_FILE = EasyCareProvider/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Easy Care Provider";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -330,8 +331,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.easycare.provider";
-				PRODUCT_NAME = "EasyCareProvider";
+				PRODUCT_BUNDLE_IDENTIFIER = com.app.EasyCareProvider;
+				PRODUCT_NAME = EasyCareProvider;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -345,13 +346,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-EasyCareProvider.release.xcconfig */;
+			baseConfigurationReference = F78AB61A69315D6000DA256C /* Pods-EasyCareProvider.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = "EasyCareProvider/Info.plist";
-             INFOPLIST_KEY_CFBundleDisplayName = "EasyCare Provider";
+				DEVELOPMENT_TEAM = 3SK4P8C679;
+				INFOPLIST_FILE = EasyCareProvider/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Easy Care Provider";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -363,8 +365,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.easycare.provider";
-				PRODUCT_NAME = "EasyCareProvider";
+				PRODUCT_BUNDLE_IDENTIFIER = com.app.EasyCareProvider;
+				PRODUCT_NAME = EasyCareProvider;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
