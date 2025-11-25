@@ -10,6 +10,7 @@ export * from './ListingCardHorizontal/ListingCardHorizontal';
 export * from './AppImage/AppImage';
 export * from './AppText/AppText';
 export * from './CustomTabBar/CustomTabBar';
+export * from './SwipeableTabView';
 export * from './CustomCrossHandleForSheet/CustomCrossHandleForSheet';
 export * from './CustomBackDrop/CustomBackDrop';
 export * from './BottomSheetTextInputField/BottomSheetTextInputField';

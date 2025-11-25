@@ -18,9 +18,12 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  runOnJS,
 } from 'react-native-reanimated';
 import {AppText} from '../AppText/AppText';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {BlurView} from '@react-native-community/blur';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 
 type TranslationTS = TFunction<'translation', undefined>;
 
@@ -96,7 +99,7 @@ const AnimatedTabItem = React.memo(
           <Animated.View style={[styles.background, backgroundStyle]} />
           <View style={styles.iconTextContainer}>
             <Image
-              tintColor={isFocused ? colors.blue : colors.deepBlue}
+              tintColor={isFocused ? colors.blue : colors.white}
               source={tabIcon}
               style={styles.tabIcon}
             />
@@ -128,6 +131,40 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
     [state.index, navigation],
   );
 
+  const handleSwipe = useCallback(
+    (direction: 'left' | 'right') => {
+      const currentIndex = state.index;
+      const newIndex =
+        direction === 'left' ? currentIndex + 1 : currentIndex - 1;
+      if (newIndex >= 0 && newIndex < state.routes.length) {
+        navigation.navigate(state.routes[newIndex].name);
+      }
+    },
+    [state.index, state.routes, navigation],
+  );
+
+  const hasSwipedLeft = useSharedValue(false);
+  const hasSwipedRight = useSharedValue(false);
+
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      hasSwipedLeft.value = false;
+      hasSwipedRight.value = false;
+    })
+    .onUpdate(event => {
+      const SWIPE_THRESHOLD = 50;
+      if (event.translationX < -SWIPE_THRESHOLD && !hasSwipedLeft.value) {
+        hasSwipedLeft.value = true;
+        runOnJS(handleSwipe)('left');
+      } else if (
+        event.translationX > SWIPE_THRESHOLD &&
+        !hasSwipedRight.value
+      ) {
+        hasSwipedRight.value = true;
+        runOnJS(handleSwipe)('right');
+      }
+    });
+
   const getTabIcon = useCallback((route: string, isFocused: boolean) => {
     switch (route) {
       case 'Home':
@@ -157,42 +194,86 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
   return (
     <View
       style={[
-        styles.container,
+        styles.wrapper,
         {
-          paddingTop: scale(20),
-          paddingBottom: Math.max(bottom || scale(16)),
+          paddingBottom: Math.max(bottom, scale(16)),
         },
       ]}>
-      {state.routes.map((route, index) => {
-        const isFocused = state.index === index;
-        const tabIcon = getTabIcon(route.name, isFocused);
-        const tabTitle = getTabTitle(route.name);
-
-        return (
-          <AnimatedTabItem
-            key={route.key}
-            route={route}
-            index={index}
-            isFocused={isFocused}
-            tabIcon={tabIcon}
-            tabTitle={tabTitle}
-            onPress={onPress}
-            t={t}
+      <GestureDetector gesture={panGesture}>
+        <View style={styles.container}>
+          <BlurView
+            style={styles.blurBackground}
+            blurType="light"
+            blurAmount={10}
+            reducedTransparencyFallbackColor="white"
           />
-        );
-      })}
+          <View style={styles.tintOverlay} />
+          {state.routes.map((route, index) => {
+            const isFocused = state.index === index;
+            const tabIcon = getTabIcon(route.name, isFocused);
+            const tabTitle = getTabTitle(route.name);
+
+            return (
+              <AnimatedTabItem
+                key={route.key}
+                route={route}
+                index={index}
+                isFocused={isFocused}
+                tabIcon={tabIcon}
+                tabTitle={tabTitle}
+                onPress={onPress}
+                t={t}
+              />
+            );
+          })}
+        </View>
+      </GestureDetector>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: scale(20),
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white,
-    paddingHorizontal: scale(20),
     gap: scale(16),
+    backgroundColor: 'transparent',
+    borderRadius: scale(50),
+    overflow: 'hidden',
+    paddingVertical: scale(12),
+    paddingHorizontal: scale(16),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  blurBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  tintOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(100, 150, 255, 0.25)',
   },
   tab: {
     alignItems: 'center',
@@ -217,8 +298,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: scale(8),
-    paddingHorizontal: scale(16),
-    paddingVertical: scale(8),
+    paddingHorizontal: scale(12),
+    paddingVertical: scale(6),
   },
   label: {
     fontSize: scale(14),
@@ -230,232 +311,3 @@ const styles = StyleSheet.create({
     width: scale(24),
   },
 });
-
-// previous - Commented out
-// import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-// import React, {useCallback, useMemo} from 'react';
-// import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
-// import {useTranslation} from 'react-i18next';
-// import {bottomInset, scale, SCREEN_WIDTH} from '../../utils';
-// import {
-//   cartActive,
-//   cartInactive,
-//   homeActive,
-//   homeInactive,
-//   locationActive,
-//   locationInactive,
-//   ordersActive,
-//   ordersInactive,
-// } from '../../assets';
-// import {colors, primaryFont} from '../../constants';
-// import {TFunction} from 'i18next';
-// import Animated, {
-//   useAnimatedStyle,
-//   useSharedValue,
-//   withSequence,
-//   withTiming,
-// } from 'react-native-reanimated';
-// import {AppText} from '../AppText/AppText';
-// import {useSafeAreaInsets} from 'react-native-safe-area-context';
-// type TranslationTS = TFunction<'translation', undefined>;
-// type AnimatedTabItemProps = {
-//   route: any;
-//   index: number;
-//   isFocused: boolean;
-//   tabIcon: number;
-//   tabTitle: string;
-//   onPress: (route: any, index: number) => void;
-//   width: number;
-//   t: TranslationTS;
-// };
-
-// const AnimatedTabItem = React.memo(
-//   ({
-//     route,
-//     index,
-//     isFocused,
-//     tabIcon,
-//     tabTitle,
-//     onPress,
-//     width,
-//     t,
-//   }: AnimatedTabItemProps) => {
-//     const scaleValue = useSharedValue(1);
-
-//     React.useEffect(() => {
-//       if (isFocused) {
-//         scaleValue.value = withSequence(
-//           withTiming(1.2, {duration: 150}),
-//           withTiming(1, {duration: 150}),
-//         );
-//       }
-//     }, [isFocused, scaleValue]);
-
-//     const animatedStyle = useAnimatedStyle(() => {
-//       return {
-//         transform: [{scale: scaleValue.value}],
-//       };
-//     });
-
-//     return (
-//       <TouchableOpacity
-//         activeOpacity={0.5}
-//         onPress={() => onPress(route, index)}
-//         style={styles.tab}>
-//         <Animated.View style={[styles.tabItem, {width: width}, animatedStyle]}>
-//           <Image
-//             tintColor={isFocused ? colors.blue : colors.deepBlue}
-//             source={tabIcon}
-//             style={styles.tabIcon}
-//           />
-//         </Animated.View>
-//         <AppText
-//           style={[
-//             styles.label,
-//             {color: isFocused ? colors.blue : colors.deepBlue},
-//           ]}>
-//           {t(tabTitle)}
-//         </AppText>
-//       </TouchableOpacity>
-//     );
-//   },
-// );
-
-// export const CustomTabBar: React.FC<BottomTabBarProps> = ({
-//   state,
-//   navigation,
-// }) => {
-//   const {t} = useTranslation();
-//   const {bottom} = useSafeAreaInsets();
-//   const ITEM_WIDTH = useMemo(
-//     () => SCREEN_WIDTH / state.routes.length,
-//     [state.routes.length],
-//   );
-
-//   const indicatorScaleValue = useSharedValue(state.index * ITEM_WIDTH);
-
-//   React.useEffect(() => {
-//     indicatorScaleValue.value = withTiming(state.index * ITEM_WIDTH, {
-//       duration: 250,
-//     });
-//   }, [state.index, indicatorScaleValue, ITEM_WIDTH]);
-
-//   const indicatorStyle = useAnimatedStyle(() => ({
-//     transform: [{translateX: indicatorScaleValue.value}],
-//   }));
-
-//   const onPress = useCallback(
-//     (route: any, index: number) => {
-//       if (state.index !== index) {
-//         navigation.navigate(route.name);
-//       }
-//     },
-//     [state.index, navigation],
-//   );
-
-//   const getTabIcon = useCallback((route: string, isFocused: boolean) => {
-//     switch (route) {
-//       case 'Home':
-//         return isFocused ? homeActive : homeInactive;
-//       case 'MyOrders':
-//         return isFocused ? ordersActive : ordersInactive;
-//       case 'MyLocation':
-//         return isFocused ? locationActive : locationInactive;
-//       case 'Cart':
-//         return isFocused ? cartActive : cartInactive;
-//       default:
-//         return null;
-//     }
-//   }, []);
-
-//   const getTabTitle = useCallback((route: string) => {
-//     switch (route) {
-//       case 'Home':
-//         return 'Navigation.home';
-//       case 'MyOrders':
-//         return 'Navigation.myOrders';
-//       case 'MyLocation':
-//         return 'Navigation.myLocation';
-//       case 'Cart':
-//         return 'Navigation.cart';
-//       default:
-//         return 'Navigation.home';
-//     }
-//   }, []);
-
-//   return (
-//     // <View style={styles.root}>
-//     <View
-//       style={[
-//         styles.container,
-//         {
-//           paddingTop: scale(20),
-//           paddingBottom: bottom,
-//         },
-//       ]}>
-//       <Animated.View
-//         style={[styles.indicator, {width: ITEM_WIDTH}, indicatorStyle]}>
-//         <View style={styles.indicatorLine} />
-//       </Animated.View>
-//       {state.routes.map((route, index) => {
-//         const isFocused = state.index === index;
-//         const tabIcon = getTabIcon(route.name, isFocused);
-//         const tabTitle = getTabTitle(route.name);
-
-//         return (
-//           <AnimatedTabItem
-//             key={route.key}
-//             route={route}
-//             index={index}
-//             isFocused={isFocused}
-//             tabIcon={tabIcon}
-//             tabTitle={tabTitle}
-//             onPress={onPress}
-//             width={ITEM_WIDTH}
-//             t={t}
-//           />
-//         );
-//       })}
-//     </View>
-//     // </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   root: {
-//     // backgroundColor: colors.white,
-//   },
-//   container: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     backgroundColor: colors.white,
-//   },
-//   tab: {
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   indicator: {
-//     position: 'absolute',
-//     top: scale(5),
-//     height: '100%',
-//   },
-//   indicatorLine: {
-//     height: scale(4),
-//     backgroundColor: colors.blue,
-//     alignSelf: 'center',
-//     width: scale(50),
-//   },
-//   tabItem: {
-//     alignItems: 'center',
-//     gap: scale(5),
-//   },
-//   label: {
-//     fontSize: scale(12),
-//     paddingTop: scale(5),
-//     ...primaryFont('400'),
-//   },
-//   tabIcon: {
-//     height: scale(24),
-//     width: scale(24),
-//   },
-// });

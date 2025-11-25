@@ -1,0 +1,1 @@
+export {SwipeableTabView} from './SwipeableTabView';
