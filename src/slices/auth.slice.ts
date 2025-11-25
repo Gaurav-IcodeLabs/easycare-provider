@@ -41,9 +41,7 @@ const authSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(resetAllSlices, () => initialState);
 
-    builder.addCase(authInfo.pending, () => {
-      console.log('authInfo.pending');
-    });
+    builder.addCase(authInfo.pending, () => {});
     builder.addCase(authInfo.fulfilled, (state, {payload}) => {
       state.authInfoLoaded = true;
       state.isAuthenticated = authenticated(payload);
@@ -159,7 +157,17 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
           statusCode: 409,
         });
       }
-      const res = await sdk.currentUser.create(params);
+
+      // Add userType: 'provider' to publicData
+      const signupParams = {
+        ...params,
+        publicData: {
+          ...params?.publicData,
+          userType: 'provider',
+        },
+      };
+
+      const res = await sdk.currentUser.create(signupParams);
       return res;
     } catch (error: any) {
       const message = error?.message || 'Signup failed';
@@ -183,7 +191,12 @@ export const signupWithIdp = createAsyncThunk<
 >('auth/signupWithIdp', async (params, {extra: sdk, rejectWithValue}) => {
   try {
     // Create user with IDP
-    const res = await sdk.currentUser.createWithIdp(params);
+    const res = await sdk.currentUser.createWithIdp({
+      ...params,
+      publicData: {
+        userType: 'provider',
+      },
+    });
 
     // After successful signup, authenticate the user
     await (sdk as any).loginWithIdp({
@@ -212,6 +225,18 @@ export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
   async (params, {extra: sdk, rejectWithValue}) => {
     try {
       const currentUser = await sdk.login(params);
+
+      const userResponse = await sdk.currentUser.show();
+      const user = userResponse.data.data;
+      const userType = (user?.attributes?.profile?.publicData as any)?.userType;
+      if (userType !== 'provider') {
+        await sdk.logout();
+        return rejectWithValue({
+          message: 'Only providers can access this app',
+          statusCode: 403,
+        } as any);
+      }
+
       return currentUser;
     } catch (error: any) {
       const message = error?.message || 'Login failed';
@@ -231,19 +256,24 @@ export const loginWithIdp = createAsyncThunk<
   Thunk
 >('auth/loginWithIdp', async (params, {extra: sdk, rejectWithValue}) => {
   try {
-    const res = await sdk.loginWithIdp(params);
-    console.log('res', res);
-    return res.data;
-  } catch (error: any) {
-    // Debug: Log the full error structure
-    console.log('loginWithIdp Error Details:', {
-      error,
-      response: error?.response,
-      responseData: error?.response?.data,
-      status: error?.response?.status,
-      message: error?.message,
-    });
+    const currentUser = await (sdk as any).loginWithIdp(params);
 
+    // Fetch current user to check userType
+    const userResponse = await sdk.currentUser.show();
+    const user = userResponse.data.data;
+    const userType = (user?.attributes?.profile?.publicData as any)?.userType;
+
+    // Only allow providers to login
+    if (userType !== 'provider') {
+      await sdk.logout();
+      return rejectWithValue({
+        message: 'Only providers can access this app',
+        statusCode: 403,
+      });
+    }
+
+    return currentUser.data;
+  } catch (error: any) {
     const statusCode = error?.response?.status || error?.status;
     const errorData = error?.response?.data;
     const errorCode = errorData?.code || errorData?.error || error?.code;

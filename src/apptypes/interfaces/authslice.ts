@@ -21,6 +21,10 @@ export interface SignupParams {
   protectedData: {
     phoneNumber?: string | number;
   };
+  publicData?: {
+    userType?: 'provider' | 'customer';
+    [key: string]: any;
+  };
 }
 
 export interface SignupWithIdpParam extends Omit<SignupParams, 'password'> {
