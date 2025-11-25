@@ -20,6 +20,7 @@ import {height, width} from './src/utils';
 import {fetchAppAssets} from './src/slices/hostedAssets.slice';
 import {ColorsProvider, ConfigurationProvider} from './src/context';
 import {mergeColors} from './src/constants';
+import {configureGoogleSignIn} from './src/utils/socialAuth.helpers';
 
 function App(): React.JSX.Element {
   const [isReady, setIsReady] = useState(false);
@@ -57,6 +58,7 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     initializeApp();
+    configureGoogleSignIn();
   }, []);
 
   // Optional: Show a minimal loading screen instead of empty fragment

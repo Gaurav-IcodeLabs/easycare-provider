@@ -27,9 +27,14 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 interface SignupFormProps {
   onSubmit: (val: SignupFormValues) => void;
   submitInProgress: boolean;
+  onGoogleSignup?: () => void;
 }
 
-const SignupForm = ({onSubmit, submitInProgress}: SignupFormProps) => {
+const SignupForm = ({
+  onSubmit,
+  submitInProgress,
+  onGoogleSignup,
+}: SignupFormProps) => {
   const {t} = useTranslation();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
@@ -159,6 +164,7 @@ const SignupForm = ({onSubmit, submitInProgress}: SignupFormProps) => {
             style={styles.socialButton}
             title={'Login.google'}
             titleStyle={styles.socialButtonText}
+            onPress={onGoogleSignup}
           />
           <Button
             leftIcon={facebookIcon}

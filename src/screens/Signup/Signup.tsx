@@ -1,27 +1,26 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import SignupForm from './components/SignupForm';
-import {AUTH, colors} from '../../constants';
-import {AuthStackParamList, SignupParams} from '../../apptypes';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {colors} from '../../constants';
+import {SignupParams} from '../../apptypes';
 import {scale, useToast} from '../../utils';
-import {GradientWrapper} from '../../components';
 import {logo} from '../../assets';
 import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
-import {signup, signUpInProgressSelector} from '../../slices/auth.slice';
+import {
+  signup,
+  signUpInProgressSelector,
+  signupWithIdp,
+} from '../../slices/auth.slice';
 import {SignupFormValues} from './helper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useLanguage} from '../../hooks';
-
-type SignupScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
+import {signInWithGoogle} from '../../utils/socialAuth.helpers';
 
 export const Signup: React.FC = () => {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
   const {top} = useSafeAreaInsets();
-  const navigation = useNavigation<SignupScreenNavigationProp>();
   const signupInProgress = useTypedSelector(signUpInProgressSelector);
   const {showToast} = useToast();
   const {isArabic} = useLanguage();
@@ -68,6 +67,51 @@ export const Signup: React.FC = () => {
     }
   };
 
+  const handleGoogleSignup = async () => {
+    try {
+      const userInfo = await signInWithGoogle();
+      await dispatch(signupWithIdp(userInfo)).unwrap();
+      showToast({
+        type: 'success',
+        title: t('Signup.successTitle'),
+        message: t('Signup.successMessage'),
+      });
+    } catch (error: any) {
+      // Debug: Log the full error structure
+      console.log('Google Signup Error:', JSON.stringify(error, null, 2));
+
+      const statusCode = error?.statusCode;
+      const errorCode = error?.code;
+      let errorMessage = t('Signup.errorGoogleAuth');
+
+      // Handle specific status codes
+      if (statusCode === 403) {
+        errorMessage = t('Signup.errorIdpValidation');
+      } else if (statusCode === 409) {
+        // Check for specific 409 error codes
+        if (errorCode === 'idp-profile-already-exists') {
+          errorMessage = t('Signup.errorIdpAlreadyLinked');
+        } else if (errorCode === 'email-taken') {
+          errorMessage = t('Signup.errorEmailExists');
+        } else if (errorCode === 'conflict-missing-key') {
+          errorMessage = t('Signup.errorMissingInfo');
+        } else {
+          errorMessage = t('Signup.errorUserExists');
+        }
+      } else if (statusCode === 400) {
+        errorMessage = t('Signup.errorInvalidInfo');
+      } else if (statusCode === 429) {
+        errorMessage = t('Signup.errorTooManyAttempts');
+      }
+
+      showToast({
+        type: 'error',
+        title: t('Signup.errorTitle'),
+        message: errorMessage,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.topSection, {paddingTop: top}]}>
@@ -76,7 +120,11 @@ export const Signup: React.FC = () => {
           style={[styles.appIcon, isArabic && {transform: [{scaleX: -1}]}]}
         />
       </View>
-      <SignupForm onSubmit={handleSignup} submitInProgress={signupInProgress} />
+      <SignupForm
+        onSubmit={handleSignup}
+        submitInProgress={signupInProgress}
+        onGoogleSignup={handleGoogleSignup}
+      />
     </View>
   );
 };

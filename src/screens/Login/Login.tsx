@@ -16,7 +16,11 @@ import {
 } from '../../utils';
 import {logo} from '../../assets';
 import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
-import {login, loginInProgressSelector} from '../../slices/auth.slice';
+import {
+  login,
+  loginInProgressSelector,
+  loginWithIdp,
+} from '../../slices/auth.slice';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useLanguage} from '../../hooks';
 import {
@@ -25,6 +29,7 @@ import {
   biometricTypeSelector,
   updateAppState,
 } from '../../slices/app.slice';
+import {signInWithGoogle} from '../../utils/socialAuth.helpers';
 
 export const Login: React.FC = () => {
   const {t} = useTranslation();
@@ -150,6 +155,57 @@ export const Login: React.FC = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const userInfo = await signInWithGoogle();
+      console.log('userInfo', userInfo);
+
+      const {idpToken, idpClientId, idpId} = userInfo ?? {};
+
+      await dispatch(
+        loginWithIdp({
+          idpToken,
+          idpClientId,
+          idpId,
+        }),
+      ).unwrap();
+
+      showToast({
+        type: 'success',
+        title: t('Login.successTitle'),
+        message: t('Login.successMessage'),
+      });
+    } catch (error: any) {
+      // Debug: Log the full error structure
+      console.log('Google Login Error:', JSON.stringify(error, null, 2));
+
+      const statusCode = error?.statusCode;
+      const errorCode = error?.code;
+      let errorMessage = t('Login.errorDefault');
+
+      // Handle specific status codes
+      if (statusCode === 401) {
+        errorMessage = t('Login.errorInvalidCredentials');
+      } else if (statusCode === 403) {
+        if (errorCode === 'forbidden') {
+          errorMessage = t('Login.errorIdpValidation');
+        } else {
+          errorMessage = t('Login.errorAccountDisabled');
+        }
+      } else if (statusCode === 404) {
+        errorMessage = t('Login.errorAccountNotFound');
+      } else if (statusCode === 429) {
+        errorMessage = t('Login.errorTooManyAttempts');
+      }
+
+      showToast({
+        type: 'error',
+        title: t('Login.errorTitle'),
+        message: errorMessage,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.topSection, {paddingTop: top}]}>
@@ -165,6 +221,7 @@ export const Login: React.FC = () => {
         biometricType={biometricType}
         biometricEnabled={biometricEnabled}
         onBiometricLogin={handleBiometricLogin}
+        onGoogleLogin={handleGoogleLogin}
       />
     </View>
   );

@@ -13,6 +13,7 @@ declare module '@env' {
   export const IOS_GOOGLE_CLIENT_ID: string;
   export const IOS_GOOGLE_CLIENT_ID_REVERSE: string;
   export const GOOGLE_WEB_CLIENT_ID: string;
+  export const GOOGLE_IOS_CLIENT_ID: string;
   export const IOS_APPLE_CLIENT_ID: string;
   export const MARKETPLACE_NAME: string;
   export const FACEBOOK_APP_ID: string;

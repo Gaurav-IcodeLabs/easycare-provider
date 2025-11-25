@@ -35,6 +35,8 @@
     "errorInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
     "errorAccountDisabled": "الحساب معطل",
     "errorTooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً",
+    "errorIdpValidation": "تعذر التحقق من حساب جوجل الخاص بك. يرجى المحاولة مرة أخرى.",
+    "errorAccountNotFound": "لم يتم العثور على حساب بهذا الحساب في جوجل. يرجى التسجيل أولاً.",
     "facebook": "تابع باستخدام فيسبوك",
     "google": "تابع باستخدام جوجل",
     "loginWithBiometric": "تسجيل الدخول بالبصمة",
@@ -92,7 +94,12 @@
     "errorDefault": "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
     "errorUserExists": "المستخدم موجود بالفعل",
     "errorInvalidInfo": "معلومات التسجيل غير صحيحة",
-    "errorTooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً"
+    "errorTooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً",
+    "errorGoogleAuth": "فشلت المصادقة عبر جوجل. يرجى المحاولة مرة أخرى.",
+    "errorIdpValidation": "تعذر التحقق من حساب جوجل الخاص بك. يرجى المحاولة مرة أخرى.",
+    "errorIdpAlreadyLinked": "حساب جوجل هذا مرتبط بالفعل بمستخدم آخر.",
+    "errorEmailExists": "يوجد حساب بالفعل بهذا البريد الإلكتروني.",
+    "errorMissingInfo": "بعض المعلومات المطلوبة مفقودة من حساب جوجل الخاص بك."
   },
   "VerificationSuccess": {
     "heading": "تم التحقق بنجاح",

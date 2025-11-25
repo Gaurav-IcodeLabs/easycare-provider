@@ -9,3 +9,12 @@ export const postDummyData = (data: any) =>
 
 export const checkPhoneNumberExists = (data: any) =>
   apiClient.post('/api/check_phone_number_exists', data);
+
+export const createUserWithIdp = (data: {
+  idpId: string;
+  idpClientId: string;
+  idpToken: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}) => apiClient.post('/api/auth/create-user-with-idp', data);

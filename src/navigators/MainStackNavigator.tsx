@@ -1,18 +1,20 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../apptypes';
-import { SCREENS } from '../constants';
-import { Profile } from '../screens';
-import { BottomTabNavigator } from './BottomTabNavigator';
-import { OtpVerified, VerifyOtp } from '../screens';
-import { phoneNumberVerifiedSelector } from '../slices/user.slice';
-import { useTypedSelector } from '../sharetribeSetup';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../apptypes';
+import {SCREENS} from '../constants';
+import {Profile} from '../screens';
+import {BottomTabNavigator} from './BottomTabNavigator';
+import {OtpVerified, VerifyOtp} from '../screens';
+import {phoneNumberVerifiedSelector} from '../slices/user.slice';
+import {useTypedSelector} from '../sharetribeSetup';
 
-const { Navigator, Screen } = createNativeStackNavigator<MainStackParamList>();
+const {Navigator, Screen} = createNativeStackNavigator<MainStackParamList>();
 
 const MainStackNavigator: React.FC = () => {
   const phoneNumberVerified = useTypedSelector(phoneNumberVerifiedSelector);
-  const initialRouteName = phoneNumberVerified
+  const initialRouteName = __DEV__
+    ? SCREENS.MAIN_TABS
+    : phoneNumberVerified
     ? SCREENS.MAIN_TABS
     : SCREENS.VERIFT_OTP;
   return (
@@ -27,6 +29,6 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.PROFILE} component={Profile} />
     </Navigator>
   );
-}
+};
 
 export default MainStackNavigator;

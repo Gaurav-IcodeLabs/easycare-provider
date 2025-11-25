@@ -68,6 +68,19 @@ const authSlice = createSlice({
       state.signupInProgress = false;
     });
 
+    builder.addCase(signupWithIdp.pending, state => {
+      state.signupInProgress = true;
+      state.signupError = null;
+    });
+    builder.addCase(signupWithIdp.fulfilled, state => {
+      state.signupInProgress = false;
+      state.isAuthenticated = true;
+    });
+    builder.addCase(signupWithIdp.rejected, (state, action) => {
+      state.signupError = storableError(action.error as any);
+      state.signupInProgress = false;
+    });
+
     builder.addCase(login.pending, state => {
       state.loginInProgress = true;
       state.loginError = null;
@@ -77,6 +90,19 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
     });
     builder.addCase(login.rejected, (state, action) => {
+      state.loginInProgress = false;
+      state.loginError = storableError(action.error as any);
+    });
+
+    builder.addCase(loginWithIdp.pending, state => {
+      state.loginInProgress = true;
+      state.loginError = null;
+    });
+    builder.addCase(loginWithIdp.fulfilled, state => {
+      state.loginInProgress = false;
+      state.isAuthenticated = true;
+    });
+    builder.addCase(loginWithIdp.rejected, (state, action) => {
       state.loginInProgress = false;
       state.loginError = storableError(action.error as any);
     });
@@ -143,6 +169,44 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
   },
 );
 
+export const signupWithIdp = createAsyncThunk<
+  {},
+  {
+    idpId: string;
+    idpClientId: string;
+    idpToken: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  },
+  Thunk
+>('auth/signupWithIdp', async (params, {extra: sdk, rejectWithValue}) => {
+  try {
+    // Create user with IDP
+    const res = await sdk.currentUser.createWithIdp(params);
+
+    // After successful signup, authenticate the user
+    await (sdk as any).loginWithIdp({
+      idpId: params.idpId,
+      idpClientId: params.idpClientId,
+      idpToken: params.idpToken,
+    });
+
+    return res.data;
+  } catch (error: any) {
+    const statusCode = error?.response?.status || error?.status;
+    const errorData = error?.response?.data;
+    const errorCode = errorData?.code || errorData?.error || error?.code;
+    const message = errorData?.message || error?.message || 'IDP signup failed';
+
+    return rejectWithValue({
+      message,
+      statusCode,
+      ...(errorCode && {code: errorCode}),
+    } as any);
+  }
+});
+
 export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
   'auth/loginStatus',
   async (params, {extra: sdk, rejectWithValue}) => {
@@ -156,6 +220,42 @@ export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
     }
   },
 );
+
+export const loginWithIdp = createAsyncThunk<
+  {},
+  {
+    idpId: string;
+    idpClientId: string;
+    idpToken: string;
+  },
+  Thunk
+>('auth/loginWithIdp', async (params, {extra: sdk, rejectWithValue}) => {
+  try {
+    const res = await sdk.loginWithIdp(params);
+    console.log('res', res);
+    return res.data;
+  } catch (error: any) {
+    // Debug: Log the full error structure
+    console.log('loginWithIdp Error Details:', {
+      error,
+      response: error?.response,
+      responseData: error?.response?.data,
+      status: error?.response?.status,
+      message: error?.message,
+    });
+
+    const statusCode = error?.response?.status || error?.status;
+    const errorData = error?.response?.data;
+    const errorCode = errorData?.code || errorData?.error || error?.code;
+    const message = errorData?.message || error?.message || 'IDP login failed';
+
+    return rejectWithValue({
+      message,
+      statusCode,
+      ...(errorCode && {code: errorCode}),
+    } as any);
+  }
+});
 
 export const logout = createAsyncThunk<{}, void, Thunk>(
   'auth/logout',

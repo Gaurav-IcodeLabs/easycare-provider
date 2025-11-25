@@ -35,6 +35,8 @@
     "errorInvalidCredentials": "Invalid email or password",
     "errorAccountDisabled": "Account is disabled",
     "errorTooManyAttempts": "Too many attempts. Please try again later",
+    "errorIdpValidation": "Unable to validate your Google account. Please try again.",
+    "errorAccountNotFound": "No account found with this Google account. Please sign up first.",
     "facebook": "Continue with Facebook",
     "google": "Continue with Google",
     "loginWithBiometric": "Login with Biometric",
@@ -92,7 +94,12 @@
     "errorDefault": "Signup failed. Please try again.",
     "errorUserExists": "User already exists",
     "errorInvalidInfo": "Invalid signup information",
-    "errorTooManyAttempts": "Too many attempts. Please try again later"
+    "errorTooManyAttempts": "Too many attempts. Please try again later",
+    "errorGoogleAuth": "Google authentication failed. Please try again.",
+    "errorIdpValidation": "Unable to validate your Google account. Please try again.",
+    "errorIdpAlreadyLinked": "This Google account is already linked to another user.",
+    "errorEmailExists": "An account with this email already exists.",
+    "errorMissingInfo": "Some required information is missing from your Google account."
   },
   "VerificationSuccess": {
     "heading": "Verification Successfully",

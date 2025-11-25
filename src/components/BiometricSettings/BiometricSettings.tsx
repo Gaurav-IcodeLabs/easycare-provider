@@ -14,7 +14,10 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
-import {currentUserEmailSelector} from '../../slices/user.slice';
+import {
+  currentUserEmailSelector,
+  hasIdentityProvidersSelector,
+} from '../../slices/user.slice';
 import {
   disableBiometricLogin,
   enableBiometricLogin,
@@ -40,6 +43,7 @@ export const BiometricSettings: React.FC = () => {
   const {showToast} = useToast();
   const dispatch = useAppDispatch();
   const currentUserEmail = useTypedSelector(currentUserEmailSelector);
+  const hasIdentityProviders = useTypedSelector(hasIdentityProvidersSelector);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [biometricType, setBiometricType] = useState<string>('');
   const [biometricEnabled, setBiometricEnabled] = useState(false);
@@ -205,7 +209,10 @@ export const BiometricSettings: React.FC = () => {
     reset();
   };
 
-  if (!biometricAvailable) {
+  // Hide biometric settings if:
+  // 1. Biometric is not available on device
+  // 2. User has identity providers (logged in with Google, etc.)
+  if (!biometricAvailable || hasIdentityProviders) {
     return null;
   }
 
