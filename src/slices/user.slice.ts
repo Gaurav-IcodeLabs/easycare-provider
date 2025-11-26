@@ -67,7 +67,6 @@ const initialState: UserState = {
   currentUserShowError: null,
   updateCurrentUserError: null,
   updateCurrentUserInProgress: false,
-  showVerifyEmailModal: false,
 };
 
 const userSlice = createSlice({
@@ -76,9 +75,6 @@ const userSlice = createSlice({
   reducers: {
     setCurrentUser: (state, {payload}: PayloadAction<CurrentUser | null>) => {
       state.currentUser = mergeCurrentUser(state.currentUser, payload);
-    },
-    setShowVerifyEmailModal: (state, {payload}: PayloadAction<boolean>) => {
-      state.showVerifyEmailModal = payload;
     },
   },
   extraReducers: builder => {
@@ -189,7 +185,7 @@ export const updateCurrentUser = createAsyncThunk<
   },
 );
 
-export const {setCurrentUser, setShowVerifyEmailModal} = userSlice.actions;
+export const {setCurrentUser} = userSlice.actions;
 
 export const currentUserEmailSelector = (state: RootState) =>
   state.user.currentUser?.attributes.email;
@@ -202,6 +198,8 @@ export const hasIdentityProvidersSelector = (state: RootState) => {
     state.user.currentUser?.attributes.identityProviders;
   return identityProviders && identityProviders.length > 0;
 };
+export const currentUserEmailVerifiedSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.emailVerified;
 
 export default userSlice.reducer;
 

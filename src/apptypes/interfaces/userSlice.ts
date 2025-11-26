@@ -5,7 +5,6 @@ export interface UserState {
   currentUserShowError: StorableError | null;
   updateCurrentUserError: null | StorableError;
   updateCurrentUserInProgress: boolean;
-  showVerifyEmailModal: boolean;
 }
 
 export interface StorableError {

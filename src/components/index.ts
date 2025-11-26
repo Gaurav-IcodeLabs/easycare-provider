@@ -16,3 +16,4 @@ export * from './CustomBackDrop/CustomBackDrop';
 export * from './BottomSheetTextInputField/BottomSheetTextInputField';
 export * from './PhoneInputField/PhoneInputField';
 export * from './BiometricSettings/BiometricSettings';
+export * from './EmailVerificationModal/EmailVerificationModal';

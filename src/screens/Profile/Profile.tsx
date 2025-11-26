@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingTop: scale(20),
     paddingHorizontal: scale(20),
-    paddingBottom: scale(40),
+    paddingBottom: scale(100),
   },
   walletContainer: {
     flexDirection: 'row',

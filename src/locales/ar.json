@@ -154,5 +154,36 @@
     "passwordPlaceholder": "أدخل كلمة المرور",
     "cancel": "إلغاء",
     "enable": "تفعيل"
+  },
+  "Editlisting": {
+    "heading": "قائمة المنتجات"
+  },
+  "EmailVerification": {
+    "modalTitle": "تحقق من بريدك الإلكتروني",
+    "modalDescription": "يرجى التحقق من عنوان بريدك الإلكتروني للوصول إلى جميع الميزات. سنرسل رابط التحقق إلى:",
+    "sendButton": "إرسال بريد التحقق",
+    "laterButton": "سأفعل ذلك لاحقاً",
+    "successTitle": "تم إرسال بريد التحقق",
+    "successMessage": "يرجى التحقق من صندوق الوارد الخاص بك على {{email}}",
+    "errorTitle": "فشل إرسال البريد",
+    "errorMessage": "يرجى المحاولة مرة أخرى لاحقاً"
+  },
+  "EmailVerified": {
+    "verifyingTitle": "جارٍ التحقق من البريد الإلكتروني...",
+    "verifyingMessage": "يرجى الانتظار بينما نتحقق من عنوان بريدك الإلكتروني.",
+    "successTitle": "تم التحقق من البريد الإلكتروني!",
+    "successMessage": "تم التحقق من بريدك الإلكتروني بنجاح.",
+    "errorTitle": "فشل التحقق",
+    "errorMessage": "تعذر التحقق من بريدك الإلكتروني. يرجى المحاولة مرة أخرى.",
+    "okButton": "حسناً"
+  },
+  "DeepLink": {
+    "verificationFailedTitle": "فشل التحقق",
+    "invalidVerificationLink": "رابط التحقق غير صالح",
+    "pleaseLoginTitle": "يرجى تسجيل الدخول",
+    "pleaseLoginMessage": "تحتاج إلى تسجيل الدخول للتحقق من بريدك الإلكتروني",
+    "emailVerifiedTitle": "تم التحقق من البريد الإلكتروني",
+    "emailVerifiedMessage": "تم التحقق من بريدك الإلكتروني بنجاح",
+    "verificationFailedDefault": "فشل التحقق من البريد الإلكتروني"
   }
 }

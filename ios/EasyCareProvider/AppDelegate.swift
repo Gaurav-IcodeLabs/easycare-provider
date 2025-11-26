@@ -32,16 +32,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
   
-  private func showSplashScreen() {
-  if let splashClass = NSClassFromString("SplashView") as? NSObject.Type,
-     let splashInstance = splashClass.perform(NSSelectorFromString("sharedInstance"))?.takeUnretainedValue() as? NSObject {
-    splashInstance.perform(NSSelectorFromString("showSplash"))
-    print("✅ Splash Screen Shown Successfully")
-  } else {
-    print("⚠️ SplashView module not found")
-  }
-}
+  // MARK: - Deep Linking Support
   
+  // Handle URL scheme deep links (myapp://...)
+  func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+  ) -> Bool {
+    // This will send the URL to React Native's Linking module
+    return RCTLinkingManager.application(app, open: url, options: options)
+  }
+  
+  // Handle Universal Links (https://...)
+  func application(
+    _ application: UIApplication,
+    continue userActivity: NSUserActivity,
+    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+  ) -> Bool {
+    // This will send Universal Links to React Native's Linking module
+    return RCTLinkingManager.application(
+      application,
+      continue: userActivity,
+      restorationHandler: restorationHandler
+    )
+  }
+  
+  private func showSplashScreen() {
+    if let splashClass = NSClassFromString("SplashView") as? NSObject.Type,
+       let splashInstance = splashClass.perform(NSSelectorFromString("sharedInstance"))?.takeUnretainedValue() as? NSObject {
+      splashInstance.perform(NSSelectorFromString("showSplash"))
+      print("✅ Splash Screen Shown Successfully")
+    } else {
+      print("⚠️ SplashView module not found")
+    }
+  }
 }
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
@@ -57,5 +82,3 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 #endif
   }
 }
-
-

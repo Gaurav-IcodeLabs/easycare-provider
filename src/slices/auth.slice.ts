@@ -32,12 +32,19 @@ const initialState: AuthState = {
   // signup
   signupError: null,
   signupInProgress: false,
+
+  // email verification modal
+  showVerifyEmailModal: false,
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    setShowVerifyEmailModal: (state, action) => {
+      state.showVerifyEmailModal = action.payload;
+    },
+  },
   extraReducers: builder => {
     builder.addCase(resetAllSlices, () => initialState);
 
@@ -114,10 +121,22 @@ const authSlice = createSlice({
     builder.addCase(logout.fulfilled, state => {
       state.logoutInProgress = false;
       state.isAuthenticated = false;
+      // Reset modal state on logout
+      state.showVerifyEmailModal = false;
     });
     builder.addCase(logout.rejected, (state, action) => {
       state.logoutInProgress = false;
       state.logoutError = storableError(action.error as any);
+    });
+
+    builder.addCase(verifyEmail.pending, state => {
+      state.showVerifyEmailModal = true;
+    });
+    builder.addCase(verifyEmail.fulfilled, state => {
+      state.showVerifyEmailModal = false;
+    });
+    builder.addCase(verifyEmail.rejected, state => {
+      state.showVerifyEmailModal = false;
     });
   },
 });
@@ -145,13 +164,13 @@ export const authInfo = createAsyncThunk<AuthInfoResponse, void, Thunk>(
 
 export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
   'auth/signup',
-  async (params, {extra: sdk, rejectWithValue}) => {
+  async (params, {dispatch, extra: sdk, rejectWithValue}) => {
     try {
       const {phoneNumber} = params?.protectedData;
-      const {phoneNumberExists} = await checkPhoneNumberExists({
+      const response = await checkPhoneNumberExists({
         phoneNumber,
       });
-      if (phoneNumberExists) {
+      if (response.data?.phoneNumberExists) {
         return rejectWithValue({
           message: 'Phone number already exists',
           statusCode: 409,
@@ -168,6 +187,16 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
       };
 
       const res = await sdk.currentUser.create(signupParams);
+
+      // Explicitly login to ensure token is stored
+      await sdk.login({
+        username: params.email,
+        password: params.password,
+      });
+
+      // Refresh auth info to update Redux state
+      await dispatch(authInfo());
+
       return res;
     } catch (error: any) {
       const message = error?.message || 'Signup failed';
@@ -188,37 +217,44 @@ export const signupWithIdp = createAsyncThunk<
     lastName: string;
   },
   Thunk
->('auth/signupWithIdp', async (params, {extra: sdk, rejectWithValue}) => {
-  try {
-    // Create user with IDP
-    const res = await sdk.currentUser.createWithIdp({
-      ...params,
-      publicData: {
-        userType: 'provider',
-      },
-    });
+>(
+  'auth/signupWithIdp',
+  async (params, {dispatch, extra: sdk, rejectWithValue}) => {
+    try {
+      // Create user with IDP
+      const res = await sdk.currentUser.createWithIdp({
+        ...params,
+        publicData: {
+          userType: 'provider',
+        },
+      });
 
-    // After successful signup, authenticate the user
-    await (sdk as any).loginWithIdp({
-      idpId: params.idpId,
-      idpClientId: params.idpClientId,
-      idpToken: params.idpToken,
-    });
+      // After successful signup, authenticate the user
+      await (sdk as any).loginWithIdp({
+        idpId: params.idpId,
+        idpClientId: params.idpClientId,
+        idpToken: params.idpToken,
+      });
 
-    return res.data;
-  } catch (error: any) {
-    const statusCode = error?.response?.status || error?.status;
-    const errorData = error?.response?.data;
-    const errorCode = errorData?.code || errorData?.error || error?.code;
-    const message = errorData?.message || error?.message || 'IDP signup failed';
+      // Refresh auth info after successful signup
+      await dispatch(authInfo());
 
-    return rejectWithValue({
-      message,
-      statusCode,
-      ...(errorCode && {code: errorCode}),
-    } as any);
-  }
-});
+      return res.data;
+    } catch (error: any) {
+      const statusCode = error?.response?.status || error?.status;
+      const errorData = error?.response?.data;
+      const errorCode = errorData?.code || errorData?.error || error?.code;
+      const message =
+        errorData?.message || error?.message || 'IDP signup failed';
+
+      return rejectWithValue({
+        message,
+        statusCode,
+        ...(errorCode && {code: errorCode}),
+      } as any);
+    }
+  },
+);
 
 export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
   'auth/loginStatus',
@@ -300,7 +336,40 @@ export const logout = createAsyncThunk<{}, void, Thunk>(
   },
 );
 
-export const {} = authSlice.actions;
+export const verifyEmail = createAsyncThunk<
+  void,
+  {verificationToken: string},
+  Thunk
+>(
+  'auth/verifyEmail',
+  async ({verificationToken}, {dispatch, extra: sdk, rejectWithValue}) => {
+    try {
+      await sdk.currentUser.verifyEmail({verificationToken});
+      // Refresh current user to get updated emailVerified status
+      const {fetchCurrentUser} = await import('./user.slice');
+      await dispatch(fetchCurrentUser({}));
+    } catch (error: any) {
+      return rejectWithValue({
+        message: error?.message || 'Failed to verify email',
+      });
+    }
+  },
+);
+
+export const sendVerificationEmail = createAsyncThunk<void, void, Thunk>(
+  'auth/sendVerificationEmail',
+  async (_, {extra: sdk, rejectWithValue}) => {
+    try {
+      await sdk.currentUser.sendVerificationEmail();
+    } catch (error: any) {
+      return rejectWithValue({
+        message: error?.message || 'Failed to send verification email',
+      });
+    }
+  },
+);
+
+export const {setShowVerifyEmailModal} = authSlice.actions;
 
 export const loginInProgressSelector = (state: RootState) =>
   state.auth.loginInProgress;
@@ -312,5 +381,7 @@ export const logoutInProgressSelector = (state: RootState) =>
   state.auth.logoutInProgress;
 export const isAuthenticatedSelector = (state: RootState) =>
   state.auth.isAuthenticated;
+export const showVerifyEmailModalSelector = (state: RootState) =>
+  state.auth.showVerifyEmailModal;
 
 export default authSlice.reducer;

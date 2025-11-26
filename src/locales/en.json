@@ -157,5 +157,33 @@
   },
   "Editlisting": {
     "heading": "Product Listing"
+  },
+  "EmailVerification": {
+    "modalTitle": "Verify Your Email",
+    "modalDescription": "Please verify your email address to access all features. We'll send a verification link to:",
+    "sendButton": "Send Verification Email",
+    "laterButton": "I'll do it later",
+    "successTitle": "Verification email sent",
+    "successMessage": "Please check your inbox at {{email}}",
+    "errorTitle": "Failed to send email",
+    "errorMessage": "Please try again later"
+  },
+  "EmailVerified": {
+    "verifyingTitle": "Verifying Email...",
+    "verifyingMessage": "Please wait while we verify your email address.",
+    "successTitle": "Email Verified!",
+    "successMessage": "Your email has been successfully verified.",
+    "errorTitle": "Verification Failed",
+    "errorMessage": "Unable to verify your email. Please try again.",
+    "okButton": "OK"
+  },
+  "DeepLink": {
+    "verificationFailedTitle": "Verification Failed",
+    "invalidVerificationLink": "Invalid verification link",
+    "pleaseLoginTitle": "Please Log In",
+    "pleaseLoginMessage": "You need to log in to verify your email",
+    "emailVerifiedTitle": "Email Verified",
+    "emailVerifiedMessage": "Your email has been successfully verified",
+    "verificationFailedDefault": "Failed to verify email"
   }
 }

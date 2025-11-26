@@ -10,6 +10,7 @@ export interface AuthState {
   loginInProgress: boolean;
   logoutError: null | StorableError;
   logoutInProgress: boolean;
+  showVerifyEmailModal: boolean;
 }
 
 export interface SignupParams {
