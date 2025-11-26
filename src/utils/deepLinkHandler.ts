@@ -3,6 +3,8 @@ import Toast from 'react-native-toast-message';
 import {store} from '../sharetribeSetup';
 import {verifyEmail} from '../slices/auth.slice';
 import i18n from '../locales';
+import {navigationRef} from '../navigators/RootNavigator';
+import {AUTH} from '../constants';
 
 export const parseUrl = (url: string) => {
   try {
@@ -38,6 +40,12 @@ export const handleDeepLinkUrl = (url: string): void => {
   // Handle email verification
   if (pathname.includes('/verify-email')) {
     handleEmailVerification(params);
+    return;
+  }
+
+  // Handle password reset
+  if (pathname.includes('/reset-password')) {
+    handlePasswordReset(params);
     return;
   }
 
@@ -93,4 +101,37 @@ const handleEmailVerification = (params: Record<string, string>): void => {
         text2: errorMessage,
       });
     });
+};
+
+const handlePasswordReset = (params: Record<string, string>): void => {
+  const token = params.t;
+  const email = params.e;
+
+  if (!token || !email) {
+    console.error('Password reset token or email missing in deep link');
+    Toast.show({
+      type: 'error',
+      text1: i18n.t('DeepLink.passwordResetFailedTitle'),
+      text2: i18n.t('DeepLink.invalidPasswordResetLink'),
+    });
+    return;
+  }
+
+  // Navigate to NewPassword screen with token and email
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(AUTH.NEW_PASSWORD as any, {
+      email: decodeURIComponent(email),
+      token,
+    });
+  } else {
+    // If navigation is not ready, wait a bit and try again
+    setTimeout(() => {
+      if (navigationRef.isReady()) {
+        navigationRef.navigate(AUTH.NEW_PASSWORD as any, {
+          email: decodeURIComponent(email),
+          token,
+        });
+      }
+    }, 500);
+  }
 };

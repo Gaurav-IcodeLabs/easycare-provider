@@ -44,6 +44,41 @@
     "biometricPrompt": "المصادقة لتسجيل الدخول",
     "biometricPromptWithType": "المصادقة باستخدام {type}"
   },
+  "ForgotPassword": {
+    "heading": "نسيت كلمة المرور؟",
+    "subheading": "أدخل عنوان بريدك الإلكتروني وسنرسل لك تعليمات لإعادة تعيين كلمة المرور.",
+    "emailLabel": "أدخل بريدك الإلكتروني",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "emailIsRequired": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+    "buttonText": "إرسال رابط إعادة التعيين",
+    "rememberPassword": "تذكرت كلمة المرور؟",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "successTitle": "تم إرسال البريد الإلكتروني",
+    "successMessage": "تم إرسال تعليمات إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
+    "errorTitle": "خطأ",
+    "errorDefault": "فشل إرسال البريد الإلكتروني. يرجى المحاولة مرة أخرى.",
+    "errorEmailNotFound": "لم يتم العثور على حساب بهذا البريد الإلكتروني",
+    "errorTooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً"
+  },
+  "NewPassword": {
+    "heading": "تعيين كلمة مرور جديدة",
+    "subheading": "أدخل كلمة المرور الجديدة أدناه.",
+    "passwordLabel": "كلمة المرور الجديدة",
+    "passwordPlaceholder": "أدخل كلمة المرور الجديدة",
+    "passwordIsRequired": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "confirmPasswordLabel": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أكد كلمة المرور الجديدة",
+    "confirmPasswordIsRequired": "يرجى تأكيد كلمة المرور",
+    "passwordsMustMatch": "كلمات المرور يجب أن تتطابق",
+    "buttonText": "إعادة تعيين كلمة المرور",
+    "successTitle": "تم إعادة تعيين كلمة المرور",
+    "successMessage": "تم إعادة تعيين كلمة المرور بنجاح",
+    "errorTitle": "خطأ",
+    "errorDefault": "فشل إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى.",
+    "errorInvalidToken": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية",
+    "errorTokenExpired": "انتهت صلاحية رابط إعادة التعيين. يرجى طلب رابط جديد",
+    "errorTooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً"
+  },
   "Signin": {
     "heading": "تحقق من الرمز",
     "subheading": "التحقق من رقم الهاتف",
@@ -184,6 +219,8 @@
     "pleaseLoginMessage": "تحتاج إلى تسجيل الدخول للتحقق من بريدك الإلكتروني",
     "emailVerifiedTitle": "تم التحقق من البريد الإلكتروني",
     "emailVerifiedMessage": "تم التحقق من بريدك الإلكتروني بنجاح",
-    "verificationFailedDefault": "فشل التحقق من البريد الإلكتروني"
+    "verificationFailedDefault": "فشل التحقق من البريد الإلكتروني",
+    "passwordResetFailedTitle": "فشل إعادة تعيين كلمة المرور",
+    "invalidPasswordResetLink": "رابط إعادة تعيين كلمة المرور غير صالح"
   }
 }

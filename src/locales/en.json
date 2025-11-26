@@ -44,6 +44,41 @@
     "biometricPrompt": "Authenticate to login",
     "biometricPromptWithType": "Authenticate with {type}"
   },
+  "ForgotPassword": {
+    "heading": "Forgot Password?",
+    "subheading": "Enter your email address and we'll send you instructions to reset your password.",
+    "emailLabel": "Enter your Email",
+    "emailPlaceholder": "Enter your email",
+    "emailIsRequired": "Please enter a valid email address",
+    "buttonText": "Send Reset Link",
+    "rememberPassword": "Remember your password?",
+    "backToLogin": "Back to Login",
+    "successTitle": "Email Sent",
+    "successMessage": "Password reset instructions have been sent to your email",
+    "errorTitle": "Error",
+    "errorDefault": "Failed to send reset email. Please try again.",
+    "errorEmailNotFound": "No account found with this email address",
+    "errorTooManyAttempts": "Too many attempts. Please try again later"
+  },
+  "NewPassword": {
+    "heading": "Set New Password",
+    "subheading": "Enter your new password below.",
+    "passwordLabel": "New Password",
+    "passwordPlaceholder": "Enter new password",
+    "passwordIsRequired": "Password must be at least 8 characters",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "confirmPasswordIsRequired": "Please confirm your password",
+    "passwordsMustMatch": "Passwords must match",
+    "buttonText": "Reset Password",
+    "successTitle": "Password Reset",
+    "successMessage": "Your password has been successfully reset",
+    "errorTitle": "Error",
+    "errorDefault": "Failed to reset password. Please try again.",
+    "errorInvalidToken": "Invalid or expired reset link",
+    "errorTokenExpired": "Reset link has expired. Please request a new one",
+    "errorTooManyAttempts": "Too many attempts. Please try again later"
+  },
   "Signin": {
     "heading": "Verify Code",
     "subheading": "Phone Number Verification",
@@ -184,6 +219,8 @@
     "pleaseLoginMessage": "You need to log in to verify your email",
     "emailVerifiedTitle": "Email Verified",
     "emailVerifiedMessage": "Your email has been successfully verified",
-    "verificationFailedDefault": "Failed to verify email"
+    "verificationFailedDefault": "Failed to verify email",
+    "passwordResetFailedTitle": "Password Reset Failed",
+    "invalidPasswordResetLink": "Invalid password reset link"
   }
 }

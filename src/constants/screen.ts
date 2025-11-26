@@ -2,6 +2,8 @@ export const AUTH = {
   ONBOARDING: 'Onboarding',
   LOGIN: 'Login',
   SIGNUP: 'Signup',
+  FORGOT_PASSWORD: 'ForgotPassword',
+  NEW_PASSWORD: 'NewPassword',
   VERIFT_OTP: 'VerifyOtp',
   OTP_VERIFIED: 'OtpVerified',
 } as const;

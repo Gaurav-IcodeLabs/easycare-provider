@@ -3,6 +3,7 @@ import React, {useEffect, useRef} from 'react';
 import {
   NavigationContainer,
   NavigationContainerRef,
+  createNavigationContainerRef,
 } from '@react-navigation/native';
 import AuthStackNavigator from './AuthStackNavigator';
 import MainStackNavigator from './MainStackNavigator';
@@ -12,8 +13,9 @@ import {fetchCurrentUser} from '../slices/user.slice';
 import {EmailVerificationModal} from '../components';
 import {handleDeepLinkUrl} from '../utils/deepLinkHandler';
 
+export const navigationRef = createNavigationContainerRef();
+
 const RootNavigator = () => {
-  const navigationRef = useRef<NavigationContainerRef<any>>(null);
   const isAuthenticated = useTypedSelector(isAuthenticatedSelector);
   const dispatch = useAppDispatch();
 
@@ -44,7 +46,7 @@ const RootNavigator = () => {
 
   return (
     <>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer ref={navigationRef as any}>
         <StatusBar
           barStyle="light-content"
           backgroundColor="transparent"

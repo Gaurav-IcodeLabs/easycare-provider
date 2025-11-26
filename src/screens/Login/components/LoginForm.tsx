@@ -65,8 +65,7 @@ const LoginForm = ({
   };
 
   const handleForgotPassword = () => {
-    // TODO: Navigate to forgot password screen when implemented
-    console.log('Navigate to forgot password');
+    navigation.navigate(AUTH.FORGOT_PASSWORD);
   };
 
   const handleSignupPress = () => {
