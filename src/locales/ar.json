@@ -39,6 +39,7 @@
     "errorAccountNotFound": "لم يتم العثور على حساب بهذا الحساب في جوجل. يرجى التسجيل أولاً.",
     "facebook": "تابع باستخدام فيسبوك",
     "google": "تابع باستخدام جوجل",
+    "apple": "تابع باستخدام آبل",
     "loginWithBiometric": "تسجيل الدخول بالبصمة",
     "loginWithBiometricType": "تسجيل الدخول باستخدام {type}",
     "biometricPrompt": "المصادقة لتسجيل الدخول",

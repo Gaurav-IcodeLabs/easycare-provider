@@ -15,6 +15,7 @@ import {
   faceid,
   fingerprint,
   googleIcon,
+  appleIcon,
   lockIcon,
 } from '../../../assets/images';
 import {useForm} from 'react-hook-form';
@@ -34,6 +35,7 @@ interface LoginFormProps {
   biometricEnabled: boolean;
   onBiometricLogin: () => void;
   onGoogleLogin: () => void;
+  onAppleLogin?: () => void;
 }
 
 const LoginForm = ({
@@ -41,6 +43,7 @@ const LoginForm = ({
   submitInProgress,
   biometricType,
   onGoogleLogin,
+  onAppleLogin,
   biometricEnabled,
   onBiometricLogin,
 }: LoginFormProps) => {
@@ -149,6 +152,15 @@ const LoginForm = ({
             titleStyle={styles.socialButtonText}
             onPress={onGoogleLogin}
           />
+          {Platform.OS === 'ios' && onAppleLogin && (
+            <Button
+              leftIcon={appleIcon}
+              style={styles.socialButton}
+              title={'Login.apple'}
+              titleStyle={styles.socialButtonText}
+              onPress={onAppleLogin}
+            />
+          )}
           <Button
             leftIcon={facebookIcon}
             style={styles.socialButton}

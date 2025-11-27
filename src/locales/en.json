@@ -39,6 +39,7 @@
     "errorAccountNotFound": "No account found with this Google account. Please sign up first.",
     "facebook": "Continue with Facebook",
     "google": "Continue with Google",
+    "apple": "Continue with Apple",
     "loginWithBiometric": "Login with Biometric",
     "loginWithBiometricType": "Login with {type}",
     "biometricPrompt": "Authenticate to login",

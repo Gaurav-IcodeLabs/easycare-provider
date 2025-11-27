@@ -20,6 +20,7 @@ export const eyeOpen = require('./eyeOpen.png');
 export const eyeClose = require('./eyeClose.png');
 export const googleIcon = require('./google.png');
 export const facebookIcon = require('./fb.png');
+export const appleIcon = require('./apple.png');
 export const mobileIcon = require('./mobile.png');
 export const logo = require('./logo.png');
 export const smartphone = require('./smartphone.png');

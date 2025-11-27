@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 import LoginForm from './components/LoginForm';
 import {LoginFormValues} from './helper';
 import {colors} from '../../constants';
-import {GradientWrapper} from '../../components';
+
 import {
   authenticateWithBiometrics,
   enableBiometricLogin,
@@ -29,7 +29,10 @@ import {
   biometricTypeSelector,
   updateAppState,
 } from '../../slices/app.slice';
-import {signInWithGoogle} from '../../utils/socialAuth.helpers';
+import {
+  signInWithGoogle,
+  signInWithApple,
+} from '../../utils/socialAuth.helpers';
 
 export const Login: React.FC = () => {
   const {t} = useTranslation();
@@ -206,6 +209,55 @@ export const Login: React.FC = () => {
     }
   };
 
+  const handleAppleLogin = async () => {
+    try {
+      const userInfo = await signInWithApple();
+      console.log('Apple userInfo', userInfo);
+
+      const {idpToken, idpClientId, idpId} = userInfo ?? {};
+
+      await dispatch(
+        loginWithIdp({
+          idpToken,
+          idpClientId,
+          idpId,
+        }),
+      ).unwrap();
+
+      showToast({
+        type: 'success',
+        title: t('Login.successTitle'),
+        message: t('Login.successMessage'),
+      });
+    } catch (error: any) {
+      console.log('Apple Login Error:', JSON.stringify(error, null, 2));
+
+      const statusCode = error?.statusCode;
+      const errorCode = error?.code;
+      let errorMessage = t('Login.errorDefault');
+
+      if (statusCode === 401) {
+        errorMessage = t('Login.errorInvalidCredentials');
+      } else if (statusCode === 403) {
+        if (errorCode === 'forbidden') {
+          errorMessage = t('Login.errorIdpValidation');
+        } else {
+          errorMessage = t('Login.errorAccountDisabled');
+        }
+      } else if (statusCode === 404) {
+        errorMessage = t('Login.errorAccountNotFound');
+      } else if (statusCode === 429) {
+        errorMessage = t('Login.errorTooManyAttempts');
+      }
+
+      showToast({
+        type: 'error',
+        title: t('Login.errorTitle'),
+        message: errorMessage,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.topSection, {paddingTop: top}]}>
@@ -222,6 +274,7 @@ export const Login: React.FC = () => {
         biometricEnabled={biometricEnabled}
         onBiometricLogin={handleBiometricLogin}
         onGoogleLogin={handleGoogleLogin}
+        onAppleLogin={handleAppleLogin}
       />
     </View>
   );

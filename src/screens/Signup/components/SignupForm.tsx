@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {scale, width} from '../../../utils';
 import {colors, primaryFont, AUTH, secondaryFont} from '../../../constants';
 import {
@@ -13,6 +13,7 @@ import {
   emailIcon,
   facebookIcon,
   googleIcon,
+  appleIcon,
   lockIcon,
 } from '../../../assets/images';
 import {useForm} from 'react-hook-form';
@@ -28,12 +29,14 @@ interface SignupFormProps {
   onSubmit: (val: SignupFormValues) => void;
   submitInProgress: boolean;
   onGoogleSignup?: () => void;
+  onAppleSignup?: () => void;
 }
 
 const SignupForm = ({
   onSubmit,
   submitInProgress,
   onGoogleSignup,
+  onAppleSignup,
 }: SignupFormProps) => {
   const {t} = useTranslation();
   const navigation =
@@ -166,6 +169,15 @@ const SignupForm = ({
             titleStyle={styles.socialButtonText}
             onPress={onGoogleSignup}
           />
+          {Platform.OS === 'ios' && onAppleSignup && (
+            <Button
+              leftIcon={appleIcon}
+              style={styles.socialButton}
+              title={'Login.apple'}
+              titleStyle={styles.socialButtonText}
+              onPress={onAppleSignup}
+            />
+          )}
           <Button
             leftIcon={facebookIcon}
             style={styles.socialButton}

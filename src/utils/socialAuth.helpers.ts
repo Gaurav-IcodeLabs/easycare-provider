@@ -1,4 +1,6 @@
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import appleAuth from '@invertase/react-native-apple-authentication';
+import {jwtDecode} from 'jwt-decode';
 import {GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID} from '@env';
 import {Platform} from 'react-native';
 
@@ -41,16 +43,95 @@ export const signInWithGoogle = async () => {
     const idpClientId = GOOGLE_WEB_CLIENT_ID;
     // Platform.OS === 'android' ? GOOGLE_WEB_CLIENT_ID : GOOGLE_IOS_CLIENT_ID;
 
+    if (!userInfo.data) {
+      throw new Error('Google Sign-In failed: No user data');
+    }
+
     return {
       idpId: 'google',
-      idpToken: userInfo.data.idToken,
+      idpToken: userInfo.data.idToken || '',
       idpClientId,
       email: userInfo.data.user.email,
-      firstName: userInfo.data.user.name,
-      lastName: userInfo.data.user.familyName || userInfo.data.user.givenName,
+      firstName: userInfo.data.user.name || 'Google',
+      lastName:
+        userInfo.data.user.familyName || userInfo.data.user.givenName || 'User',
     };
   } catch (error: any) {
     console.error('Google Sign-In Error:', error);
+    throw error;
+  }
+};
+
+// Apple Sign-In function
+export const signInWithApple = async () => {
+  try {
+    // Check if Apple Sign-In is supported (iOS 13+)
+    if (Platform.OS !== 'ios') {
+      throw new Error('Apple Sign-In is only available on iOS');
+    }
+
+    // Perform the sign-in request
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    });
+
+    // Get the credential state
+    const credentialState = await appleAuth.getCredentialStateForUser(
+      appleAuthRequestResponse.user,
+    );
+
+    // Verify the credential state is authorized
+    if (credentialState !== appleAuth.State.AUTHORIZED) {
+      throw new Error('Apple Sign-In failed: Not authorized');
+    }
+
+    const {identityToken, email, fullName} = appleAuthRequestResponse;
+
+    if (!identityToken) {
+      throw new Error('Apple Sign-In failed: No identity token');
+    }
+
+    // Extract email from JWT if not provided directly
+    // Apple only provides email/name on first sign-in, but email is always in the JWT
+    let userEmail = email;
+    if (!userEmail) {
+      try {
+        const decodedToken = jwtDecode<{email?: string}>(identityToken);
+        userEmail = decodedToken?.email || null;
+        console.log('Extracted email from JWT:', userEmail);
+      } catch (error) {
+        console.error('Failed to decode JWT:', error);
+      }
+    }
+
+    // If still no email, use a fallback
+    if (!userEmail) {
+      userEmail = `${appleAuthRequestResponse.user}@privaterelay.appleid.com`;
+    }
+
+    // Extract name from fullName object
+    // Note: Apple only provides name on FIRST sign-in
+    const firstName = fullName?.givenName || 'Apple';
+    const lastName = fullName?.familyName || 'User';
+
+    console.log('Apple Sign-In Success:', {
+      email: userEmail,
+      firstName,
+      lastName,
+      hasFullName: !!(fullName?.givenName || fullName?.familyName),
+    });
+
+    return {
+      idpId: 'apple',
+      idpToken: identityToken || '',
+      idpClientId: 'com.app.EasyCareProvider', // Your app's bundle ID (from JWT aud field)
+      email: userEmail,
+      firstName: firstName || 'Apple',
+      lastName: lastName || 'User',
+    };
+  } catch (error: any) {
+    console.error('Apple Sign-In Error:', error);
     throw error;
   }
 };
