@@ -1,4 +1,4 @@
-import {Linking, StatusBar} from 'react-native';
+import {Linking} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import {
   NavigationContainer,
@@ -12,12 +12,16 @@ import {isAuthenticatedSelector} from '../slices/auth.slice';
 import {fetchCurrentUser} from '../slices/user.slice';
 import {EmailVerificationModal} from '../components';
 import {handleDeepLinkUrl} from '../utils/deepLinkHandler';
+import {useStatusBar} from '../hooks/useStatusBar';
 
 export const navigationRef = createNavigationContainerRef();
 
 const RootNavigator = () => {
   const isAuthenticated = useTypedSelector(isAuthenticatedSelector);
   const dispatch = useAppDispatch();
+
+  // Set status bar to dark app-wide
+  useStatusBar('dark-content');
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -47,11 +51,6 @@ const RootNavigator = () => {
   return (
     <>
       <NavigationContainer ref={navigationRef as any}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor="transparent"
-          translucent={true}
-        />
         {isAuthenticated ? <MainStackNavigator /> : <AuthStackNavigator />}
       </NavigationContainer>
       <EmailVerificationModal />

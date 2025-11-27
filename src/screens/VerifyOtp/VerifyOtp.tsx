@@ -3,7 +3,6 @@ import {
   Image,
   Keyboard,
   Platform,
-  StatusBar,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -288,14 +287,11 @@ export const VerifyOtp: React.FC = () => {
   ];
 
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <GradientWrapper colors={[colors.white, colors.white]}>
-        {currentUserPhoneNumber
-          ? renderOtpVerification()
-          : renderPhoneNumberCapture()}
-      </GradientWrapper>
-    </>
+    <GradientWrapper colors={[colors.white, colors.white]}>
+      {currentUserPhoneNumber
+        ? renderOtpVerification()
+        : renderPhoneNumberCapture()}
+    </GradientWrapper>
   );
 };
 
