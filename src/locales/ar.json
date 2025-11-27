@@ -48,8 +48,8 @@
   "ForgotPassword": {
     "heading": "نسيت كلمة المرور؟",
     "subheading": "أدخل عنوان بريدك الإلكتروني وسنرسل لك تعليمات لإعادة تعيين كلمة المرور.",
-    "emailLabel": "أدخل بريدك الإلكتروني",
-    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "Example@gmail.com",
     "emailIsRequired": "يرجى إدخال عنوان بريد إلكتروني صحيح",
     "buttonText": "إرسال رابط إعادة التعيين",
     "rememberPassword": "تذكرت كلمة المرور؟",

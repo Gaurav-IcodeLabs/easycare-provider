@@ -1,12 +1,9 @@
 import React, {useState} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {colors, primaryFont, secondaryFont} from '../../constants';
-import {logo} from '../../assets';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useLanguage} from '../../hooks';
 import {scale, useToast} from '../../utils';
 import {AppText, Button, TextInputField} from '../../components';
-import {lockIcon} from '../../assets/images';
+import {vaultIcon} from '../../assets/images';
 import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -17,6 +14,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {sdk} from '../../sharetribeSetup';
 import {AUTH} from '../../constants';
 import {z} from 'zod';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type NewPasswordRouteProp = RouteProp<
   AuthStackParamList,
@@ -42,15 +40,14 @@ type NewPasswordFormValues = z.infer<ReturnType<typeof formSchemaNewPassword>>;
 
 export const NewPassword: React.FC = () => {
   const {t} = useTranslation();
-  const {top} = useSafeAreaInsets();
-  const {isArabic} = useLanguage();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const route = useRoute<NewPasswordRouteProp>();
   const [submitInProgress, setSubmitInProgress] = useState(false);
   const {showToast} = useToast();
+  const {top, bottom} = useSafeAreaInsets();
 
-  const {email, token} = route.params;
+  const {email, token} = route.params ?? {email: '', token: ''};
 
   const {
     control,
@@ -107,39 +104,40 @@ export const NewPassword: React.FC = () => {
     }
   };
 
+  const handleBackToLogin = () => {
+    navigation.goBack();
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={[styles.topSection, {paddingTop: top}]}>
-        <Image
-          source={logo}
-          style={[styles.appIcon, isArabic && {transform: [{scaleX: -1}]}]}
-        />
-      </View>
+    <View style={[styles.container, {paddingTop: top, paddingBottom: bottom}]}>
       <KeyboardAwareScrollView
         style={styles.formContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        extraKeyboardSpace={scale(50)}
+        enabled
+        bottomOffset={scale(bottom)}
         contentContainerStyle={styles.scrollContainer}>
-        <View>
-          <View style={styles.inputSection}>
-            <View style={styles.headerContainer}>
-              <AppText style={styles.heading}>
-                {t('NewPassword.heading')}
-              </AppText>
-              <AppText style={styles.subheading}>
-                {t('NewPassword.subheading')}
-              </AppText>
+        <View style={styles.content}>
+          <View style={styles.iconContainer}>
+            <View style={styles.iconCircle}>
+              <Image source={vaultIcon} style={styles.vaultIcon} />
             </View>
+          </View>
 
+          <View style={styles.headerContainer}>
+            <AppText style={styles.heading}>{t('NewPassword.heading')}</AppText>
+            <AppText style={styles.subheading}>
+              {t('NewPassword.subheading')}
+            </AppText>
+          </View>
+
+          <View style={styles.inputSection}>
             <TextInputField
               control={control}
               name={'password'}
               labelKey="NewPassword.passwordLabel"
               isPassword
               placeholder={'NewPassword.passwordPlaceholder'}
-              leftIcon={lockIcon}
-              leftIconStyle={styles.iconStyle}
               autoCapitalize="none"
             />
 
@@ -149,21 +147,25 @@ export const NewPassword: React.FC = () => {
               labelKey="NewPassword.confirmPasswordLabel"
               isPassword
               placeholder={'NewPassword.confirmPasswordPlaceholder'}
-              leftIcon={lockIcon}
-              leftIconStyle={styles.iconStyle}
               autoCapitalize="none"
             />
           </View>
-
-          <Button
-            disabled={!isValid || submitInProgress}
-            style={styles.button}
-            loader={submitInProgress}
-            title={'NewPassword.buttonText'}
-            onPress={handleSubmit(handleNewPasswordSubmit)}
-          />
         </View>
       </KeyboardAwareScrollView>
+      <Button
+        disabled={!isValid || submitInProgress}
+        style={styles.button}
+        loader={submitInProgress}
+        title={'NewPassword.buttonText'}
+        onPress={handleSubmit(handleNewPasswordSubmit)}
+      />
+      <View style={styles.backToLoginContainer}>
+        <TouchableOpacity onPress={handleBackToLogin}>
+          <AppText style={styles.loginText}>
+            {t('ForgotPassword.backToLogin')}
+          </AppText>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -172,46 +174,72 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-  },
-  appIcon: {
-    height: scale(40),
-    width: scale(120),
-    resizeMode: 'contain',
-  },
-  topSection: {
-    alignSelf: 'center',
-    justifyContent: 'center',
-  },
-  formContainer: {},
-  scrollContainer: {
-    flexGrow: 1,
     paddingHorizontal: scale(20),
   },
-  inputSection: {
-    marginTop: scale(30),
+  formContainer: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  content: {
+    flex: 1,
+    paddingTop: scale(60),
+  },
+  iconContainer: {
+    alignItems: 'center',
+    marginBottom: scale(32),
+  },
+  iconCircle: {
+    width: scale(120),
+    height: scale(120),
+    borderRadius: scale(60),
+    backgroundColor: colors.blue,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  vaultIcon: {
+    width: scale(60),
+    height: scale(60),
+    resizeMode: 'contain',
   },
   headerContainer: {
     gap: scale(8),
-    paddingBottom: scale(26),
+    marginBottom: scale(32),
+    alignItems: 'center',
   },
   heading: {
     color: colors.textBlack,
-    fontSize: scale(32),
-    textAlign: 'left',
-    ...secondaryFont('500'),
+    fontSize: scale(24),
+    textAlign: 'center',
+    ...secondaryFont('600'),
   },
   subheading: {
     color: colors.neutralDark,
-    fontSize: scale(16),
-    textAlign: 'left',
+    fontSize: scale(14),
+    textAlign: 'center',
     ...primaryFont('400'),
   },
-  iconStyle: {
-    height: scale(20),
-    width: scale(20),
+  inputSection: {
+    gap: scale(16),
   },
   button: {
-    marginTop: scale(30),
+    marginTop: scale(32),
     marginBottom: scale(20),
+  },
+  backToLoginContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backToLoginText: {
+    fontSize: scale(14),
+    color: colors.grey,
+    ...primaryFont('400'),
+  },
+  loginText: {
+    fontSize: scale(14),
+    color: colors.blue,
+    ...primaryFont('600'),
   },
 });

@@ -56,6 +56,8 @@ export const onboardingPreview2 = require('./onboardingPreview2.png');
 export const profileEditIcon = require('./profileEditIcon.png');
 export const fingerprint = require('./fingerprint.png');
 export const faceid = require('./faceid.png');
+export const locIcon = require('./lockIcon.png');
+export const vaultIcon = require('./vaultIcon.png');
 
 export const profileMenuIcons = {
   about: require('./aboutIcon.png'),

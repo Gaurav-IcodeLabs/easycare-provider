@@ -1,12 +1,9 @@
 import React, {useState} from 'react';
 import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {colors, primaryFont, secondaryFont} from '../../constants';
-import {logo} from '../../assets';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useLanguage} from '../../hooks';
 import {scale, useToast} from '../../utils';
 import {AppText, Button, TextInputField} from '../../components';
-import {emailIcon} from '../../assets/images';
 import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -16,6 +13,7 @@ import {AuthStackParamList} from '../../apptypes';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {sdk} from '../../sharetribeSetup';
 import {z} from 'zod';
+import {locIcon} from '../../assets';
 
 const formSchemaForgotPassword = (t: any) =>
   z.object({
@@ -31,8 +29,7 @@ type ForgotPasswordFormValues = z.infer<
 
 export const ForgotPassword: React.FC = () => {
   const {t} = useTranslation();
-  const {top} = useSafeAreaInsets();
-  const {isArabic} = useLanguage();
+  const {top, bottom} = useSafeAreaInsets();
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   const [submitInProgress, setSubmitInProgress] = useState(false);
@@ -95,61 +92,57 @@ export const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.topSection, {paddingTop: top}]}>
-        <Image
-          source={logo}
-          style={[styles.appIcon, isArabic && {transform: [{scaleX: -1}]}]}
-        />
-      </View>
+    <View style={[styles.container, {paddingTop: top, paddingBottom: bottom}]}>
       <KeyboardAwareScrollView
         style={styles.formContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        extraKeyboardSpace={scale(50)}
+        enabled
+        bottomOffset={scale(bottom)}
         contentContainerStyle={styles.scrollContainer}>
-        <View>
-          <View style={styles.inputSection}>
-            <View style={styles.headerContainer}>
-              <AppText style={styles.heading}>
-                {t('ForgotPassword.heading')}
-              </AppText>
-              <AppText style={styles.subheading}>
-                {t('ForgotPassword.subheading')}
-              </AppText>
-            </View>
+        <View style={styles.content}>
+          <View style={styles.iconContainer}>
+            <Image source={locIcon} style={styles.lockIcon} />
+          </View>
 
+          <View style={styles.headerContainer}>
+            <AppText style={styles.heading}>
+              {t('ForgotPassword.heading')}
+            </AppText>
+            <AppText style={styles.subheading}>
+              {t('ForgotPassword.subheading')}
+            </AppText>
+          </View>
+
+          <View style={styles.inputSection}>
             <TextInputField
               control={control}
               name={'email'}
               labelKey="ForgotPassword.emailLabel"
               keyboardType="email-address"
               placeholder={'ForgotPassword.emailPlaceholder'}
-              leftIcon={emailIcon}
-              leftIconStyle={styles.iconStyle}
             />
-          </View>
-
-          <Button
-            disabled={!isValid || submitInProgress}
-            style={styles.button}
-            loader={submitInProgress}
-            title={'ForgotPassword.buttonText'}
-            onPress={handleSubmit(handleForgotPasswordSubmit)}
-          />
-
-          <View style={styles.backToLoginContainer}>
-            <AppText style={styles.backToLoginText}>
-              {t('ForgotPassword.rememberPassword')}{' '}
-            </AppText>
-            <TouchableOpacity onPress={handleBackToLogin}>
-              <AppText style={styles.loginText}>
-                {t('ForgotPassword.backToLogin')}
-              </AppText>
-            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAwareScrollView>
+
+      <Button
+        disabled={!isValid || submitInProgress}
+        style={styles.button}
+        loader={submitInProgress}
+        title={'ForgotPassword.buttonText'}
+        onPress={handleSubmit(handleForgotPasswordSubmit)}
+      />
+      <View style={styles.backToLoginContainer}>
+        <AppText style={styles.backToLoginText}>
+          {t('ForgotPassword.rememberPassword')}{' '}
+        </AppText>
+        <TouchableOpacity onPress={handleBackToLogin}>
+          <AppText style={styles.loginText}>
+            {t('ForgotPassword.backToLogin')}
+          </AppText>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -158,53 +151,66 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-  },
-  appIcon: {
-    height: scale(40),
-    width: scale(120),
-    resizeMode: 'contain',
-  },
-  topSection: {
-    alignSelf: 'center',
-    justifyContent: 'center',
-  },
-  formContainer: {},
-  scrollContainer: {
-    flexGrow: 1,
     paddingHorizontal: scale(20),
   },
-  inputSection: {
-    marginTop: scale(30),
+  formContainer: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    paddingTop: scale(60),
+  },
+  iconContainer: {
+    width: scale(160),
+    height: scale(160),
+    borderRadius: scale(80),
+    backgroundColor: colors.blue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: scale(40),
+  },
+  lockIcon: {
+    width: scale(80),
+    height: scale(80),
+    resizeMode: 'contain',
+    tintColor: colors.white,
   },
   headerContainer: {
-    gap: scale(8),
-    paddingBottom: scale(26),
+    alignItems: 'center',
+    gap: scale(12),
+    marginBottom: scale(40),
+    paddingHorizontal: scale(20),
   },
   heading: {
     color: colors.textBlack,
-    fontSize: scale(32),
-    textAlign: 'left',
-    ...secondaryFont('500'),
+    fontSize: scale(24),
+    textAlign: 'center',
+    ...secondaryFont('600'),
   },
   subheading: {
     color: colors.neutralDark,
-    fontSize: scale(16),
-    textAlign: 'left',
+    fontSize: scale(14),
+    textAlign: 'center',
     ...primaryFont('400'),
+    lineHeight: scale(20),
   },
-  iconStyle: {
-    height: scale(20),
-    width: scale(20),
+  inputSection: {
+    width: '100%',
+    marginBottom: scale(40),
   },
   button: {
-    marginTop: scale(30),
+    width: '100%',
     marginBottom: scale(20),
+    backgroundColor: colors.blue,
   },
   backToLoginContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: scale(20),
   },
   backToLoginText: {
     fontSize: scale(14),
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: scale(14),
-    color: colors.deepBlue,
+    color: colors.blue,
     ...primaryFont('600'),
   },
 });
