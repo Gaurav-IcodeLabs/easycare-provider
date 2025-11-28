@@ -48,60 +48,6 @@ export const Home: React.FC = () => {
           </TouchableOpacity>
         )}
       />
-      {/* <View style={styles.headerImgContainer}>
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <AppText
-              style={{
-                fontSize: 60,
-                fontWeight: '700',
-                color: '#ffffffff',
-                lineHeight: 64,
-              }}>
-              50%
-            </AppText>
-
-            <View
-              style={{
-                backgroundColor: '#fdb75c',
-                borderRadius: 20,
-                paddingHorizontal: 14,
-                paddingVertical: 4,
-                marginTop: -20,
-                marginBottom: -12,
-                zIndex: 1,
-              }}>
-              <AppText style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
-                Instant
-              </AppText>
-            </View>
-
-            <AppText
-              style={{
-                fontSize: 38,
-                fontWeight: '500',
-                color: '#ffffffff',
-                lineHeight: 42,
-              }}>
-              Discount
-            </AppText>
-            <AppText style={{color: colors.white}}>
-              On your first service
-            </AppText>
-          </View>
-          <Image style={styles.carwashImg} source={carwash} />
-        </View> */}
-      {/* <View style={{marginTop: scale(20)}}>
-        <ListingCard />
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{marginTop: scale(20)}}
-        contentContainerStyle={{paddingHorizontal: scale(20), gap: scale(16)}}>
-        {Array.from({length: 3}).map((_, index) => (
-          <ListingCardHorizontal key={index} />
-        ))}
-      </ScrollView> */}
     </GradientWrapper>
   );
 };

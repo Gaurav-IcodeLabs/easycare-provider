@@ -17,3 +17,4 @@ export * from './BottomSheetTextInputField/BottomSheetTextInputField';
 export * from './PhoneInputField/PhoneInputField';
 export * from './BiometricSettings/BiometricSettings';
 export * from './EmailVerificationModal/EmailVerificationModal';
+export * from './AddOptionsPopover';

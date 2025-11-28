@@ -194,6 +194,10 @@
   "Editlisting": {
     "heading": "Product Listing"
   },
+  "AddOptions": {
+    "service": "Service",
+    "product": "Product"
+  },
   "EmailVerification": {
     "modalTitle": "Verify Your Email",
     "modalDescription": "Please verify your email address to access all features. We'll send a verification link to:",

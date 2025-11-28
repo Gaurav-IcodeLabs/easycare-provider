@@ -1,5 +1,5 @@
 import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {useTranslation} from 'react-i18next';
 import {commonShadow, scale} from '../../utils';
@@ -24,6 +24,7 @@ import {AppText} from '../AppText/AppText';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BlurView} from '@react-native-community/blur';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import {AddOptionsPopover} from '../AddOptionsPopover';
 
 type TranslationTS = TFunction<'translation', undefined>;
 
@@ -121,6 +122,7 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
 }) => {
   const {t} = useTranslation();
   const {bottom} = useSafeAreaInsets();
+  const [showPopover, setShowPopover] = useState(false);
 
   const onPress = useCallback(
     (route: any, index: number) => {
@@ -191,44 +193,111 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
     }
   }, []);
 
-  return (
-    <View
-      style={[
-        styles.wrapper,
-        {
-          paddingBottom: Math.max(bottom, scale(16)),
-        },
-      ]}>
-      <GestureDetector gesture={panGesture}>
-        <View style={styles.container}>
-          <BlurView
-            style={styles.blurBackground}
-            blurType="light"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="white"
-          />
-          <View style={styles.tintOverlay} />
-          {state.routes.map((route, index) => {
-            const isFocused = state.index === index;
-            const tabIcon = getTabIcon(route.name, isFocused);
-            const tabTitle = getTabTitle(route.name);
+  const handlePlusPress = useCallback(() => {
+    setShowPopover(true);
+  }, []);
 
-            return (
-              <AnimatedTabItem
-                key={route.key}
-                route={route}
-                index={index}
-                isFocused={isFocused}
-                tabIcon={tabIcon}
-                tabTitle={tabTitle}
-                onPress={onPress}
-                t={t}
+  const handleSelectService = useCallback(() => {
+    console.log('Service selected');
+    // Add your navigation or action here
+    // navigation.navigate('AddService');
+  }, []);
+
+  const handleSelectProduct = useCallback(() => {
+    console.log('Product selected');
+    // Add your navigation or action here
+    // navigation.navigate('AddProduct');
+  }, []);
+
+  // Animation for plus button separation
+  const plusTranslateX = useSharedValue(60);
+  const plusOpacity = useSharedValue(0);
+
+  React.useEffect(() => {
+    plusTranslateX.value = withTiming(0, {
+      duration: 600,
+      easing: Easing.bezier(0.34, 1.56, 0.64, 1),
+    });
+    plusOpacity.value = withTiming(1, {
+      duration: 400,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    });
+  }, [plusTranslateX, plusOpacity]);
+
+  const plusAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{translateX: plusTranslateX.value}],
+    opacity: plusOpacity.value,
+  }));
+
+  return (
+    <>
+      <AddOptionsPopover
+        visible={showPopover}
+        onClose={() => setShowPopover(false)}
+        onSelectService={handleSelectService}
+        onSelectProduct={handleSelectProduct}
+      />
+      <View
+        style={[
+          styles.wrapper,
+          {
+            paddingBottom: Math.max(bottom, scale(16)),
+          },
+        ]}>
+        <View style={styles.mainContainer}>
+          {/* Plus Icon Button - Separate from pill */}
+          <Animated.View style={plusAnimatedStyle}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handlePlusPress}
+              style={styles.plusButton}>
+              <View style={styles.plusIconContainer}>
+                <BlurView
+                  style={styles.plusBlurBackground}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="white"
+                />
+                <View style={styles.plusTintOverlay} />
+                <AppText style={styles.plusIcon}>+</AppText>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Tab Bar Pill */}
+          <GestureDetector gesture={panGesture}>
+            <View style={styles.container}>
+              <BlurView
+                style={styles.blurBackground}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="white"
               />
-            );
-          })}
+              <View style={styles.tintOverlay} />
+
+              {state.routes.map((route, index) => {
+                const isFocused = state.index === index;
+                const tabIcon = getTabIcon(route.name, isFocused);
+                const tabTitle = getTabTitle(route.name);
+
+                return (
+                  <AnimatedTabItem
+                    key={route.key}
+                    route={route}
+                    index={index}
+                    isFocused={isFocused}
+                    tabIcon={tabIcon}
+                    tabTitle={tabTitle}
+                    onPress={onPress}
+                    t={t}
+                  />
+                );
+              })}
+            </View>
+          </GestureDetector>
         </View>
-      </GestureDetector>
-    </View>
+      </View>
+    </>
   );
 };
 
@@ -240,6 +309,11 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     paddingHorizontal: scale(20),
+  },
+  mainContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: scale(12),
   },
   container: {
     flexDirection: 'row',
@@ -309,5 +383,47 @@ const styles = StyleSheet.create({
   tabIcon: {
     height: scale(24),
     width: scale(24),
+  },
+  plusButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  plusIconContainer: {
+    backgroundColor: 'transparent',
+    borderRadius: scale(24),
+    width: scale(48),
+    height: scale(48),
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  plusBlurBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  plusTintOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(100, 150, 255, 0.25)',
+  },
+  plusIcon: {
+    fontSize: scale(28),
+    color: colors.white,
+    ...primaryFont('600'),
+    lineHeight: scale(32),
   },
 });

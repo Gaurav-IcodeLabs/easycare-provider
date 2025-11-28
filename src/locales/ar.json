@@ -194,6 +194,10 @@
   "Editlisting": {
     "heading": "قائمة المنتجات"
   },
+  "AddOptions": {
+    "service": "خدمة",
+    "product": "منتج"
+  },
   "EmailVerification": {
     "modalTitle": "تحقق من بريدك الإلكتروني",
     "modalDescription": "يرجى التحقق من عنوان بريدك الإلكتروني للوصول إلى جميع الميزات. سنرسل رابط التحقق إلى:",
