@@ -240,7 +240,6 @@ export const BiometricSettings: React.FC = () => {
             disabled={loading}
             trackColor={{false: colors.lightGrey, true: colors.deepBlue}}
             thumbColor={colors.white}
-            ios_backgroundColor={colors.lightGrey}
           />
         </View>
       </View>
