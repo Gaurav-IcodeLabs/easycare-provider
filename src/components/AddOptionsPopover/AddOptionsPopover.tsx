@@ -21,15 +21,13 @@ import {BlurView} from '@react-native-community/blur';
 type AddOptionsPopoverProps = {
   visible: boolean;
   onClose: () => void;
-  onSelectService: () => void;
-  onSelectProduct: () => void;
+  onSelectOption: (option: 'service' | 'product') => void;
 };
 
 export const AddOptionsPopover: React.FC<AddOptionsPopoverProps> = ({
   visible,
   onClose,
-  onSelectService,
-  onSelectProduct,
+  onSelectOption,
 }) => {
   const {t} = useTranslation();
   const translateY = useSharedValue(20);
@@ -89,7 +87,7 @@ export const AddOptionsPopover: React.FC<AddOptionsPopoverProps> = ({
                     <TouchableOpacity
                       activeOpacity={0.6}
                       onPress={() => {
-                        onSelectService();
+                        onSelectOption('service');
                         onClose();
                       }}
                       style={styles.option}>
@@ -103,7 +101,7 @@ export const AddOptionsPopover: React.FC<AddOptionsPopoverProps> = ({
                     <TouchableOpacity
                       activeOpacity={0.6}
                       onPress={() => {
-                        onSelectProduct();
+                        onSelectOption('product');
                         onClose();
                       }}
                       style={styles.option}>

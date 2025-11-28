@@ -35,6 +35,7 @@ export type AuthStackParamList = {
 };
 export type MainStackParamList = {
   [SCREENS.MAIN_TABS]: undefined;
+  [SCREENS.HOME]: undefined;
   [SCREENS.PROFILE]: undefined;
   [SCREENS.EDITLISTING]: undefined;
   [SCREENS.VERIFT_OTP]: {token: string};

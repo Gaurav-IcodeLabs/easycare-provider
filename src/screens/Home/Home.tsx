@@ -1,45 +1,29 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
-import {height, scale, topInset, width} from '../../utils';
+import {scale, width} from '../../utils';
 import {colors, SCREENS} from '../../constants';
-import {
-  AppText,
-  Button,
-  GradientWrapper,
-  ListingCard,
-  ListingCardHorizontal,
-} from '../../components';
-import {carwash, easycare, magnify, offer50, placeholder} from '../../assets';
+import {GradientWrapper} from '../../components';
+import {easycare, magnify, placeholder} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {BottomTabParamList, MainStackParamList} from '../../apptypes';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {HomeHeader} from './components/HomeHeader';
+import {MainStackParamList} from '../../apptypes';
 
 type HomeNavigationProp = NativeStackNavigationProp<
-  BottomTabParamList,
+  MainStackParamList,
   typeof SCREENS.HOME
 >;
 
 export const Home: React.FC = () => {
   const navigation = useNavigation<HomeNavigationProp>();
-  const {top} = useSafeAreaInsets();
 
   const handleProfilePress = () => {
     navigation.navigate(SCREENS.PROFILE);
   };
 
   return (
-    <View style={[styles.container, {paddingTop: top}]}>
-      <HomeHeader />
-      {/* <ScreenHeader
+    <GradientWrapper>
+      <ScreenHeader
         containerStyle={{paddingHorizontal: scale(20)}}
         renderLeft={() => (
           <TouchableOpacity onPress={handleProfilePress}>
@@ -58,9 +42,9 @@ export const Home: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outercontainer: {
     flex: 1,
-    // backgroundColor: colors.white,
+    backgroundColor: colors.milkWhite,
   },
   topsection: {
     width: width,

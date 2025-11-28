@@ -11,7 +11,7 @@ import {
   profileActive,
   profileInactive,
 } from '../../assets';
-import {colors, primaryFont} from '../../constants';
+import {colors, primaryFont, SCREENS} from '../../constants';
 import {TFunction} from 'i18next';
 import Animated, {
   useAnimatedStyle,
@@ -197,17 +197,10 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
     setShowPopover(true);
   }, []);
 
-  const handleSelectService = useCallback(() => {
-    console.log('Service selected');
-    // Add your navigation or action here
-    // navigation.navigate('AddService');
-  }, []);
-
-  const handleSelectProduct = useCallback(() => {
-    console.log('Product selected');
-    // Add your navigation or action here
-    // navigation.navigate('AddProduct');
-  }, []);
+  const handleSelectOption = (option: 'service' | 'product') =>
+    navigation.navigate(
+      option === 'service' ? SCREENS.EDITLISTING : SCREENS.EDITLISTING,
+    );
 
   // Animation for plus button separation
   const plusTranslateX = useSharedValue(60);
@@ -234,8 +227,7 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
       <AddOptionsPopover
         visible={showPopover}
         onClose={() => setShowPopover(false)}
-        onSelectService={handleSelectService}
-        onSelectProduct={handleSelectProduct}
+        onSelectOption={handleSelectOption}
       />
       <View
         style={[
