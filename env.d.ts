@@ -1,6 +1,7 @@
 declare module '@env' {
   export const APP_ENV: string;
   export const BASE_URL: string;
+  export const ADMIN_PANEL_URL: string;
   export const ONESIGNAL_APP_ID: string;
   export const SHARETRIBE_SDK_CLIENT_ID: string;
   export const SHARETRIBE_SDK_CLIENT_SECRET: string;

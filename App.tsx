@@ -21,6 +21,7 @@ import {fetchAppAssets} from './src/slices/hostedAssets.slice';
 import {ColorsProvider, ConfigurationProvider} from './src/context';
 import {mergeColors} from './src/constants';
 import {configureGoogleSignIn} from './src/utils/socialAuth.helpers';
+import {fetchServicesConfig} from './src/slices/marketplaceData.slice';
 
 function App(): React.JSX.Element {
   const [isReady, setIsReady] = useState(false);
@@ -39,18 +40,16 @@ function App(): React.JSX.Element {
           colors: mergeColors(res?.appConfig?.branding),
         });
       }
-
+      await store.dispatch(fetchServicesConfig()).unwrap();
       // Add other async initializations here:
       // - Load fonts
       // - Check auth status
       // - Preload critical data
       // await Font.loadAsync(...);
-
-      setIsReady(true);
     } catch (error) {
       console.error('App initialization failed:', error);
-      setIsReady(true); // Still proceed to avoid infinite loading
     } finally {
+      setIsReady(true);
       // Hide splash screen only after everything is ready
       hideSplash();
     }
