@@ -191,9 +191,6 @@
     "cancel": "إلغاء",
     "enable": "تفعيل"
   },
-  "Editlisting": {
-    "heading": "قائمة المنتجات"
-  },
   "AddOptions": {
     "service": "خدمة",
     "product": "منتج"
@@ -227,5 +224,50 @@
     "verificationFailedDefault": "فشل التحقق من البريد الإلكتروني",
     "passwordResetFailedTitle": "فشل إعادة تعيين كلمة المرور",
     "invalidPasswordResetLink": "رابط إعادة تعيين كلمة المرور غير صالح"
+  },
+  "Editlisting": {
+    "heading": "قائمة المنتجات"
+  },
+  "EditListingDetailsForm": {
+    "title": "العنوان",
+    "titlePlaceholder": "أدخل عنوان المنتج",
+    "listingTitleRequired": "العنوان مطلوب",
+    "maxLength": "العنوان طويل جداً",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صف منتجك",
+    "descriptionRequired": "الوصف مطلوب",
+    "price": "السعر",
+    "pricePlaceholder": "أدخل السعر",
+    "priceRequired": "السعر مطلوب",
+    "stock": "الكمية المتاحة",
+    "stockPlaceholder": "أدخل الكمية المتاحة",
+    "stockRequired": "الكمية مطلوبة.",
+    "images": "صور المنتج",
+    "submit": "إرسال للموافقة",
+    "submitting": "جاري الحفظ...",
+    "listingTypeRequired": "نوع القائمة مطلوب",
+    "categoryRequired": "الفئة مطلوبة",
+    "categoryNameRequired": "اسم الفئة مطلوب",
+    "imagesRequired": "مطلوب صورة واحدة على الأقل",
+    "defaultRequiredMessage": "هذا الحقل مطلوب"
+  },
+  "CustomExtendedDataField": {
+    "numberTooSmall": "الرقم صغير جداً",
+    "numberTooBig": "الرقم كبير جداً"
+  },
+  "ErrorMessage": {
+    "required": "هذا الحقل مطلوب",
+    "validNumber": "الرجاء إدخال رقم صحيح"
+  },
+  "MultiImagePickField": {
+    "uploadText": "قم بتحميل صورك هنا",
+    "supportText": "يدعم: JPG، JPEG، PNG",
+    "limitText": "{{current}} / {{max}} صور",
+    "uploading": "جاري التحميل..."
+  },
+  "ListingSuccessModal": {
+    "title": "تم إرسال قائمتك للمراجعة.",
+    "description": "سيقوم فريق الإدارة لدينا بمراجعة التفاصيل الخاصة بك بعناية والموافقة عليها قريبًا.",
+    "done": "تم"
   }
 }
