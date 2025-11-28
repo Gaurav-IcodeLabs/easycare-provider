@@ -11,6 +11,7 @@ import {height, scale, topInset, width} from '../../utils';
 import {colors, SCREENS} from '../../constants';
 import {
   AppText,
+  Button,
   GradientWrapper,
   ListingCard,
   ListingCardHorizontal,
@@ -18,23 +19,27 @@ import {
 import {carwash, easycare, magnify, offer50, placeholder} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {MainStackParamList} from '../../apptypes';
+import {BottomTabParamList, MainStackParamList} from '../../apptypes';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {HomeHeader} from './components/HomeHeader';
 
 type HomeNavigationProp = NativeStackNavigationProp<
-  MainStackParamList,
+  BottomTabParamList,
   typeof SCREENS.HOME
 >;
 
 export const Home: React.FC = () => {
   const navigation = useNavigation<HomeNavigationProp>();
+  const {top} = useSafeAreaInsets();
 
   const handleProfilePress = () => {
     navigation.navigate(SCREENS.PROFILE);
   };
 
   return (
-    <GradientWrapper>
-      <ScreenHeader
+    <View style={[styles.container, {paddingTop: top}]}>
+      <HomeHeader />
+      {/* <ScreenHeader
         containerStyle={{paddingHorizontal: scale(20)}}
         renderLeft={() => (
           <TouchableOpacity onPress={handleProfilePress}>
@@ -47,69 +52,24 @@ export const Home: React.FC = () => {
             <Image source={magnify} style={styles.right} />
           </TouchableOpacity>
         )}
-      />
-      {/* <View style={styles.headerImgContainer}>
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <AppText
-              style={{
-                fontSize: 60,
-                fontWeight: '700',
-                color: '#ffffffff',
-                lineHeight: 64,
-              }}>
-              50%
-            </AppText>
+      /> */}
 
-            <View
-              style={{
-                backgroundColor: '#fdb75c',
-                borderRadius: 20,
-                paddingHorizontal: 14,
-                paddingVertical: 4,
-                marginTop: -20,
-                marginBottom: -12,
-                zIndex: 1,
-              }}>
-              <AppText style={{color: '#fff', fontSize: 14, fontWeight: '600'}}>
-                Instant
-              </AppText>
-            </View>
-
-            <AppText
-              style={{
-                fontSize: 38,
-                fontWeight: '500',
-                color: '#ffffffff',
-                lineHeight: 42,
-              }}>
-              Discount
-            </AppText>
-            <AppText style={{color: colors.white}}>
-              On your first service
-            </AppText>
-          </View>
-          <Image style={styles.carwashImg} source={carwash} />
-        </View> */}
-      {/* <View style={{marginTop: scale(20)}}>
+      <View style={{marginTop: scale(20)}}>
         <ListingCard />
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{marginTop: scale(20)}}
-        contentContainerStyle={{paddingHorizontal: scale(20), gap: scale(16)}}>
-        {Array.from({length: 3}).map((_, index) => (
-          <ListingCardHorizontal key={index} />
-        ))}
-      </ScrollView> */}
-    </GradientWrapper>
+      <Button
+        title="Create listing"
+        onPress={() => navigation.getParent()?.navigate(SCREENS.EDITLISTING)}
+        style={{marginTop: scale(50)}}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  outercontainer: {
+  container: {
     flex: 1,
-    backgroundColor: colors.milkWhite,
+    // backgroundColor: colors.white,
   },
   topsection: {
     width: width,

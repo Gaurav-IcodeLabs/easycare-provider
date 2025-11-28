@@ -223,5 +223,47 @@
     "verificationFailedDefault": "Failed to verify email",
     "passwordResetFailedTitle": "Password Reset Failed",
     "invalidPasswordResetLink": "Invalid password reset link"
+  },
+  "EditListingDetailsForm": {
+    "title": "Title",
+    "titlePlaceholder": "Enter product title",
+    "listingTitleRequired": "Title is required",
+    "maxLength": "Title is too long",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your product",
+    "descriptionRequired": "Description is required",
+    "price": "Price",
+    "pricePlaceholder": "Enter price",
+    "priceRequired": "Price is required",
+    "stock": "Stock Quantity",
+    "stockPlaceholder": "Enter available quantity",
+    "stockRequired": "Quantity is required.",
+    "images": "Product Images",
+    "submit": "Send for Approvel",
+    "submitting": "Saving...",
+    "listingTypeRequired": "Listing type is required",
+    "categoryRequired": "Category is required",
+    "categoryNameRequired": "Category name is required",
+    "imagesRequired": "At least one image is required",
+    "defaultRequiredMessage": "This field is required"
+  },
+  "CustomExtendedDataField": {
+    "numberTooSmall": "Number is too small",
+    "numberTooBig": "Number is too big"
+  },
+  "ErrorMessage": {
+    "required": "This field is required",
+    "validNumber": "Please enter a valid number"
+  },
+  "MultiImagePickField": {
+    "uploadText": "Upload your images here",
+    "supportText": "Supports: JPG, JPEG, PNG",
+    "limitText": "{{current}} / {{max}} images",
+    "uploading": "Uploading..."
+  },
+  "ListingSuccessModal": {
+    "title": "Your listing has been submitted for review.",
+    "description": "Our admin team will carefully review your details and approve it shortly.",
+    "done": "Done"
   }
 }

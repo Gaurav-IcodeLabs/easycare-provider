@@ -41,6 +41,19 @@ export interface ListingPublicData extends Categories {
   video: any; // You might want to define a more specific type here
 }
 
+export enum ListingState {
+  LISTING_STATE_DRAFT = 'draft',
+  LISTING_STATE_PENDING_APPROVAL = 'pendingApproval',
+  LISTING_STATE_PUBLISHED = 'published',
+  LISTING_STATE_CLOSED = 'closed',
+}
+
+export enum ListingTypes {
+  BUSINESS_PROFILE = 'business-profile',
+  PRODUCT = 'product',
+  SERVICE = 'service',
+}
+
 export interface Location {
   address: string;
   building: string;

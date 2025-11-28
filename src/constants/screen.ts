@@ -17,4 +17,5 @@ export const SCREENS = {
   PROFILE: 'Profile',
   VERIFT_OTP: 'VerifyOtp',
   OTP_VERIFIED: 'OtpVerified',
+  EDITLISTING: 'EditListing',
 } as const;

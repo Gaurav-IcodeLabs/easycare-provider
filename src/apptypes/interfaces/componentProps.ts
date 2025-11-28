@@ -37,8 +37,17 @@ export interface SectionCarouselProps extends Omit<GenericComponentProps, ''> {}
 export interface CustomFieldProps {
   fieldConfig?: FieldConfig;
   control?: any;
-  name?: string;
+  name: string;
   t?: (_: string | undefined) => string;
+  setError?: (name: string, error: {message: string}) => void;
+  clearErrors?: (name: string) => void;
+  renderTopComponent?: React.ReactNode;
+  renderBottomComponent?: React.ReactNode;
+  onChangeLong?: (value: number) => void;
+  multiline?: boolean;
+  clearError?: () => void;
+  disabledChangeCountryMode?: boolean;
+  containerStyle?: any;
 }
 
 export interface BlockBuilderProps {
