@@ -24,7 +24,7 @@ import {AppText} from '../AppText/AppText';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BlurView} from '@react-native-community/blur';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import {AddOptionsPopover} from '../AddOptionsPopover';
+import {AddOptionsModal} from '../AddOptionsModal';
 
 type TranslationTS = TFunction<'translation', undefined>;
 
@@ -224,7 +224,7 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
 
   return (
     <>
-      <AddOptionsPopover
+      <AddOptionsModal
         visible={showPopover}
         onClose={() => setShowPopover(false)}
         onSelectOption={handleSelectOption}

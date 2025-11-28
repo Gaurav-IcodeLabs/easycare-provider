@@ -192,6 +192,9 @@
     "enable": "تفعيل"
   },
   "AddOptions": {
+    "title": "اختر نوع القائمة التي تريد إنشاءها",
+    "serviceListings": "قوائم الخدمات",
+    "productListings": "قوائم المنتجات",
     "service": "خدمة",
     "product": "منتج"
   },

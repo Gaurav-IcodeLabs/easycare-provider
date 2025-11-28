@@ -195,6 +195,9 @@
     "heading": "Product Listing"
   },
   "AddOptions": {
+    "title": "Select the Type of Listing You'd Like to Create",
+    "serviceListings": "Service Listings",
+    "productListings": "Product Listings",
     "service": "Service",
     "product": "Product"
   },
