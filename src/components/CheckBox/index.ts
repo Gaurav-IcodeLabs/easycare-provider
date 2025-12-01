@@ -1,1 +1,2 @@
-export { CheckBox } from './CheckBox';
+export {CheckBox} from './CheckBox';
+export {CheckBoxStandalone} from './CheckBoxStandalone';

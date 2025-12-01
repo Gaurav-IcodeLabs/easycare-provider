@@ -254,6 +254,41 @@
     "imagesRequired": "مطلوب صورة واحدة على الأقل",
     "defaultRequiredMessage": "هذا الحقل مطلوب"
   },
+  "CreateService": {
+    "heading": "إنشاء خدمة"
+  },
+  "CreateServiceForm": {
+    "category": "الفئة",
+    "categoryPlaceholder": "اختر فئة",
+    "categoryRequired": "الفئة مطلوبة",
+    "subcategory": "الفئة الفرعية",
+    "subcategoryPlaceholder": "اختر فئة فرعية",
+    "subcategoryRequired": "الفئة الفرعية مطلوبة",
+    "title": "عنوان الخدمة",
+    "titlePlaceholder": "أدخل عنوان الخدمة",
+    "titleRequired": "العنوان مطلوب",
+    "maxLength": "العنوان طويل جداً",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صف خدمتك",
+    "descriptionRequired": "الوصف مطلوب",
+    "price": "السعر",
+    "pricePlaceholder": "أدخل السعر",
+    "priceRequired": "السعر مطلوب",
+    "duration": "المدة (بالدقائق)",
+    "durationPlaceholder": "أدخل المدة",
+    "durationRequired": "المدة مطلوبة",
+    "locationType": "نوع الموقع",
+    "locationTypePlaceholder": "اختر نوع الموقع",
+    "additionalAttributes": "خيارات الخدمة الإضافية",
+    "selectAttributesDescription": "اختر الإضافات الاختيارية لخدمتك",
+    "selectOne": "اختر واحد",
+    "selectMultiple": "اختر متعدد",
+    "customerSelectsOne": "العميل يختار واحد",
+    "required": "مطلوب",
+    "images": "صور الخدمة",
+    "submit": "إنشاء الخدمة",
+    "submitting": "جاري الإنشاء..."
+  },
   "CustomExtendedDataField": {
     "numberTooSmall": "الرقم صغير جداً",
     "numberTooBig": "الرقم كبير جداً"

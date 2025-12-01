@@ -2,7 +2,7 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../apptypes';
 import {SCREENS} from '../constants';
-import {EditListing, Profile} from '../screens';
+import {CreateService, EditListing, Profile} from '../screens';
 import {BottomTabNavigator} from './BottomTabNavigator';
 import {OtpVerified, VerifyOtp} from '../screens';
 import {phoneNumberVerifiedSelector} from '../slices/user.slice';
@@ -28,7 +28,8 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.OTP_VERIFIED} component={OtpVerified} />
       <Screen name={SCREENS.PROFILE} component={Profile} />
       <Screen name={SCREENS.EDITLISTING} component={EditListing} />
-  </Navigator>
+      <Screen name={SCREENS.CREATE_SERVICE} component={CreateService} />
+    </Navigator>
   );
 };
 

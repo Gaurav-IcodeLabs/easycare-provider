@@ -38,6 +38,7 @@ export type MainStackParamList = {
   [SCREENS.HOME]: undefined;
   [SCREENS.PROFILE]: undefined;
   [SCREENS.EDITLISTING]: undefined;
+  [SCREENS.CREATE_SERVICE]: undefined;
   [SCREENS.VERIFT_OTP]: {token: string};
   [SCREENS.OTP_VERIFIED]: undefined;
 };

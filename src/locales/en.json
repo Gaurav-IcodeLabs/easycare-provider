@@ -254,6 +254,41 @@
     "imagesRequired": "At least one image is required",
     "defaultRequiredMessage": "This field is required"
   },
+  "CreateService": {
+    "heading": "Create Service"
+  },
+  "CreateServiceForm": {
+    "category": "Category",
+    "categoryPlaceholder": "Select a category",
+    "categoryRequired": "Category is required",
+    "subcategory": "Subcategory",
+    "subcategoryPlaceholder": "Select a subcategory",
+    "subcategoryRequired": "Subcategory is required",
+    "title": "Service Title",
+    "titlePlaceholder": "Enter service title",
+    "titleRequired": "Title is required",
+    "maxLength": "Title is too long",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your service",
+    "descriptionRequired": "Description is required",
+    "price": "Price",
+    "pricePlaceholder": "Enter price",
+    "priceRequired": "Price is required",
+    "duration": "Duration (minutes)",
+    "durationPlaceholder": "Enter duration",
+    "durationRequired": "Duration is required",
+    "locationType": "Location Type",
+    "locationTypePlaceholder": "Select location type",
+    "additionalAttributes": "Additional Service Options",
+    "selectAttributesDescription": "Select optional add-ons for your service",
+    "selectOne": "Select One",
+    "selectMultiple": "Select Multiple",
+    "customerSelectsOne": "Customer selects one",
+    "required": "Required",
+    "images": "Service Images",
+    "submit": "Create Service",
+    "submitting": "Creating..."
+  },
   "CustomExtendedDataField": {
     "numberTooSmall": "Number is too small",
     "numberTooBig": "Number is too big"

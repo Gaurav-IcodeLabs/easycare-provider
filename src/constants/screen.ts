@@ -18,4 +18,5 @@ export const SCREENS = {
   VERIFT_OTP: 'VerifyOtp',
   OTP_VERIFIED: 'OtpVerified',
   EDITLISTING: 'EditListing',
+  CREATE_SERVICE: 'CreateService',
 } as const;

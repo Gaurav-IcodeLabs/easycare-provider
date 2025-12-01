@@ -199,7 +199,7 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
 
   const handleSelectOption = (option: 'service' | 'product') =>
     navigation.navigate(
-      option === 'service' ? SCREENS.EDITLISTING : SCREENS.EDITLISTING,
+      option === 'service' ? SCREENS.CREATE_SERVICE : SCREENS.EDITLISTING,
     );
 
   // Animation for plus button separation
