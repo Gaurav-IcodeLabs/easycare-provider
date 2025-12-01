@@ -17,11 +17,12 @@ import {AppText} from '../AppText/AppText';
 import {scale as scaleSize} from '../../utils';
 import {colors, primaryFont} from '../../constants';
 import {BlurView} from '@react-native-community/blur';
+import {ListingTypes} from '../../apptypes/interfaces/listing';
 
 type AddOptionsPopoverProps = {
   visible: boolean;
   onClose: () => void;
-  onSelectOption: (option: 'service' | 'product') => void;
+  onSelectOption: (option: ListingTypes.SERVICE | ListingTypes.PRODUCT) => void;
 };
 
 export const AddOptionsPopover: React.FC<AddOptionsPopoverProps> = ({
@@ -87,7 +88,7 @@ export const AddOptionsPopover: React.FC<AddOptionsPopoverProps> = ({
                     <TouchableOpacity
                       activeOpacity={0.6}
                       onPress={() => {
-                        onSelectOption('service');
+                        onSelectOption(ListingTypes.SERVICE);
                         onClose();
                       }}
                       style={styles.option}>
@@ -101,7 +102,7 @@ export const AddOptionsPopover: React.FC<AddOptionsPopoverProps> = ({
                     <TouchableOpacity
                       activeOpacity={0.6}
                       onPress={() => {
-                        onSelectOption('product');
+                        onSelectOption(ListingTypes.PRODUCT);
                         onClose();
                       }}
                       style={styles.option}>

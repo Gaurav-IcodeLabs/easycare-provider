@@ -15,6 +15,7 @@ import {
   SCHEMA_TYPE_TEXT,
 } from '../../../utils';
 import {getMarketplaceEntities} from '../../../slices/marketplaceData.slice';
+import {ListingTypes} from '../../../apptypes/interfaces/listing';
 
 type listingImageConfigType = any;
 type imageType = any;
@@ -235,9 +236,9 @@ const getInitialValues = (
       nestedCategories,
       listingFields,
     ),
-    ...(listingType === 'product'
+    ...(listingType === ListingTypes.PRODUCT
       ? {
-          pub_product_available_quantity:
+          product_available_quantity:
             listing?.currentStock?.attributes?.quantity,
         }
       : {}),
@@ -335,6 +336,8 @@ const getDefaultValues = (initialValues: any) => {
     transactionProcessAlias = '',
     unitType = '',
     listingType = '',
+    product_available_quantity = '',
+    images = [],
     ...rest
   } = initialValues;
 
@@ -346,6 +349,10 @@ const getDefaultValues = (initialValues: any) => {
     transactionProcessAlias,
     unitType,
     listingType,
+    ...(listingType === ListingTypes.PRODUCT
+      ? {product_available_quantity}
+      : {}),
+    images,
     ...rest,
   };
 };
@@ -430,25 +437,29 @@ const getListngDetailsSchema = (
       .refine(value => !isNaN(value) && value > 0, {
         message: t('EditListingDetailsForm.priceRequired'),
       }),
-    product_available_quantity: z
-      .union([z.string(), z.number()])
-      .transform(value => Number(value))
-      .refine(value => !isNaN(value) && value > 0, {
-        message: t('EditListingDetailsForm.stockRequired'),
-      })
-      .optional(),
-    images: z.array(
-      z.object({
-        id: z.object({
-          _sdkType: z.string().nonempty(),
-          uuid: z.string().nonempty(),
+    ...(listingType === ListingTypes.PRODUCT
+      ? {
+          product_available_quantity: z
+            .union([z.string(), z.number()])
+            .transform(value => Number(value))
+            .refine(value => !isNaN(value) && value > 0, {
+              message: t('EditListingDetailsForm.stockRequired'),
+            }),
+        }
+      : {}),
+    images: z
+      .array(
+        z.object({
+          id: z.object({
+            _sdkType: z.string().nonempty(),
+            uuid: z.string().nonempty(),
+          }),
+          url: z.string(),
+          localUri: z.string().optional(),
+          isUploading: z.boolean().optional(),
         }),
-        url: z.string(),
-        localUri: z.string().optional(),
-        isUploading: z.boolean().optional(),
-      }),
-    ),
-    // .optional(),
+      )
+      .optional(),
     ...conditionalFields,
   });
   return formSchema;

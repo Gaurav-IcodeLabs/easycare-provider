@@ -9,13 +9,13 @@ import {
   Button,
   MultiImagePickField,
   TextInputField,
-  DropdownField,
   AppText,
   CheckBoxStandalone,
 } from '../../../components';
+import {DropdownField} from '../../../components/DropdownField/DropdownField';
 import {scale} from '../../../utils';
 import {colors, primaryFont} from '../../../constants';
-import {useLanguage} from '../../../hooks';
+
 import {
   Category,
   Subcategory,
@@ -27,13 +27,24 @@ interface CreateServiceFormProps {
   subcategoriesByKeys: Record<string, Subcategory>;
   onSubmit: (values: any) => void;
   inProgress: boolean;
+  initialValues?: any;
+  isEditMode?: boolean;
 }
 
 export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
   const {t, i18n} = useTranslation();
   const {bottom} = useSafeAreaInsets();
-  const {categories, subcategoriesByKeys, onSubmit, inProgress} = props;
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+  const {
+    categories,
+    subcategoriesByKeys,
+    onSubmit,
+    inProgress,
+    initialValues,
+    isEditMode = false,
+  } = props;
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    initialValues?.categoryId || '',
+  );
   const [selectedSubcategory, setSelectedSubcategory] =
     useState<Subcategory | null>(null);
 
@@ -61,11 +72,22 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
     watch,
     setValue,
     trigger,
+    reset,
   } = useForm({
-    defaultValues: getDefaultServiceValues(),
+    defaultValues: initialValues || getDefaultServiceValues(),
     resolver: zodResolver(getServiceFormSchema(t)),
     mode: 'onChange',
   });
+
+  // Reset form when initialValues change (for edit mode)
+  useEffect(() => {
+    if (initialValues) {
+      console.log('CreateServiceForm received initialValues:', initialValues);
+      console.log('Images in initialValues:', initialValues.images);
+      reset(initialValues);
+      setSelectedCategoryId(initialValues.categoryId || '');
+    }
+  }, [initialValues, reset]);
 
   const watchedCategoryId = watch('categoryId');
   const watchedSubcategoryId = watch('subcategoryId');
@@ -85,14 +107,15 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
       const subcategory = subcategoriesByKeys[watchedSubcategoryId];
       if (subcategory) {
         setSelectedSubcategory(subcategory);
-        // Auto-fill price and duration from subcategory
-        setValue('price', subcategory.basePrice.toString());
-        setValue('duration', subcategory.estimatedDuration.value.toString());
-        // Reset custom attributes when subcategory changes
-        setValue('customAttributes', {});
+        // Only auto-fill price and duration if not in edit mode (no initialValues)
+        if (!initialValues) {
+          setValue('price', subcategory.basePrice.toString());
+          setValue('duration', subcategory.estimatedDuration.value.toString());
+          setValue('customAttributes', {});
+        }
       }
     }
-  }, [watchedSubcategoryId, subcategoriesByKeys, setValue]);
+  }, [watchedSubcategoryId, subcategoriesByKeys, setValue, initialValues]);
 
   const toggleAttributeOption = (
     attributeKey: string,
@@ -326,7 +349,11 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
         <Button
           title={
             inProgress
-              ? t('CreateServiceForm.submitting')
+              ? isEditMode
+                ? t('CreateServiceForm.updating')
+                : t('CreateServiceForm.submitting')
+              : isEditMode
+              ? t('CreateServiceForm.update')
               : t('CreateServiceForm.submit')
           }
           onPress={handleSubmit(onSubmitForm)}

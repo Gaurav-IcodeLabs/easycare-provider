@@ -13,6 +13,7 @@ import {
 } from '../../assets';
 import {colors, primaryFont, SCREENS} from '../../constants';
 import {TFunction} from 'i18next';
+import {ListingTypes} from '../../apptypes/interfaces/listing';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -197,10 +198,17 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
     setShowPopover(true);
   }, []);
 
-  const handleSelectOption = (option: 'service' | 'product') =>
-    navigation.navigate(
-      option === 'service' ? SCREENS.CREATE_SERVICE : SCREENS.EDITLISTING,
-    );
+  const handleSelectOption = (
+    option: ListingTypes.SERVICE | ListingTypes.PRODUCT,
+  ) => {
+    if (option === ListingTypes.SERVICE) {
+      navigation.navigate(SCREENS.CREATE_SERVICE);
+    } else {
+      navigation.navigate(SCREENS.EDITLISTING, {
+        listingType: ListingTypes.PRODUCT,
+      });
+    }
+  };
 
   // Animation for plus button separation
   const plusTranslateX = useSharedValue(60);

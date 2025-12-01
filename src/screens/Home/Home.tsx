@@ -1,13 +1,31 @@
-import {Image, StyleSheet, TouchableOpacity} from 'react-native';
-import React from 'react';
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  View,
+  ActivityIndicator,
+  FlatList,
+} from 'react-native';
+import React, {useEffect} from 'react';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {scale, width} from '../../utils';
 import {colors, SCREENS} from '../../constants';
-import {GradientWrapper} from '../../components';
+import {GradientWrapper, AppText, ListingCard} from '../../components';
 import {easycare, magnify, placeholder} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../apptypes';
+import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
+import {
+  fetchServices,
+  fetchProducts,
+  fetchDrafts,
+  servicesSelector,
+  productsSelector,
+  draftsSelector,
+  fetchListingsInProgressSelector,
+} from '../../slices/home.slice';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -16,9 +34,72 @@ type HomeNavigationProp = NativeStackNavigationProp<
 
 export const Home: React.FC = () => {
   const navigation = useNavigation<HomeNavigationProp>();
+  const dispatch = useAppDispatch();
+
+  const services = useTypedSelector(servicesSelector);
+  const products = useTypedSelector(productsSelector);
+  const drafts = useTypedSelector(draftsSelector);
+  const isLoading = useTypedSelector(fetchListingsInProgressSelector);
+
+  useEffect(() => {
+    loadAllListings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadAllListings = () => {
+    dispatch(fetchServices());
+    dispatch(fetchProducts());
+    dispatch(fetchDrafts());
+  };
 
   const handleProfilePress = () => {
     navigation.navigate(SCREENS.PROFILE);
+  };
+
+  const handleListingPress = (listing: any) => {
+    const listingType = listing?.attributes?.publicData?.listingType;
+    const listingId = listing?.id?.uuid;
+
+    if (listingType === 'service') {
+      // Navigate to CreateService screen (which also handles editing)
+      navigation.navigate(SCREENS.CREATE_SERVICE, {listingId});
+    } else if (listingType === 'product') {
+      // Navigate to EditListing screen for products
+      navigation.navigate(SCREENS.EDITLISTING, {
+        listingId,
+        listingType: 'product',
+      });
+    }
+  };
+
+  const renderListingItem = ({item}: any) => {
+    return (
+      <ListingCard
+        listing={item}
+        containerStyle={styles.listingCard}
+        onPress={() => handleListingPress(item)}
+      />
+    );
+  };
+
+  const renderSection = (title: string, data: any[]) => {
+    if (data.length === 0) {
+      return null;
+    }
+
+    return (
+      <View style={styles.section}>
+        <AppText style={styles.sectionTitle}>{title}</AppText>
+        <FlatList
+          data={data}
+          renderItem={renderListingItem}
+          keyExtractor={item => item.id.uuid}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.horizontalList}
+        />
+      </View>
+    );
   };
 
   return (
@@ -37,6 +118,28 @@ export const Home: React.FC = () => {
           </TouchableOpacity>
         )}
       />
+
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.deepBlue} />
+        </View>
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}>
+          {renderSection('Services', services)}
+          {renderSection('Products', products)}
+          {renderSection('Drafts', drafts)}
+
+          {services.length === 0 &&
+            products.length === 0 &&
+            drafts.length === 0 && (
+              <View style={styles.emptyContainer}>
+                <AppText style={styles.emptyText}>No listings found</AppText>
+              </View>
+            )}
+        </ScrollView>
+      )}
     </GradientWrapper>
   );
 };
@@ -80,5 +183,41 @@ const styles = StyleSheet.create({
   carwashImg: {
     width: scale(170),
     height: scale(125),
+  },
+  scrollContainer: {
+    paddingBottom: scale(20),
+  },
+  section: {
+    marginTop: scale(20),
+  },
+  sectionTitle: {
+    fontSize: scale(20),
+    fontWeight: '600',
+    color: colors.deepBlue,
+    paddingHorizontal: scale(20),
+    marginBottom: scale(15),
+  },
+  horizontalList: {
+    paddingHorizontal: scale(20),
+    gap: scale(15),
+  },
+  listingCard: {
+    width: scale(280),
+    marginRight: scale(15),
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: scale(50),
+  },
+  emptyText: {
+    fontSize: scale(16),
+    color: colors.neutralDark,
   },
 });

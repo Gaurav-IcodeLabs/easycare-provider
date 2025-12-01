@@ -18,11 +18,12 @@ import {AppText} from '../AppText/AppText';
 import {scale} from '../../utils';
 import {colors, primaryFont, secondaryFont} from '../../constants';
 import {BlurView} from '@react-native-community/blur';
+import {ListingTypes} from '../../apptypes/interfaces/listing';
 
 type AddOptionsModalProps = {
   visible: boolean;
   onClose: () => void;
-  onSelectOption: (option: 'service' | 'product') => void;
+  onSelectOption: (option: ListingTypes.SERVICE | ListingTypes.PRODUCT) => void;
 };
 
 export const AddOptionsModal: React.FC<AddOptionsModalProps> = ({
@@ -82,7 +83,7 @@ export const AddOptionsModal: React.FC<AddOptionsModalProps> = ({
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() => {
-                    onSelectOption('service');
+                    onSelectOption(ListingTypes.SERVICE);
                     onClose();
                   }}
                   style={[styles.button, styles.serviceButton]}>
@@ -94,7 +95,7 @@ export const AddOptionsModal: React.FC<AddOptionsModalProps> = ({
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() => {
-                    onSelectOption('product');
+                    onSelectOption(ListingTypes.PRODUCT);
                     onClose();
                   }}
                   style={[styles.button, styles.productButton]}>

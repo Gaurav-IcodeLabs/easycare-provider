@@ -255,7 +255,9 @@
     "defaultRequiredMessage": "هذا الحقل مطلوب"
   },
   "CreateService": {
-    "heading": "إنشاء خدمة"
+    "heading": "إنشاء خدمة",
+    "updateSuccess": "تم تحديث الخدمة",
+    "updateSuccessMessage": "تم تحديث خدمتك بنجاح"
   },
   "CreateServiceForm": {
     "category": "الفئة",
@@ -287,7 +289,9 @@
     "required": "مطلوب",
     "images": "صور الخدمة",
     "submit": "إنشاء الخدمة",
-    "submitting": "جاري الإنشاء..."
+    "submitting": "جاري الإنشاء...",
+    "update": "تحديث الخدمة",
+    "updating": "جاري التحديث..."
   },
   "CustomExtendedDataField": {
     "numberTooSmall": "الرقم صغير جداً",

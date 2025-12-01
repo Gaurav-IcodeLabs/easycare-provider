@@ -255,7 +255,9 @@
     "defaultRequiredMessage": "This field is required"
   },
   "CreateService": {
-    "heading": "Create Service"
+    "heading": "Create Service",
+    "updateSuccess": "Service Updated",
+    "updateSuccessMessage": "Your service has been updated successfully"
   },
   "CreateServiceForm": {
     "category": "Category",
@@ -287,7 +289,9 @@
     "required": "Required",
     "images": "Service Images",
     "submit": "Create Service",
-    "submitting": "Creating..."
+    "submitting": "Creating...",
+    "update": "Update Service",
+    "updating": "Updating..."
   },
   "CustomExtendedDataField": {
     "numberTooSmall": "Number is too small",

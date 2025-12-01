@@ -54,6 +54,24 @@ export enum ListingTypes {
   SERVICE = 'service',
 }
 
+export enum TransactionProcessAlias {
+  PURCHASE = 'default-purchase/release-1',
+  BOOKING = 'default-booking/release-1',
+  INQUIRY = 'default-inquiry/release-1',
+  NEGOTIATION = 'default-negotiation/release-1',
+}
+
+export enum UnitType {
+  ITEM = 'item',
+  DAY = 'day',
+  NIGHT = 'night',
+  HOUR = 'hour',
+  FIXED = 'fixed',
+  INQUIRY = 'inquiry',
+  OFFER = 'offer',
+  REQUEST = 'request',
+}
+
 export interface Location {
   address: string;
   building: string;

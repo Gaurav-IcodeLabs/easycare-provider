@@ -1,5 +1,6 @@
 import {CreateUserParams} from './authslice';
 import {ImageVariantsMap, UUID} from './common';
+import {ListingTypes} from './listing';
 import {
   IAvailabilityException,
   IBooking,
@@ -833,15 +834,15 @@ interface CartType {
 
 interface BaseListing {
   quantity: number;
-  type: 'product' | 'service';
+  type: ListingTypes.PRODUCT | ListingTypes.SERVICE;
 }
 
 interface ProductListing extends BaseListing {
-  type: 'product'; // explicitly define type as 'product'
+  type: ListingTypes.PRODUCT;
 }
 
 interface ServiceListing extends BaseListing {
-  type: 'service'; // explicitly define type as 'service'
+  type: ListingTypes.SERVICE;
   bookingStart: number;
   bookingEnd: number;
   staffId: string;

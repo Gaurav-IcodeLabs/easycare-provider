@@ -1,23 +1,33 @@
 import {Image, Pressable, StyleSheet, View} from 'react-native';
 import React from 'react';
 import {fontScale, scale, width} from '../../utils';
-import {car, distance, locationInactive, share, star} from '../../assets';
+import {car, locationInactive, share, star} from '../../assets';
 import {colors, primaryFont, secondaryFont} from '../../constants';
 import {AppText} from '../AppText/AppText';
 
-interface ListingCardProps {}
+interface ListingCardProps {
+  listing: any;
+  onPress?: () => void;
+  containerStyle?: any;
+}
 
-export const ListingCard: React.FC<ListingCardProps> = () => {
+export const ListingCard: React.FC<ListingCardProps> = ({
+  listing,
+  onPress,
+  containerStyle,
+}) => {
+  const imageUrl = listing?.images?.[0]?.attributes?.variants?.default?.url;
+  const title = listing?.attributes?.title || 'Untitled';
+  const location = listing?.attributes?.publicData?.location?.address || '';
+  const state = listing?.attributes?.state || '';
+
   return (
-    <Pressable style={styles.container}>
-      <Image source={car} resizeMode="contain" style={styles.image} />
-      {/* <AppImage
-        source={{
-          uri:'',// imageUi,
-        }}
-        width={width - scale(40)}
-        aspectRatio="16/9"
-      /> */}
+    <Pressable style={[styles.container, containerStyle]} onPress={onPress}>
+      {imageUrl ? (
+        <Image source={{uri: imageUrl}} style={styles.image} />
+      ) : (
+        <Image source={car} resizeMode="contain" style={styles.image} />
+      )}
       <View style={styles.reviewSection}>
         <Image style={styles.icon} source={star} />
         <AppText style={styles.distance}>5.0</AppText>
@@ -26,21 +36,24 @@ export const ListingCard: React.FC<ListingCardProps> = () => {
         <Image style={styles.shareIcon} source={share} />
       </Pressable>
       <View style={styles.bottomSection}>
-        <AppText style={styles.title}>Al-Wafa Car Wash</AppText>
-        <View style={styles.rowStyle}>
-          <Image
-            tintColor={colors.neutralDark}
-            source={locationInactive}
-            style={styles.icon}
-          />
-          <AppText style={styles.location}>
-            King Abdulaziz Street, Al - Car Wash
-          </AppText>
-        </View>
-        <View style={styles.rowStyle}>
-          <Image source={distance} style={styles.icon} />
-          <AppText style={styles.distance}>2.05 km</AppText>
-        </View>
+        <AppText style={styles.title}>{title}</AppText>
+        {location ? (
+          <View style={styles.rowStyle}>
+            <Image
+              tintColor={colors.neutralDark}
+              source={locationInactive}
+              style={styles.icon}
+            />
+            <AppText style={styles.location} numberOfLines={1}>
+              {location}
+            </AppText>
+          </View>
+        ) : null}
+        {state ? (
+          <View style={styles.rowStyle}>
+            <AppText style={styles.stateText}>{state}</AppText>
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );
@@ -117,6 +130,13 @@ const styles = StyleSheet.create({
     fontSize: fontScale(14),
     color: colors.black,
     fontWeight: '400',
+    ...primaryFont('400'),
+  },
+  stateText: {
+    fontSize: fontScale(12),
+    color: colors.neutralDark,
+    fontWeight: '400',
+    textTransform: 'capitalize',
     ...primaryFont('400'),
   },
 });
