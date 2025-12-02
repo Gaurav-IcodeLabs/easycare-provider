@@ -8,6 +8,7 @@ import {
   TransactionProcessAlias,
   UnitType,
 } from '../apptypes/interfaces/listing';
+import {addMarketplaceEntities} from './marketplaceData.slice';
 
 interface ServiceImage {
   id: string;
@@ -248,8 +249,6 @@ export const fetchServiceListing = createAsyncThunk<any, any, Thunk>(
 
       const response = await sdk.ownListings.show(queryParams as any);
 
-      // Add to marketplace entities for consistency
-      const {addMarketplaceEntities} = await import('./marketplaceData.slice');
       dispatch(addMarketplaceEntities({sdkResponse: response}));
 
       return response;
@@ -262,31 +261,10 @@ export const fetchServiceListing = createAsyncThunk<any, any, Thunk>(
   },
 );
 
-// Selectors
-export const selectedCategorySelector = (state: RootState) =>
-  state.createService.selectedCategory;
-export const selectedSubcategorySelector = (state: RootState) =>
-  state.createService.selectedSubcategory;
-export const createServiceInProgressSelector = (state: RootState) =>
-  state.createService.createServiceInProgress;
-export const imageUploadingInProgressSelector = (state: RootState) =>
-  state.createService.imageUploadingInProgress;
-export const submittedServiceIdSelector = (state: RootState) =>
-  state.createService.submittedServiceId;
-export const fetchListingInProgressSelector = (state: RootState) =>
-  state.createService.fetchListingInProgress;
-export const fetchListingErrorSelector = (state: RootState) =>
-  state.createService.fetchListingError;
-
-export const {resetCreateService, setSelectedCategory, setSelectedSubcategory} =
-  createServiceSlice.actions;
-
-export default createServiceSlice.reducer;
-
 // Update service listing
 export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
   'createService/requestUpdateServiceStatus',
-  async (serviceData, {rejectWithValue, extra: sdk}) => {
+  async (serviceData, {rejectWithValue, extra: sdk, dispatch}) => {
     try {
       const {
         listingId,
@@ -372,6 +350,13 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
         publicData,
         images: images || [],
       });
+      const updated = await sdk.ownListings.show({
+        id: listingId,
+        include: ['author', 'images', 'currentStock'],
+      } as any);
+
+      // Update the listing in Redux store
+      dispatch(addMarketplaceEntities({sdkResponse: updated}));
 
       return response.data;
     } catch (error: any) {
@@ -386,3 +371,24 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
     }
   },
 );
+
+// Selectors
+export const selectedCategorySelector = (state: RootState) =>
+  state.createService.selectedCategory;
+export const selectedSubcategorySelector = (state: RootState) =>
+  state.createService.selectedSubcategory;
+export const createServiceInProgressSelector = (state: RootState) =>
+  state.createService.createServiceInProgress;
+export const imageUploadingInProgressSelector = (state: RootState) =>
+  state.createService.imageUploadingInProgress;
+export const submittedServiceIdSelector = (state: RootState) =>
+  state.createService.submittedServiceId;
+export const fetchListingInProgressSelector = (state: RootState) =>
+  state.createService.fetchListingInProgress;
+export const fetchListingErrorSelector = (state: RootState) =>
+  state.createService.fetchListingError;
+
+export const {resetCreateService, setSelectedCategory, setSelectedSubcategory} =
+  createServiceSlice.actions;
+
+export default createServiceSlice.reducer;

@@ -204,7 +204,7 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
     if (option === ListingTypes.SERVICE) {
       navigation.navigate(SCREENS.CREATE_SERVICE);
     } else {
-      navigation.navigate(SCREENS.EDITLISTING, {
+      navigation.navigate(SCREENS.CREATE_PRODUCT, {
         listingType: ListingTypes.PRODUCT,
       });
     }

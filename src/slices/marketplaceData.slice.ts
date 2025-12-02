@@ -75,7 +75,7 @@ export const getListingsById = (
   listingIds: string[],
 ) => {
   const resources = listingIds.map((id: string) => ({
-    id,
+    id: {uuid: id},
     type: 'listing',
   }));
   const throwIfNotFound = false;
@@ -87,7 +87,7 @@ export const getOwnListingsById = (
   listingIds: string[],
 ) => {
   const resources = listingIds.map((id: string) => ({
-    id,
+    id: {uuid: id},
     type: 'ownListing',
   }));
   const throwIfNotFound = false;
@@ -98,7 +98,7 @@ export const getAuthorById = (
   authorIds: string[],
 ) => {
   const resources = authorIds?.map((id: string) => ({
-    id,
+    id: {uuid: id},
     type: 'user',
   }));
   const throwIfNotFound = false;

@@ -11,3 +11,4 @@ export * from './Cart';
 export * from './Profile';
 export * from './EditListing/EditListing';
 export * from './CreateService/CreateService';
+export * from './CreateProduct/CreateProduct';

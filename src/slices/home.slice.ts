@@ -6,9 +6,8 @@ import {addMarketplaceEntities} from './marketplaceData.slice';
 import {ListingState} from '../apptypes/interfaces/listing';
 
 interface CategoryListings {
-  services: any[];
-  products: any[];
-  drafts: any[];
+  services: string[];
+  products: string[];
 }
 
 interface HomeState {
@@ -21,7 +20,6 @@ const initialState: HomeState = {
   categoryListings: {
     services: [],
     products: [],
-    drafts: [],
   },
   fetchListingsInProgress: false,
   fetchListingsError: null,
@@ -42,7 +40,8 @@ const homeSlice = createSlice({
       state.fetchListingsError = null;
     });
     builder.addCase(fetchServices.fulfilled, (state, {payload}) => {
-      state.categoryListings.services = payload;
+      const serviceIds = payload.map((listing: any) => listing.id.uuid);
+      state.categoryListings.services = serviceIds;
       state.fetchListingsInProgress = false;
     });
     builder.addCase(fetchServices.rejected, (state, {payload}) => {
@@ -56,24 +55,11 @@ const homeSlice = createSlice({
       state.fetchListingsError = null;
     });
     builder.addCase(fetchProducts.fulfilled, (state, {payload}) => {
-      state.categoryListings.products = payload;
+      const productIds = payload.map((listing: any) => listing.id.uuid);
+      state.categoryListings.products = productIds;
       state.fetchListingsInProgress = false;
     });
     builder.addCase(fetchProducts.rejected, (state, {payload}) => {
-      state.fetchListingsInProgress = false;
-      state.fetchListingsError = payload;
-    });
-
-    // Fetch Drafts
-    builder.addCase(fetchDrafts.pending, state => {
-      state.fetchListingsInProgress = true;
-      state.fetchListingsError = null;
-    });
-    builder.addCase(fetchDrafts.fulfilled, (state, {payload}) => {
-      state.categoryListings.drafts = payload;
-      state.fetchListingsInProgress = false;
-    });
-    builder.addCase(fetchDrafts.rejected, (state, {payload}) => {
       state.fetchListingsInProgress = false;
       state.fetchListingsError = payload;
     });
@@ -94,10 +80,10 @@ export const fetchServices = createAsyncThunk<any, void, Thunk>(
         ],
         pub_listingType: 'service',
       } as any);
-
       dispatch(addMarketplaceEntities({sdkResponse: response}));
       return response.data.data;
     } catch (error) {
+      console.error('fetchServices error:', error);
       throw storableError(error);
     }
   },
@@ -119,27 +105,10 @@ export const fetchProducts = createAsyncThunk<any, void, Thunk>(
       } as any);
 
       dispatch(addMarketplaceEntities({sdkResponse: response}));
+
       return response.data.data;
     } catch (error) {
-      throw storableError(error);
-    }
-  },
-);
-
-// Thunk to fetch drafts (both services and products)
-export const fetchDrafts = createAsyncThunk<any, void, Thunk>(
-  'home/fetchDraftsStatus',
-  async (_, {dispatch, extra: sdk}) => {
-    try {
-      const response = await sdk.ownListings.query({
-        include: ['author', 'images', 'currentStock'],
-        perPage: 5,
-        states: [ListingState.LISTING_STATE_DRAFT],
-      } as any);
-
-      dispatch(addMarketplaceEntities({sdkResponse: response}));
-      return response.data.data;
-    } catch (error) {
+      console.error('fetchProducts error:', error);
       throw storableError(error);
     }
   },
@@ -148,12 +117,13 @@ export const fetchDrafts = createAsyncThunk<any, void, Thunk>(
 // Selectors
 export const categoryListingsSelector = (state: RootState) =>
   state.home.categoryListings;
-export const servicesSelector = (state: RootState) =>
+
+export const serviceIdsSelector = (state: RootState) =>
   state.home.categoryListings.services;
-export const productsSelector = (state: RootState) =>
+
+export const productIdsSelector = (state: RootState) =>
   state.home.categoryListings.products;
-export const draftsSelector = (state: RootState) =>
-  state.home.categoryListings.drafts;
+
 export const fetchListingsInProgressSelector = (state: RootState) =>
   state.home.fetchListingsInProgress;
 export const fetchListingsErrorSelector = (state: RootState) =>

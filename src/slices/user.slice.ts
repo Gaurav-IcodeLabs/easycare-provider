@@ -126,7 +126,9 @@ export const fetchCurrentUser = createAsyncThunk<
     try {
       const parameters = {...currentUserParameters, ...params} as any;
       const response = await sdk.currentUser.show(parameters);
+
       const entities = denormalisedResponseEntities(response);
+      dispatch(addMarketplaceEntities({sdkResponse: entities}));
 
       // Handle deleted user
       if (entities[0]?.attributes?.profile?.metadata?.isDeleted === true) {

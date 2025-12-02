@@ -259,6 +259,34 @@
     "updateSuccess": "تم تحديث الخدمة",
     "updateSuccessMessage": "تم تحديث خدمتك بنجاح"
   },
+  "CreateProduct": {
+    "heading": "إنشاء منتج",
+    "editHeading": "تعديل المنتج",
+    "updateSuccess": "تم تحديث المنتج",
+    "updateSuccessMessage": "تم تحديث منتجك بنجاح"
+  },
+  "CreateProductForm": {
+    "title": "عنوان المنتج",
+    "titlePlaceholder": "أدخل عنوان المنتج",
+    "titleRequired": "العنوان مطلوب",
+    "maxLength": "العنوان طويل جداً",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صف منتجك",
+    "descriptionRequired": "الوصف مطلوب",
+    "price": "السعر",
+    "pricePlaceholder": "أدخل السعر",
+    "priceRequired": "السعر مطلوب",
+    "stock": "الكمية المتوفرة",
+    "stockPlaceholder": "أدخل الكمية المتوفرة",
+    "stockRequired": "الكمية المتوفرة مطلوبة",
+    "images": "صور المنتج",
+    "imagesRequired": "صورة واحدة على الأقل مطلوبة",
+    "waitForUpload": "يرجى الانتظار حتى يتم تحميل جميع الصور",
+    "submit": "إنشاء المنتج",
+    "submitting": "جاري الإنشاء...",
+    "update": "تحديث المنتج",
+    "updating": "جاري التحديث..."
+  },
   "CreateServiceForm": {
     "category": "الفئة",
     "categoryPlaceholder": "اختر فئة",

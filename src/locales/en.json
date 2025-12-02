@@ -259,6 +259,34 @@
     "updateSuccess": "Service Updated",
     "updateSuccessMessage": "Your service has been updated successfully"
   },
+  "CreateProduct": {
+    "heading": "Create Product",
+    "editHeading": "Edit Product",
+    "updateSuccess": "Product Updated",
+    "updateSuccessMessage": "Your product has been updated successfully"
+  },
+  "CreateProductForm": {
+    "title": "Product Title",
+    "titlePlaceholder": "Enter product title",
+    "titleRequired": "Title is required",
+    "maxLength": "Title is too long",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your product",
+    "descriptionRequired": "Description is required",
+    "price": "Price",
+    "pricePlaceholder": "Enter price",
+    "priceRequired": "Price is required",
+    "stock": "Stock Quantity",
+    "stockPlaceholder": "Enter available quantity",
+    "stockRequired": "Stock quantity is required",
+    "images": "Product Images",
+    "imagesRequired": "At least one image is required",
+    "waitForUpload": "Please wait for all images to finish uploading",
+    "submit": "Create Product",
+    "submitting": "Creating...",
+    "update": "Update Product",
+    "updating": "Updating..."
+  },
   "CreateServiceForm": {
     "category": "Category",
     "categoryPlaceholder": "Select a category",

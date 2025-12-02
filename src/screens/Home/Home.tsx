@@ -10,7 +10,7 @@ import {
 import React, {useEffect} from 'react';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {scale, width} from '../../utils';
-import {colors, SCREENS} from '../../constants';
+import {colors, ListingType, SCREENS} from '../../constants';
 import {GradientWrapper, AppText, ListingCard} from '../../components';
 import {easycare, magnify, placeholder} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
@@ -20,12 +20,11 @@ import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
 import {
   fetchServices,
   fetchProducts,
-  fetchDrafts,
-  servicesSelector,
-  productsSelector,
-  draftsSelector,
   fetchListingsInProgressSelector,
+  serviceIdsSelector,
+  productIdsSelector,
 } from '../../slices/home.slice';
+import {getOwnListingsById} from '../../slices/marketplaceData.slice';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -35,21 +34,21 @@ type HomeNavigationProp = NativeStackNavigationProp<
 export const Home: React.FC = () => {
   const navigation = useNavigation<HomeNavigationProp>();
   const dispatch = useAppDispatch();
+  const entities = useTypedSelector(state => state.marketplaceData.entities);
+  const servicesIds = useTypedSelector(serviceIdsSelector);
+  const productsIds = useTypedSelector(productIdsSelector);
+  const services = getOwnListingsById(entities, servicesIds);
+  const products = getOwnListingsById(entities, productsIds);
 
-  const services = useTypedSelector(servicesSelector);
-  const products = useTypedSelector(productsSelector);
-  const drafts = useTypedSelector(draftsSelector);
   const isLoading = useTypedSelector(fetchListingsInProgressSelector);
 
   useEffect(() => {
     loadAllListings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAllListings = () => {
     dispatch(fetchServices());
     dispatch(fetchProducts());
-    dispatch(fetchDrafts());
   };
 
   const handleProfilePress = () => {
@@ -60,14 +59,11 @@ export const Home: React.FC = () => {
     const listingType = listing?.attributes?.publicData?.listingType;
     const listingId = listing?.id?.uuid;
 
-    if (listingType === 'service') {
-      // Navigate to CreateService screen (which also handles editing)
+    if (listingType === ListingType.SERVICE) {
       navigation.navigate(SCREENS.CREATE_SERVICE, {listingId});
-    } else if (listingType === 'product') {
-      // Navigate to EditListing screen for products
-      navigation.navigate(SCREENS.EDITLISTING, {
+    } else if (listingType === ListingType.PRODUCT) {
+      navigation.navigate(SCREENS.CREATE_PRODUCT, {
         listingId,
-        listingType: 'product',
       });
     }
   };
@@ -129,15 +125,12 @@ export const Home: React.FC = () => {
           showsVerticalScrollIndicator={false}>
           {renderSection('Services', services)}
           {renderSection('Products', products)}
-          {renderSection('Drafts', drafts)}
 
-          {services.length === 0 &&
-            products.length === 0 &&
-            drafts.length === 0 && (
-              <View style={styles.emptyContainer}>
-                <AppText style={styles.emptyText}>No listings found</AppText>
-              </View>
-            )}
+          {services.length === 0 && products.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <AppText style={styles.emptyText}>No listings found</AppText>
+            </View>
+          )}
         </ScrollView>
       )}
     </GradientWrapper>
