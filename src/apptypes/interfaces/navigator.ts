@@ -42,6 +42,7 @@ export type MainStackParamList = {
   [SCREENS.CREATE_PRODUCT]: {listingId?: string};
   [SCREENS.VERIFT_OTP]: {token: string};
   [SCREENS.OTP_VERIFIED]: undefined;
+  [SCREENS.LISTINGS]: {listingType: string};
 };
 
 export type BottomTabParamList = {

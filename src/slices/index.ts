@@ -7,3 +7,4 @@ export {default as app} from './app.slice';
 export {default as createService} from './createService.slice';
 export {default as home} from './home.slice';
 export {default as createProduct} from './createProduct.slice';
+export {default as listings} from './listings.slice';

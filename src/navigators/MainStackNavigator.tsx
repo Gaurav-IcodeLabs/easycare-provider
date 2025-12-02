@@ -2,7 +2,13 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../apptypes';
 import {SCREENS} from '../constants';
-import {CreateService, CreateProduct, EditListing, Profile} from '../screens';
+import {
+  CreateService,
+  CreateProduct,
+  EditListing,
+  Profile,
+  Listings,
+} from '../screens';
 import {BottomTabNavigator} from './BottomTabNavigator';
 import {OtpVerified, VerifyOtp} from '../screens';
 import {phoneNumberVerifiedSelector} from '../slices/user.slice';
@@ -30,6 +36,7 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.EDITLISTING} component={EditListing} />
       <Screen name={SCREENS.CREATE_SERVICE} component={CreateService} />
       <Screen name={SCREENS.CREATE_PRODUCT} component={CreateProduct} />
+      <Screen name={SCREENS.LISTINGS} component={Listings} />
     </Navigator>
   );
 };

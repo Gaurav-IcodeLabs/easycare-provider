@@ -339,5 +339,12 @@
     "title": "Your listing has been submitted for review.",
     "description": "Our admin team will carefully review your details and approve it shortly.",
     "done": "Done"
+  },
+
+  "HOME": {
+    "servicelisting": "Service Listings",
+    "productlisting": "Product Listings",
+    "viewAll": "View All",
+    "noListings": "No listings found"
   }
 }

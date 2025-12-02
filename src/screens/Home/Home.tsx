@@ -6,11 +6,12 @@ import {
   View,
   ActivityIndicator,
   FlatList,
+  RefreshControl,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {scale, width} from '../../utils';
-import {colors, ListingType, SCREENS} from '../../constants';
+import {colors, ListingType, SCREENS, secondaryFont} from '../../constants';
 import {GradientWrapper, AppText, ListingCard} from '../../components';
 import {easycare, magnify, placeholder} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
@@ -25,6 +26,7 @@ import {
   productIdsSelector,
 } from '../../slices/home.slice';
 import {getOwnListingsById} from '../../slices/marketplaceData.slice';
+import {useTranslation} from 'react-i18next';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -34,6 +36,7 @@ type HomeNavigationProp = NativeStackNavigationProp<
 export const Home: React.FC = () => {
   const navigation = useNavigation<HomeNavigationProp>();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
   const entities = useTypedSelector(state => state.marketplaceData.entities);
   const servicesIds = useTypedSelector(serviceIdsSelector);
   const productsIds = useTypedSelector(productIdsSelector);
@@ -41,6 +44,7 @@ export const Home: React.FC = () => {
   const products = getOwnListingsById(entities, productsIds);
 
   const isLoading = useTypedSelector(fetchListingsInProgressSelector);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
     loadAllListings();
@@ -50,6 +54,12 @@ export const Home: React.FC = () => {
     dispatch(fetchServices());
     dispatch(fetchProducts());
   };
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([dispatch(fetchServices()), dispatch(fetchProducts())]);
+    setRefreshing(false);
+  }, [dispatch]);
 
   const handleProfilePress = () => {
     navigation.navigate(SCREENS.PROFILE);
@@ -78,14 +88,23 @@ export const Home: React.FC = () => {
     );
   };
 
-  const renderSection = (title: string, data: any[]) => {
+  const handleViewAll = (type: ListingType) => {
+    navigation.navigate(SCREENS.LISTINGS, {listingType: type});
+  };
+
+  const renderSection = (title: string, type: ListingType, data: any[]) => {
     if (data.length === 0) {
       return null;
     }
 
     return (
       <View style={styles.section}>
-        <AppText style={styles.sectionTitle}>{title}</AppText>
+        <View style={styles.sectionHeader}>
+          <AppText style={styles.sectionTitle}>{title}</AppText>
+          <TouchableOpacity onPress={() => handleViewAll(type)}>
+            <AppText style={styles.viewAll}>{t('HOME.viewAll')}</AppText>
+          </TouchableOpacity>
+        </View>
         <FlatList
           data={data}
           renderItem={renderListingItem}
@@ -99,7 +118,10 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <GradientWrapper>
+    <GradientWrapper
+      start={{x: 0, y: 0}}
+      end={{x: 0, y: 0.5}}
+      colors={[colors.deepBlue, colors.blue, colors.white]}>
       <ScreenHeader
         containerStyle={{paddingHorizontal: scale(20)}}
         renderLeft={() => (
@@ -115,20 +137,36 @@ export const Home: React.FC = () => {
         )}
       />
 
-      {isLoading ? (
+      {isLoading && !refreshing ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.deepBlue} />
         </View>
       ) : (
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}>
-          {renderSection('Services', services)}
-          {renderSection('Products', products)}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.deepBlue}
+              colors={[colors.deepBlue]}
+            />
+          }>
+          {renderSection(
+            t('HOME.servicelisting'),
+            ListingType.SERVICE,
+            services,
+          )}
+          {renderSection(
+            t('HOME.productlisting'),
+            ListingType.PRODUCT,
+            products,
+          )}
 
           {services.length === 0 && products.length === 0 && (
             <View style={styles.emptyContainer}>
-              <AppText style={styles.emptyText}>No listings found</AppText>
+              <AppText style={styles.emptyText}>{t('HOME.noListings')}</AppText>
             </View>
           )}
         </ScrollView>
@@ -178,17 +216,15 @@ const styles = StyleSheet.create({
     height: scale(125),
   },
   scrollContainer: {
-    paddingBottom: scale(20),
+    paddingVertical: scale(20),
+    gap: scale(20),
   },
-  section: {
-    marginTop: scale(20),
-  },
+  section: {gap: scale(12)},
   sectionTitle: {
     fontSize: scale(20),
-    fontWeight: '600',
+    ...secondaryFont('500'),
+    lineHeight: 28,
     color: colors.deepBlue,
-    paddingHorizontal: scale(20),
-    marginBottom: scale(15),
   },
   horizontalList: {
     paddingHorizontal: scale(20),
@@ -212,5 +248,17 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: scale(16),
     color: colors.neutralDark,
+  },
+  viewAll: {
+    fontSize: scale(14),
+    fontWeight: '500',
+    ...secondaryFont('400'),
+    color: colors.deepBlue,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: scale(20),
   },
 });
