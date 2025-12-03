@@ -36,6 +36,7 @@ interface LoginFormProps {
   onBiometricLogin: () => void;
   onGoogleLogin: () => void;
   onAppleLogin?: () => void;
+  onFacebookLogin?: () => void;
 }
 
 const LoginForm = ({
@@ -44,6 +45,7 @@ const LoginForm = ({
   biometricType,
   onGoogleLogin,
   onAppleLogin,
+  onFacebookLogin,
   biometricEnabled,
   onBiometricLogin,
 }: LoginFormProps) => {
@@ -166,6 +168,7 @@ const LoginForm = ({
             style={styles.socialButton}
             title={'Login.facebook'}
             titleStyle={styles.socialButtonText}
+            onPress={onFacebookLogin}
           />
         </View>
 

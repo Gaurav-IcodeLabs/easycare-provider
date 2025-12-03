@@ -42,7 +42,19 @@
 				<string>com.googleusercontent.apps.94441629146-4trr2etsmsuegjrrbjhjj1q0u4v3uo8r</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1014620760866445</string>
+			</array>
+		</dict>
 	</array>
+	<key>FacebookAppID</key>
+	<string>1014620760866445</string>
+	<key>FacebookClientToken</key>
+	<string>1e0914eb184e0d68b2d4a90e5a86f547</string>
+	<key>FacebookDisplayName</key>
+	<string>EasyCare</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -52,6 +64,10 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>easycareprovider</string>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

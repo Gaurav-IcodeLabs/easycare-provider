@@ -30,6 +30,7 @@ interface SignupFormProps {
   submitInProgress: boolean;
   onGoogleSignup?: () => void;
   onAppleSignup?: () => void;
+  onFacebookSignup?: () => void;
 }
 
 const SignupForm = ({
@@ -37,6 +38,7 @@ const SignupForm = ({
   submitInProgress,
   onGoogleSignup,
   onAppleSignup,
+  onFacebookSignup,
 }: SignupFormProps) => {
   const {t} = useTranslation();
   const navigation =
@@ -183,6 +185,7 @@ const SignupForm = ({
             style={styles.socialButton}
             title={'Login.facebook'}
             titleStyle={styles.socialButtonText}
+            onPress={onFacebookSignup}
           />
         </View>
 

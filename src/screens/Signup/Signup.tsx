@@ -18,6 +18,7 @@ import {useLanguage} from '../../hooks';
 import {
   signInWithGoogle,
   signInWithApple,
+  signInWithFacebook,
 } from '../../utils/socialAuth.helpers';
 
 export const Signup: React.FC = () => {
@@ -157,6 +158,48 @@ export const Signup: React.FC = () => {
     }
   };
 
+  const handleFacebookSignup = async () => {
+    try {
+      const userInfo = await signInWithFacebook();
+      await dispatch(signupWithIdp(userInfo)).unwrap();
+      showToast({
+        type: 'success',
+        title: t('Signup.successTitle'),
+        message: t('Signup.successMessage'),
+      });
+    } catch (error: any) {
+      console.log('Facebook Signup Error:', JSON.stringify(error, null, 2));
+
+      const statusCode = error?.statusCode;
+      const errorCode = error?.code;
+      let errorMessage = t('Signup.errorFacebookAuth');
+
+      if (statusCode === 403) {
+        errorMessage = t('Signup.errorIdpValidation');
+      } else if (statusCode === 409) {
+        if (errorCode === 'idp-profile-already-exists') {
+          errorMessage = t('Signup.errorIdpAlreadyLinked');
+        } else if (errorCode === 'email-taken') {
+          errorMessage = t('Signup.errorEmailExists');
+        } else if (errorCode === 'conflict-missing-key') {
+          errorMessage = t('Signup.errorMissingInfo');
+        } else {
+          errorMessage = t('Signup.errorUserExists');
+        }
+      } else if (statusCode === 400) {
+        errorMessage = t('Signup.errorInvalidInfo');
+      } else if (statusCode === 429) {
+        errorMessage = t('Signup.errorTooManyAttempts');
+      }
+
+      showToast({
+        type: 'error',
+        title: t('Signup.errorTitle'),
+        message: errorMessage,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.topSection, {paddingTop: top}]}>
@@ -170,6 +213,7 @@ export const Signup: React.FC = () => {
         submitInProgress={signupInProgress}
         onGoogleSignup={handleGoogleSignup}
         onAppleSignup={handleAppleSignup}
+        onFacebookSignup={handleFacebookSignup}
       />
     </View>
   );

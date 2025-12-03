@@ -1,7 +1,12 @@
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import {LoginManager, AccessToken, Profile} from 'react-native-fbsdk-next';
 import {jwtDecode} from 'jwt-decode';
-import {GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID} from '@env';
+import {
+  GOOGLE_WEB_CLIENT_ID,
+  GOOGLE_IOS_CLIENT_ID,
+  FACEBOOK_APP_ID,
+} from '@env';
 import {Platform} from 'react-native';
 
 // Recommended: Call this once at app startup (e.g., in App.tsx)
@@ -58,6 +63,57 @@ export const signInWithGoogle = async () => {
     };
   } catch (error: any) {
     console.error('Google Sign-In Error:', error);
+    throw error;
+  }
+};
+
+// Facebook Sign-In function
+export const signInWithFacebook = async () => {
+  try {
+    // Logout any previous session to ensure fresh login
+    await LoginManager.logOut();
+
+    // Perform Facebook login with required permissions
+    const result = await LoginManager.logInWithPermissions([
+      'public_profile',
+      'email',
+    ]);
+
+    if (result.isCancelled) {
+      throw new Error('User cancelled Facebook login');
+    }
+
+    // Get the access token
+    const data = await AccessToken.getCurrentAccessToken();
+
+    if (!data) {
+      throw new Error('Failed to get Facebook access token');
+    }
+
+    // Get user profile information
+    const profile = await Profile.getCurrentProfile();
+
+    if (!profile) {
+      throw new Error('Failed to get Facebook profile');
+    }
+
+    console.log('Facebook Sign-In Success:', {
+      email: profile.email,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      userId: profile.userID,
+    });
+
+    return {
+      idpId: 'facebook',
+      idpToken: data.accessToken,
+      idpClientId: FACEBOOK_APP_ID || '',
+      email: profile.email || `${profile.userID}@facebook.com`,
+      firstName: profile.firstName || 'Facebook',
+      lastName: profile.lastName || 'User',
+    };
+  } catch (error: any) {
+    console.error('Facebook Sign-In Error:', error);
     throw error;
   }
 };

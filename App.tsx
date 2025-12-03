@@ -22,6 +22,7 @@ import {ColorsProvider, ConfigurationProvider} from './src/context';
 import {mergeColors} from './src/constants';
 import {configureGoogleSignIn} from './src/utils/socialAuth.helpers';
 import {fetchServicesConfig} from './src/slices/marketplaceData.slice';
+import {Settings} from 'react-native-fbsdk-next';
 
 function App(): React.JSX.Element {
   const [isReady, setIsReady] = useState(false);
@@ -58,6 +59,9 @@ function App(): React.JSX.Element {
   useEffect(() => {
     initializeApp();
     configureGoogleSignIn();
+
+    // Initialize Facebook SDK
+    Settings.initializeSDK();
   }, []);
 
   // Optional: Show a minimal loading screen instead of empty fragment
