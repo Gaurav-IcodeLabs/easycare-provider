@@ -5,12 +5,13 @@ import {
   Modal,
   TouchableOpacity,
   ScrollView,
+  I18nManager,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {AppText, Button, GradientWrapper} from '../../../components';
 import {CheckBoxStandalone} from '../../../components/CheckBox/CheckBoxStandalone';
 import {colors, primaryFont} from '../../../constants';
-import {scale, fontScale} from '../../../utils';
+import {scale, fontScale, formatTime12Hour} from '../../../utils';
 import {TimePickerModal} from './TimePickerModal';
 
 interface TimeSlot {
@@ -331,7 +332,7 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
                                   openTimePicker(day, index, 'startTime')
                                 }>
                                 <AppText style={styles.timeText}>
-                                  {slot.startTime}
+                                  {formatTime12Hour(slot.startTime)}
                                 </AppText>
                               </TouchableOpacity>
                             </View>
@@ -346,7 +347,7 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
                                   openTimePicker(day, index, 'endTime')
                                 }>
                                 <AppText style={styles.timeText}>
-                                  {slot.endTime}
+                                  {formatTime12Hour(slot.endTime)}
                                 </AppText>
                               </TouchableOpacity>
                             </View>
@@ -446,7 +447,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
@@ -481,7 +482,7 @@ const styles = StyleSheet.create({
     marginBottom: scale(12),
   },
   timezoneSelector: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: colors.lightGray,
@@ -521,7 +522,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.lightGray,
   },
   dayRow: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     paddingVertical: scale(12),
   },
@@ -529,18 +530,18 @@ const styles = StyleSheet.create({
     fontSize: fontScale(16),
     color: colors.textBlack,
     ...primaryFont('400'),
-    marginLeft: scale(12),
+    ...(I18nManager.isRTL ? {marginRight: scale(12)} : {marginLeft: scale(12)}),
     textTransform: 'capitalize',
   },
   slotsContainer: {
     marginTop: scale(12),
-    marginLeft: scale(32),
+    ...(I18nManager.isRTL ? {marginRight: scale(32)} : {marginLeft: scale(32)}),
   },
   slotRow: {
     marginBottom: scale(12),
   },
   timeInputs: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     gap: scale(8),
     alignItems: 'flex-end',
   },
@@ -568,7 +569,7 @@ const styles = StyleSheet.create({
     ...primaryFont('400'),
   },
   seatsInput: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     backgroundColor: colors.lightGray,
     borderRadius: scale(6),
@@ -596,7 +597,7 @@ const styles = StyleSheet.create({
   removeSlotButton: {
     position: 'absolute',
     top: 0,
-    right: 0,
+    ...(I18nManager.isRTL ? {left: 0} : {right: 0}),
     width: scale(24),
     height: scale(24),
     backgroundColor: colors.error,

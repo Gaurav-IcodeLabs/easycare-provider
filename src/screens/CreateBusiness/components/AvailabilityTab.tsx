@@ -1,9 +1,21 @@
 import React, {FC} from 'react';
-import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  I18nManager,
+} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {AppText} from '../../../components';
 import {colors, primaryFont} from '../../../constants';
-import {scale, fontScale} from '../../../utils';
+import {
+  scale,
+  fontScale,
+  formatDateMedium,
+  formatDateShort,
+  formatTimeRange,
+} from '../../../utils';
 
 interface TimeSlot {
   startTime: string;
@@ -51,16 +63,6 @@ export const AvailabilityTab: FC<AvailabilityTabProps> = ({
     console.log('🎯 AvailabilityTab received exceptions:', exceptions);
     console.log('🎯 Exceptions count:', exceptions.length);
   }, [exceptions]);
-
-  const getDateDisplay = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
 
   const getNextWeekDates = () => {
     const today = new Date();
@@ -127,13 +129,7 @@ export const AvailabilityTab: FC<AvailabilityTabProps> = ({
               <AppText style={styles.dayName}>
                 {t(`CreateBusiness.days.${dayName}`)}
               </AppText>
-              <AppText style={styles.dayDate}>
-                {date.toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </AppText>
+              <AppText style={styles.dayDate}>{formatDateMedium(date)}</AppText>
               {isAvailable ? (
                 <View>
                   <View style={styles.availableBadge}>
@@ -145,7 +141,7 @@ export const AvailabilityTab: FC<AvailabilityTabProps> = ({
                   {getDaySlots(date).map((slot, idx) => (
                     <View key={idx} style={styles.slotInfo}>
                       <AppText style={styles.slotTime}>
-                        {slot.startTime} - {slot.endTime}
+                        {formatTimeRange(slot.startTime, slot.endTime)}
                       </AppText>
                       <AppText style={styles.slotSeats}>
                         {slot.seats} {t('CreateBusiness.seatsAvailable')}
@@ -191,10 +187,10 @@ export const AvailabilityTab: FC<AvailabilityTabProps> = ({
                 </View>
                 <AppText style={styles.exceptionDates}>
                   {exception.startDate === exception.endDate
-                    ? getDateDisplay(exception.startDate).split(',')[0]
-                    : `${exception.startDate.split('-')[2]} - ${
-                        exception.endDate.split('-')[2]
-                      }`}
+                    ? formatDateShort(exception.startDate)
+                    : `${formatDateShort(
+                        exception.startDate,
+                      )} - ${formatDateShort(exception.endDate)}`}
                 </AppText>
               </View>
               <TouchableOpacity
@@ -252,7 +248,7 @@ const styles = StyleSheet.create({
     marginBottom: scale(12),
   },
   availableBadge: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
   },
   availableDot: {
@@ -260,7 +256,7 @@ const styles = StyleSheet.create({
     height: scale(8),
     borderRadius: scale(4),
     backgroundColor: colors.primary,
-    marginRight: scale(8),
+    ...(I18nManager.isRTL ? {marginLeft: scale(8)} : {marginRight: scale(8)}),
   },
   availableText: {
     fontSize: fontScale(14),
@@ -299,7 +295,7 @@ const styles = StyleSheet.create({
     gap: scale(12),
   },
   exceptionCard: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: colors.lightGray,
@@ -310,7 +306,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   exceptionIndicator: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     marginBottom: scale(4),
   },
@@ -318,7 +314,7 @@ const styles = StyleSheet.create({
     width: scale(8),
     height: scale(8),
     borderRadius: scale(4),
-    marginRight: scale(8),
+    ...(I18nManager.isRTL ? {marginLeft: scale(8)} : {marginRight: scale(8)}),
   },
   unavailableDot: {
     backgroundColor: colors.error,

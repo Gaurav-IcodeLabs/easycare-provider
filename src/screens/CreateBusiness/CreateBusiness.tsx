@@ -1,9 +1,18 @@
-import {FlatList, StyleSheet, View, Dimensions, ScrollView} from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  Dimensions,
+  ScrollView,
+  I18nManager,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import React, {FC, useState, useRef} from 'react';
 import {colors, primaryFont} from '../../constants';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {backIcon} from '../../assets';
-import {AppText, ListingSuccessModal, Button} from '../../components';
+import {AppText, ListingSuccessModal} from '../../components';
 import {useTranslation} from 'react-i18next';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {fontScale, scale, useToast} from '../../utils';
@@ -334,7 +343,19 @@ export const CreateBusiness: FC = () => {
 
       await dispatch(requestPublishBusiness(publishData)).unwrap();
 
-      setShowModal(true);
+      if (isEditMode) {
+        // Show toast for updates
+        showToast({
+          type: 'success',
+          title: t('CreateBusiness.success'),
+          message: t('CreateBusiness.businessUpdatedSuccessfully'),
+        });
+        dispatch(resetCreateBusiness());
+        navigation.goBack();
+      } else {
+        // Show modal for new listings
+        setShowModal(true);
+      }
     } catch (error: any) {
       console.error('Error creating business:', error);
       showToast({
@@ -477,27 +498,38 @@ export const CreateBusiness: FC = () => {
           {paddingBottom: bottom || scale(20)},
         ]}>
         {index > 0 && (
-          <Button
-            title={t('CreateBusiness.back')}
+          <TouchableOpacity
             onPress={handleBack}
             disabled={isLoading}
-            style={styles.button}
-            textStyle={styles.backButtonText}
-          />
+            style={[styles.button, styles.backButton]}
+            activeOpacity={0.7}>
+            <AppText style={styles.backButtonText}>
+              {t('CreateBusiness.back')}
+            </AppText>
+          </TouchableOpacity>
         )}
-        <Button
-          title={
-            index === steps.length - 1
-              ? isEditMode
-                ? t('CreateBusiness.updateBusiness')
-                : t('CreateBusiness.publish')
-              : t('CreateBusiness.next')
-          }
+        <TouchableOpacity
           onPress={handleNext}
-          loader={isLoading}
           disabled={isLoading}
-          style={[styles.button, index === 0 && styles.fullWidthButton]}
-        />
+          style={[
+            styles.button,
+            styles.primaryButton,
+            index === 0 && styles.fullWidthButton,
+            isLoading && styles.buttonDisabled,
+          ]}
+          activeOpacity={0.7}>
+          {isLoading ? (
+            <ActivityIndicator color={colors.white} />
+          ) : (
+            <AppText style={styles.primaryButtonText}>
+              {index === steps.length - 1
+                ? isEditMode
+                  ? t('CreateBusiness.updateBusiness')
+                  : t('CreateBusiness.publish')
+                : t('CreateBusiness.next')}
+            </AppText>
+          )}
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -549,7 +581,7 @@ const styles = StyleSheet.create({
     ...primaryFont('500'),
   },
   stepIndicatorContainer: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: scale(20),
@@ -595,8 +627,7 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     paddingHorizontal: scale(20),
-    paddingTop: scale(16),
-    paddingBottom: scale(20),
+    paddingVertical: scale(15),
     gap: scale(12),
     backgroundColor: colors.white,
     borderTopWidth: 1,
@@ -612,9 +643,29 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+    height: scale(48),
+    borderRadius: scale(50),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButton: {
+    backgroundColor: colors.lightGray,
   },
   backButtonText: {
     color: colors.textBlack,
+    fontSize: fontScale(16),
+    ...primaryFont('600'),
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
+  },
+  primaryButtonText: {
+    color: colors.white,
+    fontSize: fontScale(16),
+    ...primaryFont('600'),
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   fullWidthButton: {
     flex: 1,

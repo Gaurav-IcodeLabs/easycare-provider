@@ -423,9 +423,11 @@
     "save": "Save",
     "back": "Back",
     "next": "Next",
-    "publish": "Publish Business Profile",
-    "updateBusiness": "Update Business Profile",
+    "publish": "Publish",
+    "updateBusiness": "Update",
     "error": "Error",
-    "errorMessage": "Something went wrong. Please try again."
+    "errorMessage": "Something went wrong. Please try again.",
+    "success": "Success",
+    "businessUpdatedSuccessfully": "Your business has been updated successfully."
   }
 }

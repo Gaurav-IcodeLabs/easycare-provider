@@ -511,6 +511,147 @@ function getTimeOfDay(currentTime, timeZone) {
   const formattedTime = moment.tz(currentTime, timeZone).format('HH:mm');
   return formattedTime;
 }
+
+/**
+ * Unified date formatting functions for consistent display across the app
+ */
+
+/**
+ * Format date for short display (e.g., "Mon, Jan 15")
+ * @param {string | Date} date - Date to format
+ * @returns {string} Formatted date string
+ */
+export const formatDateShort = (date: string | Date): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+/**
+ * Format date for long display (e.g., "Monday, January 15, 2024")
+ * @param {string | Date} date - Date to format
+ * @returns {string} Formatted date string
+ */
+export const formatDateLong = (date: string | Date): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
+/**
+ * Format date for medium display (e.g., "January 15, 2024")
+ * @param {string | Date} date - Date to format
+ * @returns {string} Formatted date string
+ */
+export const formatDateMedium = (date: string | Date): string => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return dateObj.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
+/**
+ * Format date range for display (e.g., "Mon, Jan 15 - Fri, Jan 19")
+ * @param {string | Date} startDate - Start date
+ * @param {string | Date} endDate - End date
+ * @returns {string} Formatted date range string
+ */
+export const formatDateRange = (
+  startDate: string | Date,
+  endDate: string | Date,
+): string => {
+  const start = formatDateShort(startDate);
+  const end = formatDateShort(endDate);
+  return `${start} - ${end}`;
+};
+
+/**
+ * Format time in 12-hour format (e.g., "2:30 PM")
+ * @param {string} time - Time string in HH:mm format
+ * @returns {string} Formatted time string
+ */
+export const formatTime12Hour = (time: string): string => {
+  const [hours, minutes] = time.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const displayHours = hours % 12 || 12;
+  return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+};
+
+/**
+ * Format time in 24-hour format (e.g., "14:30")
+ * @param {string} time - Time string in any format
+ * @returns {string} Formatted time string in HH:mm format
+ */
+export const formatTime24Hour = (time: string): string => {
+  // If already in HH:mm format, return as is
+  if (/^\d{2}:\d{2}$/.test(time)) {
+    return time;
+  }
+
+  // Parse from 12-hour format if needed
+  const match = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (match) {
+    let hours = parseInt(match[1], 10);
+    const minutes = match[2];
+    const period = match[3].toUpperCase();
+
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+  }
+
+  return time;
+};
+
+/**
+ * Format time range (e.g., "9:00 AM - 5:00 PM")
+ * @param {string} startTime - Start time in HH:mm format
+ * @param {string} endTime - End time in HH:mm format
+ * @param {boolean} use24Hour - Whether to use 24-hour format (default: false)
+ * @returns {string} Formatted time range string
+ */
+export const formatTimeRange = (
+  startTime: string,
+  endTime: string,
+  use24Hour: boolean = false,
+): string => {
+  if (use24Hour) {
+    return `${formatTime24Hour(startTime)} - ${formatTime24Hour(endTime)}`;
+  }
+  return `${formatTime12Hour(startTime)} - ${formatTime12Hour(endTime)}`;
+};
+
+/**
+ * Format date and time together (e.g., "Mon, Jan 15 at 2:30 PM")
+ * @param {string | Date} date - Date to format
+ * @param {string} time - Time in HH:mm format
+ * @param {boolean} use24Hour - Whether to use 24-hour format (default: false)
+ * @returns {string} Formatted date and time string
+ */
+export const formatDateTime = (
+  date: string | Date,
+  time: string,
+  use24Hour: boolean = false,
+): string => {
+  const formattedDate = formatDateShort(date);
+  const formattedTime = use24Hour
+    ? formatTime24Hour(time)
+    : formatTime12Hour(time);
+  return `${formattedDate} at ${formattedTime}`;
+};
 const findBookingUnitBoundaries = params => {
   const {
     cumulatedResults,

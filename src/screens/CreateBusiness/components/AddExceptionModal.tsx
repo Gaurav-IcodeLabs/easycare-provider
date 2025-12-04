@@ -5,12 +5,13 @@ import {
   Modal,
   TouchableOpacity,
   ScrollView,
+  I18nManager,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {AppText, Button, GradientWrapper} from '../../../components';
 import {RadioButton} from '../../../components/RadioButton';
 import {colors, primaryFont} from '../../../constants';
-import {scale, fontScale} from '../../../utils';
+import {scale, fontScale, formatDateRange} from '../../../utils';
 import {CalendarPicker} from './CalendarPicker';
 
 interface AddExceptionModalProps {
@@ -101,18 +102,6 @@ export const AddExceptionModal: FC<AddExceptionModalProps> = ({
     onClose();
   };
 
-  const formatDateDisplay = (dateStr: string) => {
-    if (!dateStr) {
-      return '';
-    }
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   return (
     <Modal
       visible={visible}
@@ -173,9 +162,7 @@ export const AddExceptionModal: FC<AddExceptionModalProps> = ({
                     (!startDate || !endDate) && styles.placeholderText,
                   ]}>
                   {startDate && endDate
-                    ? `${formatDateDisplay(startDate)} - ${formatDateDisplay(
-                        endDate,
-                      )}`
+                    ? formatDateRange(startDate, endDate)
                     : 'Select date range'}
                 </AppText>
               </TouchableOpacity>
@@ -215,7 +202,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scale(16),
@@ -252,7 +239,7 @@ const styles = StyleSheet.create({
     marginBottom: scale(24),
   },
   radioOption: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     marginBottom: scale(16),
   },
@@ -260,7 +247,7 @@ const styles = StyleSheet.create({
     fontSize: fontScale(16),
     color: colors.textBlack,
     ...primaryFont('400'),
-    marginLeft: scale(12),
+    ...(I18nManager.isRTL ? {marginRight: scale(12)} : {marginLeft: scale(12)}),
   },
   label: {
     fontSize: fontScale(16),

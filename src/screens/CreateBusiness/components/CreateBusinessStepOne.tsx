@@ -67,7 +67,12 @@ const LocationPickerField: FC<LocationPickerFieldProps> = ({value, error}) => {
           padding: scale(12),
           backgroundColor: colors.lightGray,
         }}>
-        <AppText style={{fontSize: scale(14), color: colors.textBlack}}>
+        <AppText
+          style={{
+            fontSize: scale(14),
+            color: colors.textBlack,
+            textAlign: 'left',
+          }}>
           {address}
         </AppText>
       </View>

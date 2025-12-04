@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  I18nManager,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
@@ -53,6 +54,7 @@ export const Home: React.FC = () => {
 
   useEffect(() => {
     loadAllListings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAllListings = () => {
@@ -349,7 +351,7 @@ const styles = StyleSheet.create({
     color: colors.deepBlue,
   },
   sectionHeader: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: scale(20),
@@ -364,6 +366,7 @@ const styles = StyleSheet.create({
     ...secondaryFont('600'),
     color: colors.white,
     marginBottom: scale(12),
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
   setupDescription: {
     fontSize: scale(16),
@@ -371,13 +374,14 @@ const styles = StyleSheet.create({
     color: colors.white,
     marginBottom: scale(32),
     opacity: 0.9,
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
   setupSteps: {
     gap: scale(20),
     marginBottom: scale(40),
   },
   setupStep: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     gap: scale(16),
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     padding: scale(16),
@@ -404,12 +408,14 @@ const styles = StyleSheet.create({
     ...secondaryFont('600'),
     color: colors.white,
     marginBottom: scale(4),
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
   stepDescription: {
     fontSize: scale(14),
     ...secondaryFont('400'),
     color: colors.white,
     opacity: 0.8,
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
   setupButton: {
     backgroundColor: colors.white,

@@ -344,7 +344,16 @@
     "servicelisting": "قوائم الخدمات",
     "productlisting": "قوائم المنتجات",
     "viewAll": "عرض الكل",
-    "noListings": "لا توجد قوائم"
+    "noListings": "لا توجد قوائم",
+    "welcomeProvider": "مرحباً بك في EasyCare للمزودين",
+    "setupDescription": "أكمل هذه الخطوات لبدء تقديم خدماتك ومنتجاتك للعملاء",
+    "setupBusiness": "إعداد الملف التجاري",
+    "setupBusinessDesc": "أضف معلومات عملك والموقع والصور",
+    "setupAvailability": "حدد أوقات التوفر",
+    "setupAvailabilityDesc": "قم بتكوين ساعات عملك وجدولك الزمني",
+    "setupPayout": "إعداد تفاصيل الدفع",
+    "setupPayoutDesc": "أضف معلومات الدفع الخاصة بك لتلقي الأرباح",
+    "getStarted": "ابدأ الآن"
   },
   "CreateBusiness": {
     "heading": "إنشاء ملف تجاري",
@@ -416,6 +425,8 @@
     "publish": "نشر الملف التجاري",
     "updateBusiness": "تحديث الملف التجاري",
     "error": "خطأ",
-    "errorMessage": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    "errorMessage": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "success": "نجح",
+    "businessUpdatedSuccessfully": "تم تحديث ملفك التجاري بنجاح."
   }
 }
