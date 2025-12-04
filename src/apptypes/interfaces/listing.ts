@@ -50,6 +50,7 @@ export enum ListingState {
 
 export enum ListingTypes {
   BUSINESS_PROFILE = 'business-profile',
+  BUSINESS = 'business',
   PRODUCT = 'product',
   SERVICE = 'service',
 }

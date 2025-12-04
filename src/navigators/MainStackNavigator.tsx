@@ -5,6 +5,7 @@ import {SCREENS} from '../constants';
 import {
   CreateService,
   CreateProduct,
+  CreateBusiness,
   EditListing,
   Profile,
   Listings,
@@ -36,6 +37,7 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.EDITLISTING} component={EditListing} />
       <Screen name={SCREENS.CREATE_SERVICE} component={CreateService} />
       <Screen name={SCREENS.CREATE_PRODUCT} component={CreateProduct} />
+      <Screen name={SCREENS.CREATE_BUSINESS} component={CreateBusiness} />
       <Screen name={SCREENS.LISTINGS} component={Listings} />
     </Navigator>
   );

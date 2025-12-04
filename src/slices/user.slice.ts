@@ -89,6 +89,7 @@ const userSlice = createSlice({
             state.currentUser,
             action.payload,
           );
+        } else {
         }
         state.currentUserShowError = null;
       })
@@ -125,10 +126,16 @@ export const fetchCurrentUser = createAsyncThunk<
   async (params = {}, {dispatch, extra: sdk, rejectWithValue}) => {
     try {
       const parameters = {...currentUserParameters, ...params} as any;
+
       const response = await sdk.currentUser.show(parameters);
 
+      if (!response || !response.data) {
+        throw new Error('Invalid response from currentUser.show');
+      }
+
       const entities = denormalisedResponseEntities(response);
-      dispatch(addMarketplaceEntities({sdkResponse: entities}));
+
+      dispatch(addMarketplaceEntities({sdkResponse: response}));
 
       // Handle deleted user
       if (entities[0]?.attributes?.profile?.metadata?.isDeleted === true) {
@@ -195,6 +202,11 @@ export const currentUserPhoneNumberSelector = (state: RootState) =>
   state.user.currentUser?.attributes.profile.protectedData?.phoneNumber;
 export const phoneNumberVerifiedSelector = (state: RootState) =>
   state.user.currentUser?.attributes.profile.publicData?.phoneNumberVerified;
+export const businessListingIdSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.profile.publicData?.businessListingId;
+export const businessListingSetupCompletedSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.profile.publicData
+    ?.businessListingSetupCompleted;
 export const hasIdentityProvidersSelector = (state: RootState) => {
   const identityProviders =
     state.user.currentUser?.attributes.identityProviders;

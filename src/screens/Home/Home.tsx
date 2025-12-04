@@ -27,6 +27,7 @@ import {
 } from '../../slices/home.slice';
 import {getOwnListingsById} from '../../slices/marketplaceData.slice';
 import {useTranslation} from 'react-i18next';
+import {businessListingSetupCompletedSelector} from '../../slices/user.slice';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -45,6 +46,10 @@ export const Home: React.FC = () => {
 
   const isLoading = useTypedSelector(fetchListingsInProgressSelector);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  const isBusinessListingSetup = useTypedSelector(
+    businessListingSetupCompletedSelector,
+  );
 
   useEffect(() => {
     loadAllListings();
@@ -116,6 +121,94 @@ export const Home: React.FC = () => {
       </View>
     );
   };
+
+  if (!isBusinessListingSetup) {
+    return (
+      <GradientWrapper
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 0.5}}
+        colors={[colors.deepBlue, colors.blue]}>
+        <ScreenHeader
+          containerStyle={{paddingHorizontal: scale(20)}}
+          renderLeft={() => (
+            <TouchableOpacity onPress={handleProfilePress}>
+              <Image source={placeholder} style={styles.left} />
+            </TouchableOpacity>
+          )}
+          renderCenter={() => <Image source={easycare} resizeMode="contain" />}
+        />
+        <View style={styles.setupContainer}>
+          <AppText style={styles.setupTitle}>
+            {t('HOME.welcomeProvider')}
+          </AppText>
+          <AppText style={styles.setupDescription}>
+            {t('HOME.setupDescription')}
+          </AppText>
+
+          <View style={styles.setupSteps}>
+            <TouchableOpacity
+              style={styles.setupStep}
+              onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
+              <View style={styles.stepNumber}>
+                <AppText style={styles.stepNumberText}>1</AppText>
+              </View>
+              <View style={styles.stepContent}>
+                <AppText style={styles.stepTitle}>
+                  {t('HOME.setupBusiness')}
+                </AppText>
+                <AppText style={styles.stepDescription}>
+                  {t('HOME.setupBusinessDesc')}
+                </AppText>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.setupStep}
+              onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
+              <View style={styles.stepNumber}>
+                <AppText style={styles.stepNumberText}>2</AppText>
+              </View>
+              <View style={styles.stepContent}>
+                <AppText style={styles.stepTitle}>
+                  {t('HOME.setupAvailability')}
+                </AppText>
+                <AppText style={styles.stepDescription}>
+                  {t('HOME.setupAvailabilityDesc')}
+                </AppText>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.setupStep}
+              onPress={() => {
+                // TODO: Navigate to payout setup screen
+                // navigation.navigate(SCREENS.SETUP_PAYOUT);
+              }}>
+              <View style={styles.stepNumber}>
+                <AppText style={styles.stepNumberText}>3</AppText>
+              </View>
+              <View style={styles.stepContent}>
+                <AppText style={styles.stepTitle}>
+                  {t('HOME.setupPayout')}
+                </AppText>
+                <AppText style={styles.stepDescription}>
+                  {t('HOME.setupPayoutDesc')}
+                </AppText>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            style={styles.setupButton}
+            onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
+            <AppText style={styles.setupButtonText}>
+              {t('HOME.getStarted')}
+            </AppText>
+          </TouchableOpacity>
+        </View>
+      </GradientWrapper>
+    );
+  }
 
   return (
     <GradientWrapper
@@ -260,5 +353,74 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: scale(20),
+  },
+  setupContainer: {
+    flex: 1,
+    paddingHorizontal: scale(20),
+    paddingTop: scale(40),
+  },
+  setupTitle: {
+    fontSize: scale(24),
+    ...secondaryFont('600'),
+    color: colors.white,
+    marginBottom: scale(12),
+  },
+  setupDescription: {
+    fontSize: scale(16),
+    ...secondaryFont('400'),
+    color: colors.white,
+    marginBottom: scale(32),
+    opacity: 0.9,
+  },
+  setupSteps: {
+    gap: scale(20),
+    marginBottom: scale(40),
+  },
+  setupStep: {
+    flexDirection: 'row',
+    gap: scale(16),
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    padding: scale(16),
+    borderRadius: scale(12),
+  },
+  stepNumber: {
+    width: scale(40),
+    height: scale(40),
+    borderRadius: scale(20),
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepNumberText: {
+    fontSize: scale(18),
+    ...secondaryFont('600'),
+    color: colors.deepBlue,
+  },
+  stepContent: {
+    flex: 1,
+  },
+  stepTitle: {
+    fontSize: scale(16),
+    ...secondaryFont('600'),
+    color: colors.white,
+    marginBottom: scale(4),
+  },
+  stepDescription: {
+    fontSize: scale(14),
+    ...secondaryFont('400'),
+    color: colors.white,
+    opacity: 0.8,
+  },
+  setupButton: {
+    backgroundColor: colors.white,
+    paddingVertical: scale(16),
+    borderRadius: scale(100),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  setupButtonText: {
+    fontSize: scale(16),
+    ...secondaryFont('600'),
+    color: colors.deepBlue,
   },
 });
