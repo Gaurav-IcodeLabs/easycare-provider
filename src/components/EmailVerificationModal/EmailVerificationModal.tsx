@@ -14,14 +14,13 @@ import {
   setShowVerifyEmailModal,
   isAuthenticatedSelector,
 } from '../../slices/auth.slice';
-import {useColors} from '../../context';
 import {scale} from '../../utils';
 import {useLanguage} from '../../hooks';
+import {colors} from '../../constants';
 
 export const EmailVerificationModal: React.FC = () => {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
-  const colors = useColors() as any;
   const {isArabic} = useLanguage();
   const email = useTypedSelector(currentUserEmailSelector);
   const emailVerified = useTypedSelector(currentUserEmailVerifiedSelector);
@@ -84,15 +83,15 @@ export const EmailVerificationModal: React.FC = () => {
             <Text style={styles.closeText}>✕</Text>
           </TouchableOpacity>
 
-          <AppText style={[styles.title, {color: colors.textPrimary}]}>
+          <AppText style={[styles.title, {color: colors.black}]}>
             {t('EmailVerification.modalTitle')}
           </AppText>
 
-          <AppText style={[styles.description, {color: colors.textSecondary}]}>
+          <AppText style={[styles.description, {color: colors.lightblack}]}>
             {t('EmailVerification.modalDescription')}
           </AppText>
 
-          <AppText style={[styles.email, {color: colors.textPrimary}]}>
+          <AppText style={[styles.email, {color: colors.black}]}>
             {email}
           </AppText>
 
@@ -104,7 +103,7 @@ export const EmailVerificationModal: React.FC = () => {
           />
 
           <TouchableOpacity onPress={handleClose}>
-            <Text style={[styles.laterText, {color: colors.textSecondary}]}>
+            <Text style={[styles.laterText, {color: colors.lightblack}]}>
               {t('EmailVerification.laterButton')}
             </Text>
           </TouchableOpacity>
