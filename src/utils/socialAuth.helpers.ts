@@ -6,8 +6,10 @@ import {
   GOOGLE_WEB_CLIENT_ID,
   GOOGLE_IOS_CLIENT_ID,
   FACEBOOK_APP_ID,
+  APPLE_IDP_CLIENT_ID,
 } from '@env';
 import {Platform} from 'react-native';
+import {createOpenIdpToken} from './api';
 
 // Recommended: Call this once at app startup (e.g., in App.tsx)
 export const configureGoogleSignIn = () => {
@@ -119,72 +121,70 @@ export const signInWithFacebook = async () => {
 };
 
 // Apple Sign-In function
-export const signInWithApple = async () => {
+export const signInWithApple = async (): Promise<{
+  idpId: string;
+  idpToken: string;
+  idpClientId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}> => {
   try {
-    // Check if Apple Sign-In is supported (iOS 13+)
+    // Early exit for non-iOS platforms
     if (Platform.OS !== 'ios') {
       throw new Error('Apple Sign-In is only available on iOS');
     }
 
-    // Perform the sign-in request
-    const appleAuthRequestResponse = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-    });
+    // Perform Apple authentication request
+    const {user, identityToken, email, fullName} =
+      await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
 
-    // Get the credential state
-    const credentialState = await appleAuth.getCredentialStateForUser(
-      appleAuthRequestResponse.user,
-    );
-
-    // Verify the credential state is authorized
+    // Verify credential state
+    const credentialState = await appleAuth.getCredentialStateForUser(user);
     if (credentialState !== appleAuth.State.AUTHORIZED) {
       throw new Error('Apple Sign-In failed: Not authorized');
     }
 
-    const {identityToken, email, fullName} = appleAuthRequestResponse;
-
+    // Identity token is required
     if (!identityToken) {
       throw new Error('Apple Sign-In failed: No identity token');
     }
 
-    // Extract email from JWT if not provided directly
-    // Apple only provides email/name on first sign-in, but email is always in the JWT
-    let userEmail = email;
+    // Extract email: direct, from JWT, or fallback
+    let userEmail: string | null = email ?? null;
     if (!userEmail) {
       try {
-        const decodedToken = jwtDecode<{email?: string}>(identityToken);
-        userEmail = decodedToken?.email || null;
-        console.log('Extracted email from JWT:', userEmail);
-      } catch (error) {
-        console.error('Failed to decode JWT:', error);
+        const decoded = jwtDecode<{email?: string}>(identityToken);
+        userEmail = decoded.email ?? null;
+      } catch (decodeError) {
+        console.error('Failed to decode JWT:', decodeError);
       }
     }
+    userEmail = userEmail ?? `${user}@privaterelay.appleid.com`;
 
-    // If still no email, use a fallback
-    if (!userEmail) {
-      userEmail = `${appleAuthRequestResponse.user}@privaterelay.appleid.com`;
-    }
+    // Extract name (only available on first sign-in)
+    const firstName = fullName?.givenName ?? 'Apple';
+    const lastName = fullName?.familyName ?? 'User';
 
-    // Extract name from fullName object
-    // Note: Apple only provides name on FIRST sign-in
-    const firstName = fullName?.givenName || 'Apple';
-    const lastName = fullName?.familyName || 'User';
-
-    console.log('Apple Sign-In Success:', {
+    // Create OpenID token via backend
+    const {idpToken} = await createOpenIdpToken({
       email: userEmail,
       firstName,
       lastName,
-      hasFullName: !!(fullName?.givenName || fullName?.familyName),
+      email_verified: true,
     });
 
+    // Return Sharetribe-compatible payload
     return {
       idpId: 'apple',
-      idpToken: identityToken || '',
-      idpClientId: 'com.app.EasyCareProvider', // Your app's bundle ID (from JWT aud field)
+      idpToken,
+      idpClientId: APPLE_IDP_CLIENT_ID,
       email: userEmail,
-      firstName: firstName || 'Apple',
-      lastName: lastName || 'User',
+      firstName,
+      lastName,
     };
   } catch (error: any) {
     console.error('Apple Sign-In Error:', error);

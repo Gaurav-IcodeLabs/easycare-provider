@@ -23,6 +23,7 @@ import {mergeColors} from './src/constants';
 import {configureGoogleSignIn} from './src/utils/socialAuth.helpers';
 import {fetchServicesConfig} from './src/slices/marketplaceData.slice';
 import {Settings} from 'react-native-fbsdk-next';
+import {authInfo} from './src/slices/auth.slice';
 
 function App(): React.JSX.Element {
   const [isReady, setIsReady] = useState(false);
@@ -34,6 +35,10 @@ function App(): React.JSX.Element {
       if (!i18n.isInitialized) {
         await i18n.init();
       }
+
+      // Check auth status first
+      await store.dispatch(authInfo()).unwrap();
+
       const res: any = await store.dispatch(fetchAppAssets()).unwrap();
       if (res.appConfig) {
         setConfig({
@@ -44,7 +49,6 @@ function App(): React.JSX.Element {
       await store.dispatch(fetchServicesConfig()).unwrap();
       // Add other async initializations here:
       // - Load fonts
-      // - Check auth status
       // - Preload critical data
       // await Font.loadAsync(...);
     } catch (error) {
@@ -62,7 +66,7 @@ function App(): React.JSX.Element {
 
     // Initialize Facebook SDK
     Settings.initializeSDK();
-  }, []);
+  }, [initializeApp]);
 
   // Optional: Show a minimal loading screen instead of empty fragment
   if (!isReady) {
