@@ -2,6 +2,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import {LoginManager, AccessToken, Profile} from 'react-native-fbsdk-next';
 import {jwtDecode} from 'jwt-decode';
+import axios from 'axios';
 import {
   GOOGLE_WEB_CLIENT_ID,
   GOOGLE_IOS_CLIENT_ID,
@@ -84,7 +85,6 @@ export const signInWithFacebook = async () => {
     if (result.isCancelled) {
       throw new Error('User cancelled Facebook login');
     }
-
     // Get the access token
     const data = await AccessToken.getCurrentAccessToken();
 
@@ -94,23 +94,26 @@ export const signInWithFacebook = async () => {
 
     // Get user profile information
     const profile = await Profile.getCurrentProfile();
-
     if (!profile) {
       throw new Error('Failed to get Facebook profile');
     }
 
-    console.log('Facebook Sign-In Success:', {
-      email: profile.email,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      userId: profile.userID,
-    });
+    // Fetch email from Graph API (Profile API doesn't include email)
+    let email = '';
+    try {
+      const {data: userData} = await axios.get(
+        `https://graph.facebook.com/me?fields=email&access_token=${data.accessToken}`,
+      );
+      email = userData.email || '';
+    } catch (emailError) {
+      console.warn('Failed to fetch email from Facebook:', emailError);
+    }
 
     return {
       idpId: 'facebook',
       idpToken: data.accessToken,
       idpClientId: FACEBOOK_APP_ID || '',
-      email: profile.email || `${profile.userID}@facebook.com`,
+      email: email || `${profile.userID}@facebook.com`,
       firstName: profile.firstName || 'Facebook',
       lastName: profile.lastName || 'User',
     };

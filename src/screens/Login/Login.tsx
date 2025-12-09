@@ -262,23 +262,22 @@ export const Login: React.FC = () => {
   const handleFacebookLogin = async () => {
     try {
       const userInfo = await signInWithFacebook();
-      console.log('Facebook userInfo', userInfo);
 
-      // const {idpToken, idpClientId, idpId} = userInfo ?? {};
+      const {idpToken, idpClientId, idpId} = userInfo ?? {};
 
-      // await dispatch(
-      //   loginWithIdp({
-      //     idpToken,
-      //     idpClientId,
-      //     idpId,
-      //   }),
-      // ).unwrap();
+      await dispatch(
+        loginWithIdp({
+          idpToken,
+          idpClientId,
+          idpId,
+        }),
+      ).unwrap();
 
-      // showToast({
-      //   type: 'success',
-      //   title: t('Login.successTitle'),
-      //   message: t('Login.successMessage'),
-      // });
+      showToast({
+        type: 'success',
+        title: t('Login.successTitle'),
+        message: t('Login.successMessage'),
+      });
     } catch (error: any) {
       console.log('Facebook Login Error:', JSON.stringify(error, null, 2));
 
