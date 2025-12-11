@@ -187,7 +187,86 @@ export const updateCurrentUser = createAsyncThunk<
   },
 );
 
+export const changeUserEmail = createAsyncThunk<
+  void,
+  {currentPassword: string; email: string},
+  Thunk
+>(
+  'user/changeUserEmail',
+  async ({currentPassword, email}, {dispatch, extra: sdk, rejectWithValue}) => {
+    try {
+      await sdk.currentUser.changeEmail({
+        currentPassword,
+        email,
+      });
+
+      // Refresh user info after email change
+      await dispatch(authInfo());
+      await dispatch(fetchCurrentUser({}));
+    } catch (error: any) {
+      // Handle specific Sharetribe API errors
+      if (error?.status === 403) {
+        // Forbidden - incorrect password
+        return rejectWithValue({
+          status: 403,
+          message: 'Incorrect current password',
+        });
+      } else if (error?.status === 409) {
+        // Conflict - email already in use
+        return rejectWithValue({
+          status: 409,
+          message: 'Email already in use',
+        });
+      } else if (error?.status === 422) {
+        // Unprocessable Entity - invalid email format or other validation errors
+        return rejectWithValue({
+          status: 422,
+          message: 'Invalid email format',
+        });
+      }
+
+      return rejectWithValue({
+        status: error?.status,
+        message: error?.message || 'Failed to change email',
+      });
+    }
+  },
+);
+
+export const uploadProfileImage = createAsyncThunk<
+  {id: string},
+  {file: any},
+  Thunk
+>('user/uploadProfileImage', async ({file}, {extra: sdk, rejectWithValue}) => {
+  try {
+    const response = await sdk.images.upload({
+      image: file,
+    });
+
+    // The response structure is: response.data.data.id.uuid
+    const imageId = response.data.data.id.uuid;
+
+    return {
+      id: imageId,
+    };
+  } catch (error: any) {
+    return rejectWithValue({
+      message: error?.message || 'Failed to upload profile image',
+    });
+  }
+});
+
 export const {setCurrentUser} = userSlice.actions;
+
+export const currentUserDisplayNameSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.profile.displayName;
+export const currentUserFirstNameSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.profile.firstName;
+export const currentUserLastNameSelector = (state: RootState) =>
+  state.user.currentUser?.attributes.profile.lastName;
+export const currentUserProfileImageUrlSelector = (state: RootState) =>
+  state.user.currentUser?.profileImage?.attributes?.variants?.['square-small']
+    ?.url;
 
 export const currentUserEmailSelector = (state: RootState) =>
   state.user.currentUser?.attributes.email;

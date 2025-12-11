@@ -7,6 +7,9 @@ import {
   CreateProduct,
   EditListing,
   Profile,
+  EditProfile,
+  ChangePassword,
+  ChangeEmail,
   Listings,
 } from '../screens';
 import {BottomTabNavigator} from './BottomTabNavigator';
@@ -33,6 +36,9 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.VERIFT_OTP} component={VerifyOtp} />
       <Screen name={SCREENS.OTP_VERIFIED} component={OtpVerified} />
       <Screen name={SCREENS.PROFILE} component={Profile} />
+      <Screen name={SCREENS.EDIT_PROFILE} component={EditProfile} />
+      <Screen name={SCREENS.CHANGE_PASSWORD} component={ChangePassword} />
+      <Screen name={SCREENS.CHANGE_EMAIL} component={ChangeEmail} />
       <Screen name={SCREENS.EDITLISTING} component={EditListing} />
       <Screen name={SCREENS.CREATE_SERVICE} component={CreateService} />
       <Screen name={SCREENS.CREATE_PRODUCT} component={CreateProduct} />

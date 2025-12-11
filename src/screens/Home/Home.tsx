@@ -13,7 +13,7 @@ import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {scale, width} from '../../utils';
 import {colors, ListingType, SCREENS, secondaryFont} from '../../constants';
 import {GradientWrapper, AppText, ListingCard} from '../../components';
-import {easycare, magnify, placeholder} from '../../assets';
+import {avatarPlaceholder, easycare, magnify, placeholder} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../apptypes';
@@ -27,6 +27,7 @@ import {
 } from '../../slices/home.slice';
 import {getOwnListingsById} from '../../slices/marketplaceData.slice';
 import {useTranslation} from 'react-i18next';
+import {currentUserProfileImageUrlSelector} from '../../slices/user.slice';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -42,6 +43,7 @@ export const Home: React.FC = () => {
   const productsIds = useTypedSelector(productIdsSelector);
   const services = getOwnListingsById(entities, servicesIds);
   const products = getOwnListingsById(entities, productsIds);
+  const profileImageUrl = useTypedSelector(currentUserProfileImageUrlSelector);
 
   const isLoading = useTypedSelector(fetchListingsInProgressSelector);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -126,7 +128,12 @@ export const Home: React.FC = () => {
         containerStyle={{paddingHorizontal: scale(20)}}
         renderLeft={() => (
           <TouchableOpacity onPress={handleProfilePress}>
-            <Image source={placeholder} style={styles.left} />
+            <Image
+              source={
+                profileImageUrl ? {uri: profileImageUrl} : avatarPlaceholder
+              }
+              style={styles.left}
+            />
           </TouchableOpacity>
         )}
         renderCenter={() => <Image source={easycare} resizeMode="contain" />}

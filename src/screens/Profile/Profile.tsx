@@ -18,13 +18,26 @@ import {
   GradientWrapper,
   LanguageChangeButton,
 } from '../../components';
-import {placeholder, profileEditIcon, rightup} from '../../assets';
+import {
+  avatarPlaceholder,
+  placeholder,
+  profileEditIcon,
+  rightup,
+} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {getProfileOptions, ProfileOption} from './helper';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
-import {resetAllSlices, useAppDispatch} from '../../sharetribeSetup';
+import {
+  resetAllSlices,
+  useAppDispatch,
+  useTypedSelector,
+} from '../../sharetribeSetup';
 import {logout} from '../../slices/auth.slice';
+import {
+  currentUserDisplayNameSelector,
+  currentUserProfileImageUrlSelector,
+} from '../../slices/user.slice';
 
 const WALLET_AMOUNT = '50 SAR';
 const GRADIENT_COLORS = [colors.deepBlue, colors.blue, colors.white];
@@ -35,7 +48,10 @@ export const Profile: React.FC = () => {
   const {t} = useTranslation();
   const isRTL = I18nManager.isRTL;
   const dispatch = useAppDispatch();
-
+  const currentUserDisplayName = useTypedSelector(
+    currentUserDisplayNameSelector,
+  );
+  const profileImageUrl = useTypedSelector(currentUserProfileImageUrlSelector);
   const handleBackPress = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -82,10 +98,15 @@ export const Profile: React.FC = () => {
     () => (
       <View style={styles.profileImageContainer}>
         <TouchableOpacity onPress={handleBackPress}>
-          <Image source={placeholder} style={styles.profileImage} />
+          <Image
+            source={
+              profileImageUrl ? {uri: profileImageUrl} : avatarPlaceholder
+            }
+            style={styles.profileImage}
+          />
         </TouchableOpacity>
         <AppText numberOfLines={2} style={styles.profileName}>
-          Mohammed Ziyad Awadh
+          {currentUserDisplayName}
         </AppText>
       </View>
     ),
@@ -134,6 +155,10 @@ export const Profile: React.FC = () => {
     [handleItemPress, isRTL, t],
   );
 
+  const handleEditProfile = useCallback(() => {
+    (navigation as any).navigate('EditProfile');
+  }, [navigation]);
+
   return (
     <GestureDetector gesture={swipeGesture}>
       <View style={styles.container}>
@@ -142,6 +167,7 @@ export const Profile: React.FC = () => {
             containerStyle={styles.headerContainer}
             renderLeft={renderProfileHeader}
             rightIcon={profileEditIcon}
+            rightIconPress={handleEditProfile}
           />
 
           <ScrollView

@@ -31,6 +31,7 @@ export type Colors =
   | 'blue'
   | 'moonStoneBlue'
   | 'textBlack'
+  | 'borderGray'
   | 'appleGreen'
   | 'white'
   | 'milkWhite'

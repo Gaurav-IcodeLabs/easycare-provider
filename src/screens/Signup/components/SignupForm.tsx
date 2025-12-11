@@ -10,11 +10,11 @@ import {
   TextInputField,
 } from '../../../components';
 import {
-  emailIcon,
   facebookIcon,
   googleIcon,
   appleIcon,
   lockIcon,
+  inputIcons,
 } from '../../../assets/images';
 import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -88,7 +88,7 @@ const SignupForm = ({
             name={'firstName'}
             labelKey="Signup.firstNameLabel"
             placeholder={'Signup.firstNamePlaceholder'}
-            leftIcon={lockIcon}
+            leftIcon={inputIcons.person}
             leftIconStyle={styles.iconStyle}
           />
           <TextInputField
@@ -96,7 +96,7 @@ const SignupForm = ({
             name={'lastName'}
             labelKey="Signup.lastNameLabel"
             placeholder={'Signup.lastNamePlaceholder'}
-            leftIcon={lockIcon}
+            leftIcon={inputIcons.person}
             leftIconStyle={styles.iconStyle}
           />
           <TextInputField
@@ -104,7 +104,7 @@ const SignupForm = ({
             name={'fullName'}
             labelKey="Signup.fullNameLabel"
             placeholder={'Signup.fullNamePlaceholder'}
-            leftIcon={lockIcon}
+            leftIcon={inputIcons.person}
             leftIconStyle={styles.iconStyle}
           />
 
@@ -114,7 +114,7 @@ const SignupForm = ({
             labelKey="Signup.emailLabel"
             keyboardType="email-address"
             placeholder={'Signup.emailPlaceholder'}
-            leftIcon={emailIcon}
+            leftIcon={inputIcons.email}
             leftIconStyle={styles.iconStyle}
           />
 

@@ -37,6 +37,8 @@ export type MainStackParamList = {
   [SCREENS.MAIN_TABS]: undefined;
   [SCREENS.HOME]: undefined;
   [SCREENS.PROFILE]: undefined;
+  [SCREENS.EDIT_PROFILE]: undefined;
+  [SCREENS.CHANGE_PASSWORD]: undefined;
   [SCREENS.EDITLISTING]: {listingId?: string; listingType?: string};
   [SCREENS.CREATE_SERVICE]: {listingId?: string};
   [SCREENS.CREATE_PRODUCT]: {listingId?: string};

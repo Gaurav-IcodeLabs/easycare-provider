@@ -16,7 +16,7 @@ export const colors: AppColors = {
   milkWhite: '#F4F8FF',
   white: '#FFFFFF',
   black: '#000000',
-
+  borderGray: '#E0E5ED',
   lightblack: '#1E1E1E',
   neutralDark: '#414854',
   red: '#FF0000',

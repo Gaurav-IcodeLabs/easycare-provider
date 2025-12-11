@@ -9,7 +9,7 @@ index cd625e5..5f09666 100644
  import {
    CountryCode,
 diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
-index b89c388..bcc7dc9 100644
+index b89c388..cb73fa6 100644
 --- a/node_modules/react-native-phone-number-input/lib/index.js
 +++ b/node_modules/react-native-phone-number-input/lib/index.js
 @@ -159,6 +159,7 @@ export default class PhoneInput extends PureComponent {
@@ -63,3 +63,36 @@ index b89c388..bcc7dc9 100644
            </View>
          </View>
        </CountryModalProvider>
+@@ -246,3 +250,31 @@ export const isValidNumber = (number, countryCode) => {
+     return false;
+   }
+ };
++
++export const parsePhoneNumber = (phoneNumberString) => {
++  try {
++    // Remove any spaces or special characters except +
++    const cleanNumber = phoneNumberString.replace(/[^\d+]/g, '');
++    
++    // Parse the number (phoneUtil will auto-detect country from the + prefix)
++    const parsedNumber = phoneUtil.parseAndKeepRawInput(cleanNumber);
++    
++    // Get country code (e.g., "IN" for India)
++    const countryCode = phoneUtil.getRegionCodeForNumber(parsedNumber);
++    
++    // Get calling code (e.g., "91" for India)
++    const callingCode = parsedNumber.getCountryCode().toString();
++    
++    // Get national number (e.g., "9879786732")
++    const phoneNumber = parsedNumber.getNationalNumber().toString();
++    
++    return {
++      callingCode,
++      phoneNumber,
++      countryCode,
++    };
++  } catch (err) {
++    console.error('Error parsing phone number:', err);
++    return null;
++  }
++};
+\ No newline at end of file

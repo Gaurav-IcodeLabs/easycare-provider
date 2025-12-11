@@ -59,6 +59,8 @@ export const faceid = require('./faceid.png');
 export const locIcon = require('./lockIcon.png');
 export const vaultIcon = require('./vaultIcon.png');
 export const success = require('./success.png');
+export const editIcon = require('./editIcon.png');
+export const avatarPlaceholder = require('./avatarPlaceholder.png');
 
 export const profileMenuIcons = {
   about: require('./aboutIcon.png'),
@@ -71,4 +73,11 @@ export const profileMenuIcons = {
   settings: require('./settingsIcon.png'),
   wallet: require('./walletIcon.png'),
   report: require('./reportIcon.png'),
+};
+
+export const inputIcons = {
+  person: require('./userInputIcon.png'),
+  email: require('./email.png'),
+  lock: require('./lockInputIcon.png'),
+  phone: require('./phoneInputIcon.png'),
 };

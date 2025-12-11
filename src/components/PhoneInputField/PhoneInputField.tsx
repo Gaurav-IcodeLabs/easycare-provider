@@ -1,5 +1,12 @@
 import React, {useRef, useState} from 'react';
-import {StyleSheet, TextInput, TextStyle, View, ViewStyle} from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  TextInput,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import {Control, Controller, FieldValues, Path} from 'react-hook-form';
 import {scale} from '../../utils';
@@ -16,9 +23,12 @@ interface PhoneInputFieldProps<T extends FieldValues> {
   labelKey?: string;
   inputContainerStyles?: ViewStyle;
   insideBottomSheet?: boolean;
+  labelStyle?: StyleProp<TextStyle>;
   setError: (name: Path<T>, error: {type: string; message?: string}) => void;
   clearErrors: (name: Path<T>) => void;
   placeholderKey?: string;
+  phoneInputRef?: React.RefObject<PhoneInput | null>;
+  defaultCode?: any;
 }
 
 const getInputStyle = (
@@ -37,9 +47,13 @@ export const PhoneInputField = <T extends FieldValues>({
   setError,
   clearErrors,
   placeholderKey,
+  phoneInputRef,
+  defaultCode = 'IN',
+  labelStyle = {},
 }: PhoneInputFieldProps<T>) => {
   const {t} = useTranslation();
-  const phoneInput = useRef<PhoneInput>(null);
+  const internalPhoneInput = useRef<PhoneInput>(null);
+  const phoneInput = phoneInputRef || internalPhoneInput;
   const {isArabic} = useLanguage();
   const [isFocused, setIsFocused] = useState(false);
   const label = labelKey ? t(labelKey) : undefined;
@@ -78,14 +92,14 @@ export const PhoneInputField = <T extends FieldValues>({
           <View style={styles.container}>
             {label && (
               <View style={styles.labelContainer}>
-                <AppText style={styles.text}>{label}</AppText>
+                <AppText style={[styles.text, labelStyle]}>{label}</AppText>
               </View>
             )}
 
             <PhoneInput
               ref={phoneInput}
               value={value}
-              defaultCode="IN"
+              defaultCode={defaultCode}
               layout="second"
               onChangeFormattedText={onChange}
               withDarkTheme={false}
@@ -107,8 +121,7 @@ export const PhoneInputField = <T extends FieldValues>({
               textInputProps={{
                 onFocus: () => setIsFocused(true),
                 onBlur: () => {
-                  setIsFocused(false);
-                  validatePhoneNumber(); // ← now uses fresh value from ref
+                  setIsFocused(false), validatePhoneNumber(); // ← now uses fresh value from ref
                 },
                 placeholderTextColor: colors.placeholder || colors.neutralDark,
                 allowFontScaling: false,
