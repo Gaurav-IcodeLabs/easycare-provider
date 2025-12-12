@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import {BlurView} from '@react-native-community/blur';
 import React, {FC, useState, useRef} from 'react';
 import {colors, primaryFont} from '../../constants';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
@@ -492,44 +493,49 @@ export const CreateBusiness: FC = () => {
       </ScrollView>
 
       {/* Sticky button inside each step */}
-      <View
-        style={[
-          styles.stickyButtonContainer,
-          {paddingBottom: bottom || scale(20)},
-        ]}>
-        {index > 0 && (
-          <TouchableOpacity
-            onPress={handleBack}
-            disabled={isLoading}
-            style={[styles.button, styles.backButton]}
-            activeOpacity={0.7}>
-            <AppText style={styles.backButtonText}>
-              {t('CreateBusiness.back')}
-            </AppText>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          onPress={handleNext}
-          disabled={isLoading}
-          style={[
-            styles.button,
-            styles.primaryButton,
-            index === 0 && styles.fullWidthButton,
-            isLoading && styles.buttonDisabled,
-          ]}
-          activeOpacity={0.7}>
-          {isLoading ? (
-            <ActivityIndicator color={colors.white} />
-          ) : (
-            <AppText style={styles.primaryButtonText}>
-              {index === steps.length - 1
-                ? isEditMode
-                  ? t('CreateBusiness.updateBusiness')
-                  : t('CreateBusiness.publish')
-                : t('CreateBusiness.next')}
-            </AppText>
+      <View style={styles.stickyButtonContainer}>
+        <BlurView
+          style={styles.blurBackground}
+          blurType={'light'}
+          blurAmount={10}
+          reducedTransparencyFallbackColor={colors.white}
+        />
+        <View
+          style={[styles.buttonWrapper, {paddingBottom: bottom || scale(20)}]}>
+          {index > 0 && (
+            <TouchableOpacity
+              onPress={handleBack}
+              disabled={isLoading}
+              style={[styles.button, styles.backButton]}
+              activeOpacity={0.7}>
+              <AppText style={styles.backButtonText}>
+                {t('CreateBusiness.back')}
+              </AppText>
+            </TouchableOpacity>
           )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleNext}
+            disabled={isLoading}
+            style={[
+              styles.button,
+              styles.primaryButton,
+              index === 0 && styles.fullWidthButton,
+              isLoading && styles.buttonDisabled,
+            ]}
+            activeOpacity={0.7}>
+            {isLoading ? (
+              <ActivityIndicator color={colors.white} />
+            ) : (
+              <AppText style={styles.primaryButtonText}>
+                {index === steps.length - 1
+                  ? isEditMode
+                    ? t('CreateBusiness.updateBusiness')
+                    : t('CreateBusiness.publish')
+                  : t('CreateBusiness.next')}
+              </AppText>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -616,6 +622,7 @@ const styles = StyleSheet.create({
     color: colors.textBlack,
     ...primaryFont('600'),
     marginBottom: scale(20),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   flatListContainer: {
     flex: 1,
@@ -625,21 +632,20 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    overflow: 'hidden',
+  },
+  blurBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  buttonWrapper: {
     flexDirection: 'row',
     paddingHorizontal: scale(20),
     paddingVertical: scale(15),
     gap: scale(12),
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.lightGray,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 5,
   },
   button: {
     flex: 1,

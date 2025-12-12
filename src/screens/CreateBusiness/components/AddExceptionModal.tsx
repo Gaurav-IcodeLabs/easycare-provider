@@ -223,16 +223,15 @@ const styles = StyleSheet.create({
     height: scale(40),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.textBlack,
     borderRadius: scale(20),
   },
   closeButtonText: {
     fontSize: fontScale(18),
-    color: colors.white,
+    color: colors.black,
   },
   content: {
     flex: 1,
-    paddingHorizontal: scale(24),
+    marginHorizontal: scale(24),
     paddingTop: scale(24),
   },
   section: {
@@ -242,6 +241,7 @@ const styles = StyleSheet.create({
     flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
     marginBottom: scale(16),
+    justifyContent: I18nManager.isRTL ? 'flex-end' : 'flex-start',
   },
   radioLabel: {
     fontSize: fontScale(16),
@@ -254,6 +254,7 @@ const styles = StyleSheet.create({
     color: colors.textBlack,
     ...primaryFont('600'),
     marginBottom: scale(8),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   dateInput: {
     backgroundColor: colors.lightGray,
@@ -264,6 +265,7 @@ const styles = StyleSheet.create({
     fontSize: fontScale(16),
     color: colors.textBlack,
     ...primaryFont('400'),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   placeholderText: {
     color: colors.textGray,

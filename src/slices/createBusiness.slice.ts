@@ -136,6 +136,7 @@ export const requestCreateBusinessDraft = createAsyncThunk<any, any, Thunk>(
         transactionProcessAlias: TransactionProcessAlias.INQUIRY,
         unitType: UnitType.INQUIRY,
         registrationNumber,
+        address: location?.address || '',
       };
 
       let response;

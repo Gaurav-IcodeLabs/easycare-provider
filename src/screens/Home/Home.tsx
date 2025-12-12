@@ -136,7 +136,12 @@ export const Home: React.FC = () => {
           containerStyle={{paddingHorizontal: scale(20)}}
           renderLeft={() => (
             <TouchableOpacity onPress={handleProfilePress}>
-              <Image source={placeholder} style={styles.left} />
+              <Image
+                source={
+                  profileImageUrl ? {uri: profileImageUrl} : avatarPlaceholder
+                }
+                style={styles.left}
+              />
             </TouchableOpacity>
           )}
           renderCenter={() => <Image source={easycare} resizeMode="contain" />}
@@ -373,7 +378,7 @@ const styles = StyleSheet.create({
     ...secondaryFont('600'),
     color: colors.white,
     marginBottom: scale(12),
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   setupDescription: {
     fontSize: scale(16),
@@ -381,14 +386,14 @@ const styles = StyleSheet.create({
     color: colors.white,
     marginBottom: scale(32),
     opacity: 0.9,
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   setupSteps: {
     gap: scale(20),
     marginBottom: scale(40),
   },
   setupStep: {
-    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    flexDirection: 'row',
     gap: scale(16),
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     padding: scale(16),
@@ -415,14 +420,14 @@ const styles = StyleSheet.create({
     ...secondaryFont('600'),
     color: colors.white,
     marginBottom: scale(4),
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   stepDescription: {
     fontSize: scale(14),
     ...secondaryFont('400'),
     color: colors.white,
     opacity: 0.8,
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   setupButton: {
     backgroundColor: colors.white,

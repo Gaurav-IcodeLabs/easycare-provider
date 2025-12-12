@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
     fontSize: fontScale(16),
     color: colors.primary,
     ...primaryFont('500'),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   weekPreview: {
     gap: scale(12),
@@ -240,16 +241,20 @@ const styles = StyleSheet.create({
     ...primaryFont('600'),
     marginBottom: scale(4),
     textTransform: 'capitalize',
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   dayDate: {
     fontSize: fontScale(14),
     color: colors.textGray,
     ...primaryFont('400'),
     marginBottom: scale(12),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   availableBadge: {
-    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'flex-start',
+    marginBottom: scale(12),
   },
   availableDot: {
     width: scale(8),
@@ -274,12 +279,14 @@ const styles = StyleSheet.create({
     fontSize: fontScale(13),
     color: colors.textBlack,
     ...primaryFont('500'),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   slotSeats: {
     fontSize: fontScale(12),
     color: colors.textGray,
     ...primaryFont('400'),
     marginTop: scale(2),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   addExceptionButton: {
     paddingVertical: scale(12),
@@ -290,6 +297,7 @@ const styles = StyleSheet.create({
     fontSize: fontScale(16),
     color: colors.primary,
     ...primaryFont('500'),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   exceptionsContainer: {
     gap: scale(12),

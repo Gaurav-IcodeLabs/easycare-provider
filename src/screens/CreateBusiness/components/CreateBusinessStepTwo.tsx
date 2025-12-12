@@ -1,5 +1,5 @@
 import React, {FC, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {I18nManager, StyleSheet, View} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {AppText} from '../../../components';
 import {colors, primaryFont} from '../../../constants';
@@ -195,5 +195,6 @@ const styles = StyleSheet.create({
     ...primaryFont('400'),
     marginBottom: scale(16),
     paddingHorizontal: scale(16),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
 });

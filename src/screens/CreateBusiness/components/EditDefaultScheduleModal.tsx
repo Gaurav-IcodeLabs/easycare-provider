@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   I18nManager,
+  Alert,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {Dropdown} from 'react-native-element-dropdown';
 import {AppText, Button, GradientWrapper} from '../../../components';
 import {CheckBoxStandalone} from '../../../components/CheckBox/CheckBoxStandalone';
 import {colors, primaryFont} from '../../../constants';
@@ -48,12 +50,12 @@ const daysOfWeek = [
 ];
 
 const timezones = [
-  'Asia/Kolkata',
-  'America/New_York',
-  'America/Los_Angeles',
-  'Europe/London',
-  'Asia/Dubai',
-  'Asia/Tokyo',
+  {label: 'Asia/Kolkata', value: 'Asia/Kolkata'},
+  {label: 'America/New_York', value: 'America/New_York'},
+  {label: 'America/Los_Angeles', value: 'America/Los_Angeles'},
+  {label: 'Europe/London', value: 'Europe/London'},
+  {label: 'Asia/Dubai', value: 'Asia/Dubai'},
+  {label: 'Asia/Tokyo', value: 'Asia/Tokyo'},
 ];
 
 export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
@@ -66,7 +68,6 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
   const {t} = useTranslation();
   const [localSchedule, setLocalSchedule] = useState(schedule);
   const [localTimezone, setLocalTimezone] = useState(timezone);
-  const [showTimezoneDropdown, setShowTimezoneDropdown] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [timePickerConfig, setTimePickerConfig] = useState<{
     day: string;
@@ -241,7 +242,7 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
   const handleSave = () => {
     const validation = validateSchedule();
     if (!validation.valid) {
-      alert(validation.message);
+      Alert.alert(t('CreateBusiness.error'), validation.message);
       return;
     }
 
@@ -274,28 +275,19 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
               <AppText style={styles.sectionTitle}>
                 {t('CreateBusiness.selectTimezone')}
               </AppText>
-              <TouchableOpacity
-                style={styles.timezoneSelector}
-                onPress={() => setShowTimezoneDropdown(!showTimezoneDropdown)}>
-                <AppText style={styles.timezoneText}>{localTimezone}</AppText>
-                <AppText style={styles.dropdownIcon}>▼</AppText>
-              </TouchableOpacity>
-
-              {showTimezoneDropdown && (
-                <View style={styles.timezoneDropdown}>
-                  {timezones.map(tz => (
-                    <TouchableOpacity
-                      key={tz}
-                      style={styles.timezoneOption}
-                      onPress={() => {
-                        setLocalTimezone(tz);
-                        setShowTimezoneDropdown(false);
-                      }}>
-                      <AppText style={styles.timezoneOptionText}>{tz}</AppText>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+              <Dropdown
+                data={timezones}
+                labelField="label"
+                valueField="value"
+                placeholder={t('CreateBusiness.selectTimezone')}
+                value={localTimezone}
+                onChange={item => setLocalTimezone(item.value)}
+                style={styles.timezoneDropdown}
+                placeholderStyle={styles.timezoneText}
+                selectedTextStyle={styles.timezoneText}
+                containerStyle={styles.dropdownContainer}
+                itemTextStyle={styles.timezoneOptionText}
+              />
             </View>
 
             <View style={styles.section}>
@@ -470,45 +462,36 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: scale(16),
+    marginHorizontal: scale(16),
   },
   section: {
     marginTop: scale(24),
+    width: '100%',
   },
   sectionTitle: {
     fontSize: fontScale(16),
     color: colors.textBlack,
     ...primaryFont('600'),
     marginBottom: scale(12),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
-  timezoneSelector: {
-    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  timezoneDropdown: {
     backgroundColor: colors.lightGray,
     padding: scale(16),
     borderRadius: scale(8),
+    borderWidth: 1,
+    borderColor: colors.lightGray,
   },
   timezoneText: {
     fontSize: fontScale(16),
     color: colors.textBlack,
     ...primaryFont('400'),
   },
-  dropdownIcon: {
-    fontSize: fontScale(12),
-    color: colors.textGray,
-  },
-  timezoneDropdown: {
-    marginTop: scale(8),
+  dropdownContainer: {
     backgroundColor: colors.white,
     borderRadius: scale(8),
     borderWidth: 1,
     borderColor: colors.lightGray,
-  },
-  timezoneOption: {
-    padding: scale(16),
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightGray,
   },
   timezoneOptionText: {
     fontSize: fontScale(16),
@@ -524,6 +507,7 @@ const styles = StyleSheet.create({
   dayRow: {
     flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
+    justifyContent: I18nManager.isRTL ? 'flex-end' : 'flex-start',
     paddingVertical: scale(12),
   },
   dayLabel: {
