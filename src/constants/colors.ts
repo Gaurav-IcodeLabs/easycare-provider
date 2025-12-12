@@ -24,6 +24,14 @@ export const colors: AppColors = {
   placeholder: '#B0B0B0',
   grey: '#6C7278',
   focusBlue: '#5BC1EE',
+
+  // Aliases for common usage
+  primary: '#0E397E',
+  textGray: '#6C7278',
+  lightGray: '#E9ECEF',
+  border: '#E9ECEF',
+  error: '#FF0000',
+  lightYellow: '#F5E6C8',
 };
 
 export const mergeColors = (appColors: Partial<AppColors>) => ({

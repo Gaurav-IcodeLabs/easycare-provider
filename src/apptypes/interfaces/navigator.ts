@@ -42,6 +42,7 @@ export type MainStackParamList = {
   [SCREENS.EDITLISTING]: {listingId?: string; listingType?: string};
   [SCREENS.CREATE_SERVICE]: {listingId?: string};
   [SCREENS.CREATE_PRODUCT]: {listingId?: string};
+  [SCREENS.CREATE_BUSINESS]: undefined;
   [SCREENS.VERIFT_OTP]: {token: string};
   [SCREENS.OTP_VERIFIED]: undefined;
   [SCREENS.LISTINGS]: {listingType: string};

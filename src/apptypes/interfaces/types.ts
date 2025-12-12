@@ -43,7 +43,13 @@ export type Colors =
   | 'grey'
   | 'placeholder'
   | 'transparent'
-  | 'focusBlue';
+  | 'focusBlue'
+  | 'primary'
+  | 'textGray'
+  | 'lightGray'
+  | 'border'
+  | 'error'
+  | 'lightYellow';
 
 export type CategoryLevels =
   | 'categoryLevel1'
