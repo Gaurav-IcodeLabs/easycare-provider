@@ -5,6 +5,8 @@ import {
   FlatList,
   RefreshControl,
   TouchableOpacity,
+  Image,
+  I18nManager,
 } from 'react-native';
 import React, {useEffect, useCallback} from 'react';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
@@ -25,6 +27,7 @@ import {
 } from '../../slices/listings.slice';
 import {getOwnListingsById} from '../../slices/marketplaceData.slice';
 import {useTranslation} from 'react-i18next';
+import {backIcon} from '../../assets';
 
 type ListingsNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -38,6 +41,7 @@ export const Listings: React.FC = () => {
   const route = useRoute<ListingsRouteProp>();
   const dispatch = useAppDispatch();
   const {t} = useTranslation();
+  const isRTL = I18nManager.isRTL;
 
   const {listingType} = route.params;
 
@@ -129,7 +133,10 @@ export const Listings: React.FC = () => {
         )}
         renderLeft={() => (
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <AppText style={styles.backButton}>←</AppText>
+            <Image
+              source={backIcon}
+              style={[styles.backIcon, isRTL && {transform: [{scaleX: -1}]}]}
+            />
           </TouchableOpacity>
         )}
       />
@@ -204,5 +211,10 @@ const styles = StyleSheet.create({
     fontSize: scale(24),
     color: colors.white,
     fontWeight: '600',
+  },
+  backIcon: {
+    tintColor: colors.white,
+    height: scale(24),
+    width: scale(24),
   },
 });

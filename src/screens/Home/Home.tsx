@@ -14,7 +14,7 @@ import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {scale, width} from '../../utils';
 import {colors, ListingType, SCREENS, secondaryFont} from '../../constants';
 import {GradientWrapper, AppText, ListingCard} from '../../components';
-import {avatarPlaceholder, easycare, magnify, placeholder} from '../../assets';
+import {avatarPlaceholder, easycare, magnify} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../apptypes';
@@ -28,8 +28,12 @@ import {
 } from '../../slices/home.slice';
 import {getOwnListingsById} from '../../slices/marketplaceData.slice';
 import {useTranslation} from 'react-i18next';
-import {businessListingSetupCompletedSelector} from '../../slices/user.slice';
-import {currentUserProfileImageUrlSelector} from '../../slices/user.slice';
+import {
+  businessProfileSetupCompletedSelector,
+  availabilitySetupCompletedSelector,
+  payoutSetupCompletedSelector,
+  currentUserProfileImageUrlSelector,
+} from '../../slices/user.slice';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -50,9 +54,17 @@ export const Home: React.FC = () => {
   const isLoading = useTypedSelector(fetchListingsInProgressSelector);
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const isBusinessListingSetup = useTypedSelector(
-    businessListingSetupCompletedSelector,
+  const isBusinessProfileSetup = useTypedSelector(
+    businessProfileSetupCompletedSelector,
   );
+  const isAvailabilitySetup = useTypedSelector(
+    availabilitySetupCompletedSelector,
+  );
+  const isPayoutSetup = useTypedSelector(payoutSetupCompletedSelector);
+
+  // Show setup screen if any step is incomplete
+  const showSetupScreen =
+    !isBusinessProfileSetup || !isAvailabilitySetup || !isPayoutSetup;
 
   useEffect(() => {
     loadAllListings();
@@ -126,7 +138,7 @@ export const Home: React.FC = () => {
     );
   };
 
-  if (!isBusinessListingSetup) {
+  if (showSetupScreen) {
     return (
       <GradientWrapper
         start={{x: 0, y: 0}}
@@ -156,10 +168,23 @@ export const Home: React.FC = () => {
 
           <View style={styles.setupSteps}>
             <TouchableOpacity
-              style={styles.setupStep}
+              style={[
+                styles.setupStep,
+                isBusinessProfileSetup && styles.setupStepCompleted,
+              ]}
               onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
-              <View style={styles.stepNumber}>
-                <AppText style={styles.stepNumberText}>1</AppText>
+              <View
+                style={[
+                  styles.stepNumber,
+                  isBusinessProfileSetup && styles.stepNumberCompleted,
+                ]}>
+                <AppText
+                  style={[
+                    styles.stepNumberText,
+                    isBusinessProfileSetup && styles.stepNumberTextCompleted,
+                  ]}>
+                  {isBusinessProfileSetup ? '✓' : '1'}
+                </AppText>
               </View>
               <View style={styles.stepContent}>
                 <AppText style={styles.stepTitle}>
@@ -172,10 +197,23 @@ export const Home: React.FC = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.setupStep}
+              style={[
+                styles.setupStep,
+                isAvailabilitySetup && styles.setupStepCompleted,
+              ]}
               onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
-              <View style={styles.stepNumber}>
-                <AppText style={styles.stepNumberText}>2</AppText>
+              <View
+                style={[
+                  styles.stepNumber,
+                  isAvailabilitySetup && styles.stepNumberCompleted,
+                ]}>
+                <AppText
+                  style={[
+                    styles.stepNumberText,
+                    isAvailabilitySetup && styles.stepNumberTextCompleted,
+                  ]}>
+                  {isAvailabilitySetup ? '✓' : '2'}
+                </AppText>
               </View>
               <View style={styles.stepContent}>
                 <AppText style={styles.stepTitle}>
@@ -188,13 +226,23 @@ export const Home: React.FC = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.setupStep}
-              onPress={() => {
-                // TODO: Navigate to payout setup screen
-                // navigation.navigate(SCREENS.SETUP_PAYOUT);
-              }}>
-              <View style={styles.stepNumber}>
-                <AppText style={styles.stepNumberText}>3</AppText>
+              style={[
+                styles.setupStep,
+                isPayoutSetup && styles.setupStepCompleted,
+              ]}
+              onPress={() => navigation.navigate(SCREENS.SETUP_PAYOUT)}>
+              <View
+                style={[
+                  styles.stepNumber,
+                  isPayoutSetup && styles.stepNumberCompleted,
+                ]}>
+                <AppText
+                  style={[
+                    styles.stepNumberText,
+                    isPayoutSetup && styles.stepNumberTextCompleted,
+                  ]}>
+                  {isPayoutSetup ? '✓' : '3'}
+                </AppText>
               </View>
               <View style={styles.stepContent}>
                 <AppText style={styles.stepTitle}>
@@ -207,13 +255,13 @@ export const Home: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.setupButton}
             onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
             <AppText style={styles.setupButtonText}>
               {t('HOME.getStarted')}
             </AppText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </GradientWrapper>
     );
@@ -399,6 +447,10 @@ const styles = StyleSheet.create({
     padding: scale(16),
     borderRadius: scale(12),
   },
+  setupStepCompleted: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    opacity: 0.7,
+  },
   stepNumber: {
     width: scale(40),
     height: scale(40),
@@ -407,10 +459,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  stepNumberCompleted: {
+    backgroundColor: '#4CAF50',
+  },
   stepNumberText: {
     fontSize: scale(18),
     ...secondaryFont('600'),
     color: colors.deepBlue,
+  },
+  stepNumberTextCompleted: {
+    color: colors.white,
   },
   stepContent: {
     flex: 1,

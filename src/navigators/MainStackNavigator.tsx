@@ -12,6 +12,7 @@ import {
   ChangePassword,
   ChangeEmail,
   Listings,
+  SetupPayout,
 } from '../screens';
 import {BottomTabNavigator} from './BottomTabNavigator';
 import {OtpVerified, VerifyOtp} from '../screens';
@@ -45,6 +46,7 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.CREATE_PRODUCT} component={CreateProduct} />
       <Screen name={SCREENS.CREATE_BUSINESS} component={CreateBusiness} />
       <Screen name={SCREENS.LISTINGS} component={Listings} />
+      <Screen name={SCREENS.SETUP_PAYOUT} component={SetupPayout} />
     </Navigator>
   );
 };

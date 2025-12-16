@@ -290,6 +290,17 @@ export const requestPublishBusiness = createAsyncThunk<any, any, Thunk>(
         response = currentListing;
       }
 
+      // Update business listing with setup completion flags
+      console.log('6️⃣ Updating business listing with setup flags...');
+      await sdk.ownListings.update({
+        id: listingId,
+        publicData: {
+          businessProfileSetupCompleted: true,
+          availabilitySetupCompleted: true,
+        },
+      });
+      console.log('✅ Setup flags updated in business listing');
+
       // Fetch the updated listing with includes for denormalization
       const updatedListing = await sdk.ownListings.show({
         id: listingId,
