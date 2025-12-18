@@ -1,8 +1,7 @@
 import {Linking} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {
   NavigationContainer,
-  NavigationContainerRef,
   createNavigationContainerRef,
 } from '@react-navigation/native';
 import AuthStackNavigator from './AuthStackNavigator';
@@ -10,9 +9,11 @@ import MainStackNavigator from './MainStackNavigator';
 import {useAppDispatch, useTypedSelector} from '../sharetribeSetup';
 import {isAuthenticatedSelector} from '../slices/auth.slice';
 import {fetchCurrentUser} from '../slices/user.slice';
+import {fetchBusinessListing} from '../slices/createBusiness.slice';
 import {EmailVerificationModal} from '../components';
 import {handleDeepLinkUrl} from '../utils/deepLinkHandler';
 import {useStatusBar} from '../hooks/useStatusBar';
+import {types as sdkTypes} from '../utils/sdkLoader';
 
 export const navigationRef = createNavigationContainerRef();
 
@@ -25,7 +26,17 @@ const RootNavigator = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      dispatch(fetchCurrentUser({})).unwrap();
+      dispatch(fetchCurrentUser({}))
+        .unwrap()
+        .then(user => {
+          const existingBusinessId =
+            user?.attributes?.profile?.publicData?.businessListingId;
+          if (existingBusinessId) {
+            dispatch(
+              fetchBusinessListing({id: new sdkTypes.UUID(existingBusinessId)}),
+            );
+          }
+        });
     }
   }, [isAuthenticated, dispatch]);
 

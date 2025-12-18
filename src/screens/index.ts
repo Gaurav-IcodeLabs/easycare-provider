@@ -17,3 +17,4 @@ export * from './CreateService/CreateService';
 export * from './CreateProduct/CreateProduct';
 export * from './Listings/Listings';
 export * from './CreateBusiness';
+export * from './SetupPayout';

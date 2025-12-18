@@ -26,6 +26,12 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BlurView} from '@react-native-community/blur';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import {AddOptionsModal} from '../AddOptionsModal';
+import {useTypedSelector} from '../../sharetribeSetup';
+import {
+  availabilitySetupCompletedSelector,
+  businessProfileSetupCompletedSelector,
+  payoutSetupCompletedSelector,
+} from '../../slices/user.slice';
 
 type TranslationTS = TFunction<'translation', undefined>;
 
@@ -124,7 +130,17 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
   const {t} = useTranslation();
   const {bottom} = useSafeAreaInsets();
   const [showPopover, setShowPopover] = useState(false);
+  const isBusinessProfileSetup = useTypedSelector(
+    businessProfileSetupCompletedSelector,
+  );
+  const isAvailabilitySetup = useTypedSelector(
+    availabilitySetupCompletedSelector,
+  );
+  const isPayoutSetup = useTypedSelector(payoutSetupCompletedSelector);
 
+  // Show setup screen if any step is incomplete
+  const disablePlusIcon =
+    !isBusinessProfileSetup || !isAvailabilitySetup || !isPayoutSetup;
   const onPress = useCallback(
     (route: any, index: number) => {
       if (state.index !== index) {
@@ -246,23 +262,25 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
         ]}>
         <View style={styles.mainContainer}>
           {/* Plus Icon Button - Separate from pill */}
-          <Animated.View style={plusAnimatedStyle}>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={handlePlusPress}
-              style={styles.plusButton}>
-              <View style={styles.plusIconContainer}>
-                <BlurView
-                  style={styles.plusBlurBackground}
-                  blurType="light"
-                  blurAmount={10}
-                  reducedTransparencyFallbackColor="white"
-                />
-                <View style={styles.plusTintOverlay} />
-                <AppText style={styles.plusIcon}>+</AppText>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+          {!disablePlusIcon ? (
+            <Animated.View style={plusAnimatedStyle}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handlePlusPress}
+                style={styles.plusButton}>
+                <View style={styles.plusIconContainer}>
+                  <BlurView
+                    style={styles.plusBlurBackground}
+                    blurType="light"
+                    blurAmount={10}
+                    reducedTransparencyFallbackColor="white"
+                  />
+                  <View style={styles.plusTintOverlay} />
+                  <AppText style={styles.plusIcon}>+</AppText>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
+          ) : null}
 
           {/* Tab Bar Pill */}
           <GestureDetector gesture={panGesture}>

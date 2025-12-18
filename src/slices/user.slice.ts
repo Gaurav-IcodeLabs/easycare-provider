@@ -262,6 +262,38 @@ export const uploadProfileImage = createAsyncThunk<
   }
 });
 
+export const updateOwnListing = createAsyncThunk<
+  any,
+  {id: string; publicData?: Record<string, any>; [key: string]: any},
+  Thunk
+>(
+  'user/updateOwnListing',
+  async (data, {dispatch, extra: sdk, rejectWithValue}) => {
+    try {
+      const {id, ...updateData} = data;
+      const response = await sdk.ownListings.update(
+        {
+          id,
+          ...updateData,
+        },
+        {
+          expand: true,
+          include: ['images'],
+        },
+      );
+
+      dispatch(addMarketplaceEntities({sdkResponse: response}));
+
+      return response.data;
+    } catch (error: any) {
+      console.log('updateOwnListing error', error);
+      return rejectWithValue({
+        message: error?.message || 'Failed to update business listing',
+      });
+    }
+  },
+);
+
 export const {setCurrentUser} = userSlice.actions;
 
 export const currentUserDisplayNameSelector = (state: RootState) =>
@@ -285,6 +317,49 @@ export const businessListingIdSelector = (state: RootState) =>
 export const businessListingSetupCompletedSelector = (state: RootState) =>
   state.user.currentUser?.attributes.profile.publicData
     ?.businessListingSetupCompleted;
+
+// Individual setup step selectors - read from business listing publicData
+export const businessProfileSetupCompletedSelector = (state: RootState) => {
+  const businessListingId =
+    state.user.currentUser?.attributes.profile.publicData?.businessListingId;
+  if (!businessListingId) {
+    return false;
+  }
+
+  const businessListing =
+    state.marketplaceData?.entities?.ownListing?.[businessListingId];
+  return (
+    businessListing?.attributes?.publicData?.businessProfileSetupCompleted ||
+    false
+  );
+};
+
+export const availabilitySetupCompletedSelector = (state: RootState) => {
+  const businessListingId =
+    state.user.currentUser?.attributes.profile.publicData?.businessListingId;
+  if (!businessListingId) {
+    return false;
+  }
+
+  const businessListing =
+    state.marketplaceData?.entities?.ownListing?.[businessListingId];
+  return (
+    businessListing?.attributes?.publicData?.availabilitySetupCompleted || false
+  );
+};
+
+export const payoutSetupCompletedSelector = (state: RootState) => {
+  const businessListingId =
+    state.user.currentUser?.attributes.profile.publicData?.businessListingId;
+  if (!businessListingId) {
+    return false;
+  }
+
+  const businessListing =
+    state.marketplaceData?.entities?.ownListing?.[businessListingId];
+  return businessListing?.attributes?.publicData?.payoutSetupCompleted || false;
+};
+
 export const hasIdentityProvidersSelector = (state: RootState) => {
   const identityProviders =
     state.user.currentUser?.attributes.identityProviders;

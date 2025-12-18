@@ -38,6 +38,7 @@ export type MainStackParamList = {
   [SCREENS.HOME]: undefined;
   [SCREENS.PROFILE]: undefined;
   [SCREENS.EDIT_PROFILE]: undefined;
+  [SCREENS.CHANGE_EMAIL]: undefined;
   [SCREENS.CHANGE_PASSWORD]: undefined;
   [SCREENS.EDITLISTING]: {listingId?: string; listingType?: string};
   [SCREENS.CREATE_SERVICE]: {listingId?: string};
@@ -46,6 +47,7 @@ export type MainStackParamList = {
   [SCREENS.VERIFT_OTP]: {token: string};
   [SCREENS.OTP_VERIFIED]: undefined;
   [SCREENS.LISTINGS]: {listingType: string};
+  [SCREENS.SETUP_PAYOUT]: undefined;
 };
 
 export type BottomTabParamList = {
