@@ -292,13 +292,12 @@ const OtpInputField: React.FC<OtpInputFieldProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   inputContainer: {
-    width: scale(60),
-    height: scale(60),
-    marginHorizontal: scale(8),
+    width: scale(50),
+    height: scale(50),
     borderRadius: scale(10),
     borderWidth: 1,
     borderColor: colors.lightGrey,
@@ -307,7 +306,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   input: {
-    fontSize: scale(24),
+    fontSize: scale(18),
     fontWeight: '600',
     textAlign: 'center',
     width: '100%',

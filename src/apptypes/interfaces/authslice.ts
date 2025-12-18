@@ -20,7 +20,7 @@ export interface SignupParams {
   displayName?: string;
   password: string;
   protectedData: {
-    phoneNumber?: string | number;
+    phoneNumber: string;
   };
   publicData?: {
     userType?: 'provider' | 'customer';

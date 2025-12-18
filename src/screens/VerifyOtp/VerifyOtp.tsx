@@ -10,16 +10,21 @@ import {
 } from 'react-native';
 import {AppText, Button, ErrorMessage, GradientWrapper} from '../../components';
 import {useTranslation} from 'react-i18next';
-import {colors, primaryFont} from '../../constants';
-import {fontScale, scale, topInset} from '../../utils';
+import {colors, primaryFont, SCREENS} from '../../constants';
+import {fontScale, scale, useToast} from '../../utils';
 import OtpInputField from './components/OtpInputField';
 import {KeyboardAvoidingView} from 'react-native-keyboard-controller';
-import {mail} from '../../assets';
+import {phoneVerification} from '../../assets';
 import {useLanguage} from '../../hooks';
-import {currentUserPhoneNumberSelector} from '../../slices/user.slice';
-import {useTypedSelector} from '../../sharetribeSetup';
+import {
+  currentUserPhoneNumberSelector,
+  updateCurrentUser,
+} from '../../slices/user.slice';
+import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
 import PhoneInput from 'react-native-phone-number-input';
 import {useForm, Controller} from 'react-hook-form';
+import {checkPhoneNumberExists, sendOTP, verifyOTP} from '../../utils/api';
+import {useNavigation} from '@react-navigation/native';
 
 type PhoneFormValues = {
   phoneNumber: string;
@@ -27,6 +32,7 @@ type PhoneFormValues = {
 
 export const VerifyOtp: React.FC = () => {
   const {t} = useTranslation();
+  const {showToast} = useToast();
   const {isArabic} = useLanguage();
   const currentUserPhoneNumber = useTypedSelector(
     currentUserPhoneNumberSelector,
@@ -34,7 +40,11 @@ export const VerifyOtp: React.FC = () => {
 
   // OTP State
   const [otp, setOtp] = useState('');
-  const [isError, setIsError] = useState(false);
+
+  // Loading States
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
 
   // Timer State
   const [seconds, setSeconds] = useState(30);
@@ -43,6 +53,8 @@ export const VerifyOtp: React.FC = () => {
   const [formattedValue, setFormattedValue] = useState('');
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
   const phoneInputRef = useRef<PhoneInput>(null);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   const {
     control,
@@ -56,7 +68,9 @@ export const VerifyOtp: React.FC = () => {
 
   // Countdown Timer
   useEffect(() => {
-    if (!currentUserPhoneNumber || seconds <= 0) return;
+    if (!currentUserPhoneNumber || seconds <= 0) {
+      return;
+    }
 
     const interval = setInterval(() => {
       setSeconds(s => (s <= 1 ? 0 : s - 1));
@@ -71,35 +85,115 @@ export const VerifyOtp: React.FC = () => {
     const time = `${m}:${s}`;
 
     if (isArabic) {
-      return time.replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)]);
+      return time.replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[parseInt(d, 10)]);
     }
     return time;
   };
 
-  const handleResendOtp = () => {
-    setSeconds(30);
-    setOtp('');
-    setIsError(false);
-    // TODO: Call your resend OTP API here
+  const handleResendOtp = async () => {
+    if (!currentUserPhoneNumber || isResending) {
+      return;
+    }
+
+    setIsResending(true);
+    try {
+      await sendOTP({phoneNumber: currentUserPhoneNumber});
+      setSeconds(30);
+      setOtp('');
+      showToast({
+        type: 'success',
+        title: t('Signin.otpResent'),
+        message: t('Signin.otpResentMessage'),
+      });
+    } catch (error: any) {
+      console.error('Failed to resend OTP:', error);
+      showToast({
+        type: 'error',
+        title: t('Signin.errorTitle'),
+        message: error?.response?.data?.message || t('Signin.resendError'),
+      });
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const handleOtpChange = (value: string) => {
     setOtp(value);
-    setIsError(false);
   };
 
-  const handleOtpSubmit = () => {
-    if (otp.length !== 4) return;
-    // TODO: Verify OTP with backend
-    console.log('Submitting OTP:', otp);
+  const handleOtpSubmit = async () => {
+    if (!currentUserPhoneNumber || otp.length !== 6 || isVerifying) {
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      if (!__DEV__) {
+        await verifyOTP({phoneNumber: currentUserPhoneNumber, code: otp});
+      }
+      showToast({
+        type: 'success',
+        title: t('Signin.successTitle'),
+        message: t('Signin.verifySuccess'),
+      });
+      // TODO: Navigate to next screen or update user state
+      dispatch(updateCurrentUser({publicData: {phoneNumberVerified: true}}));
+      navigation.navigate(SCREENS.MAIN_TABS);
+    } catch (error: any) {
+      console.error('Failed to verify OTP:', error);
+      showToast({
+        type: 'error',
+        title: t('Signin.errorTitle'),
+        message: error?.response?.data?.message || t('Signin.verifyError'),
+      });
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
-  const handlePhoneSubmit = () => {
-    if (!phoneInputRef.current) return;
+  const handlePhoneSubmit = async () => {
+    if (!phoneInputRef.current || isSendingOtp) {
+      return;
+    }
     const fullNumber =
       phoneInputRef.current.getNumberAfterPossiblyEliminatingZero();
-    console.log('Saving phone:', fullNumber);
-    // TODO: Save phone number + trigger OTP send
+    console.log('fullNumber', fullNumber);
+    setIsSendingOtp(true);
+    try {
+      const {phoneNumberExists} = await checkPhoneNumberExists({
+        phoneNumber: fullNumber.formattedNumber,
+      });
+      if (phoneNumberExists) {
+        showToast({
+          type: 'error',
+          title: t('Signin.errorTitle'),
+          message: t('Signin.phoneAlreadyExists'),
+        });
+        return;
+      }
+      await sendOTP({phoneNumber: fullNumber.formattedNumber});
+      dispatch(
+        updateCurrentUser({
+          protectedData: {
+            phoneNumber: fullNumber.formattedNumber,
+          },
+        }),
+      );
+      showToast({
+        type: 'success',
+        title: t('Signin.successTitle'),
+        message: t('Signin.otpSent'),
+      });
+    } catch (error: any) {
+      console.error('Failed to send OTP:', error);
+      showToast({
+        type: 'error',
+        title: t('Signin.errorTitle'),
+        message: error?.response?.data?.message || t('Signin.sendError'),
+      });
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
   const renderOtpVerification = () => (
@@ -110,7 +204,7 @@ export const VerifyOtp: React.FC = () => {
         <View style={styles.screenContainer}>
           <View style={styles.contentWrapper}>
             <View style={styles.cardContent}>
-              <Image style={styles.illustration} source={mail} />
+              <Image style={styles.illustration} source={phoneVerification} />
               <AppText style={styles.heading}>{t('Signin.subheading')}</AppText>
               <AppText style={styles.description}>
                 {t('Signin.message')}
@@ -126,26 +220,21 @@ export const VerifyOtp: React.FC = () => {
 
               <View style={styles.otpSection}>
                 <OtpInputField
-                  length={4}
+                  length={6}
                   onOtpChange={handleOtpChange}
                   autoFocus={true}
                   value={otp}
                 />
-                {isError && (
-                  <ErrorMessage
-                    textStyles={styles.errorMessage}
-                    error={t('Signin.invalidOtp')}
-                  />
-                )}
               </View>
             </View>
 
             <View style={styles.footer}>
               <Button
-                disabled={otp.length !== 4}
+                disabled={otp.length !== 6 || isVerifying}
                 title={t('Signin.button')}
                 onPress={handleOtpSubmit}
                 style={styles.button}
+                loader={isVerifying}
               />
 
               <View style={styles.helperSection}>
@@ -160,10 +249,13 @@ export const VerifyOtp: React.FC = () => {
                   ]}>
                   <TouchableOpacity
                     onPress={handleResendOtp}
-                    disabled={seconds > 0}>
+                    disabled={seconds > 0 || isResending}>
                     <AppText
-                      style={[styles.resend, seconds > 0 && {opacity: 0.6}]}>
-                      {t('Signin.resend')}
+                      style={[
+                        styles.resend,
+                        (seconds > 0 || isResending) && styles.resendDisabled,
+                      ]}>
+                      {isResending ? t('Signin.sending') : t('Signin.resend')}
                     </AppText>
                   </TouchableOpacity>
 
@@ -190,7 +282,7 @@ export const VerifyOtp: React.FC = () => {
         <View style={styles.screenContainer}>
           <View style={styles.contentWrapper}>
             <View style={styles.cardContent}>
-              <Image style={styles.illustration} source={mail} />
+              <Image style={styles.illustration} source={phoneVerification} />
               <AppText style={styles.heading}>
                 {t('Signin.noPhoneHeading')}
               </AppText>
@@ -205,7 +297,9 @@ export const VerifyOtp: React.FC = () => {
                   rules={{
                     required: t('Signup.phoneRequired'),
                     validate: () => {
-                      if (!phoneInputRef.current) return true;
+                      if (!phoneInputRef.current) {
+                        return true;
+                      }
                       const valid =
                         phoneInputRef.current.isValidNumber(formattedValue);
                       return valid || t('Signup.invalidPhoneNumber');
@@ -271,8 +365,9 @@ export const VerifyOtp: React.FC = () => {
               <Button
                 title={t('Signin.savePhoneButton')}
                 style={styles.button}
-                disabled={!isValid}
+                disabled={!isValid || isSendingOtp}
                 onPress={handleSubmit(handlePhoneSubmit)}
+                loader={isSendingOtp}
               />
             </View>
           </View>
@@ -300,28 +395,23 @@ const styles = StyleSheet.create({
   flex: {flex: 1},
   screenContainer: {
     flex: 1,
-    paddingTop: topInset + scale(24),
-    paddingHorizontal: scale(24),
-    paddingBottom: scale(32),
-    backgroundColor: colors.white,
+    paddingHorizontal: scale(20),
+    justifyContent: 'center',
   },
-  contentWrapper: {flex: 1, justifyContent: 'center'},
-  cardContent: {
-    flexGrow: 1,
-    paddingHorizontal: scale(24),
-    paddingVertical: scale(32),
-  },
+  contentWrapper: {flex: 1, marginTop: scale(60)},
+  cardContent: {},
   illustration: {
     alignSelf: 'center',
-    height: scale(110),
-    width: scale(110),
-    marginBottom: scale(24),
+    height: scale(140),
+    width: scale(140),
+    marginBottom: scale(35),
   },
   heading: {
-    color: colors.deepBlue,
+    color: colors.black,
     fontSize: scale(24),
     ...primaryFont('600'),
     textAlign: 'center',
+    marginBottom: scale(10),
   },
   description: {
     fontSize: scale(15),
@@ -329,7 +419,6 @@ const styles = StyleSheet.create({
     ...primaryFont('400'),
     textAlign: 'center',
     lineHeight: scale(22),
-    marginTop: scale(12),
   },
   phoneChip: {
     alignSelf: 'center',
@@ -338,25 +427,21 @@ const styles = StyleSheet.create({
     paddingVertical: scale(6),
     borderRadius: scale(20),
     backgroundColor: colors.lightGrey,
+    marginBottom: scale(75),
   },
   phoneChipText: {
     color: colors.deepBlue,
     ...primaryFont('500'),
     fontSize: fontScale(14),
   },
-  otpSection: {marginTop: scale(32), alignItems: 'center'},
+  otpSection: {},
   errorMessage: {
     fontSize: scale(16),
     marginTop: scale(12),
     textAlign: 'center',
     ...primaryFont('500'),
   },
-  button: {
-    marginTop: scale(8),
-    backgroundColor: colors.deepBlue,
-    borderRadius: scale(12),
-    height: scale(56),
-  },
+  button: {height: scale(52), marginTop: scale(60)},
   helperSection: {marginTop: scale(16), alignItems: 'center'},
   nototp: {
     textAlign: 'center',
@@ -378,6 +463,7 @@ const styles = StyleSheet.create({
   },
   timerContainerRTL: {flexDirection: 'row-reverse'},
   timerText: {color: colors.neutralDark},
+  resendDisabled: {opacity: 0.6},
   phoneInputSpacing: {marginTop: scale(24)},
   footer: {marginTop: scale(16)},
   inputStyles: {borderRadius: scale(12), height: scale(56)},

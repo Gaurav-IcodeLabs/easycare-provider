@@ -94,7 +94,17 @@
     "phoneUpdateSuccessTitle": "تم حفظ الرقم",
     "phoneUpdateSuccessMessage": "أرسلنا رمز التحقق إلى {{phone}}",
     "phoneUpdateErrorTitle": "تعذر حفظ الرقم",
-    "phoneUpdateErrorMessage": "يرجى المحاولة مرة أخرى."
+    "phoneUpdateErrorMessage": "يرجى المحاولة مرة أخرى.",
+    "successTitle": "نجح",
+    "errorTitle": "خطأ",
+    "otpSent": "تم إرسال رمز التحقق بنجاح",
+    "sendError": "فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.",
+    "verifySuccess": "تم التحقق من رقم الهاتف بنجاح",
+    "verifyError": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
+    "otpResent": "تم إعادة إرسال الرمز",
+    "otpResentMessage": "تم إرسال رمز تحقق جديد",
+    "resendError": "فشل إعادة إرسال الرمز. يرجى المحاولة مرة أخرى.",
+    "sending": "جاري الإرسال..."
   },
   "Signup": {
     "heading": "إنشاء حساب جديد",

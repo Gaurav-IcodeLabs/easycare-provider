@@ -61,6 +61,7 @@ export const vaultIcon = require('./vaultIcon.png');
 export const success = require('./success.png');
 export const editIcon = require('./editIcon.png');
 export const avatarPlaceholder = require('./avatarPlaceholder.png');
+export const phoneVerification = require('./phoneVerification.png');
 
 export const profileMenuIcons = {
   about: require('./aboutIcon.png'),

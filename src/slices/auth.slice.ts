@@ -2,7 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {AuthState, LoginThunkParams, SignupParams, Thunk} from '../apptypes';
 import {resetAllSlices, RootState} from '../sharetribeSetup';
 import {storableError} from '../utils';
-import {checkPhoneNumberExists} from '../utils/api';
+import {checkPhoneNumberExists, sendOTP} from '../utils/api';
 
 const authenticated = (authInfo: AuthInfoResponse) =>
   authInfo?.isAnonymous === false;
@@ -167,10 +167,10 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
   async (params, {dispatch, extra: sdk, rejectWithValue}) => {
     try {
       const {phoneNumber} = params?.protectedData;
-      const response = await checkPhoneNumberExists({
+      const {phoneNumberExists} = await checkPhoneNumberExists({
         phoneNumber,
       });
-      if (response.data?.phoneNumberExists) {
+      if (phoneNumberExists) {
         return rejectWithValue({
           message: 'Phone number already exists',
           statusCode: 409,
@@ -196,7 +196,7 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
 
       // Refresh auth info to update Redux state
       await dispatch(authInfo());
-
+      await sendOTP({phoneNumber});
       return res;
     } catch (error: any) {
       const message = error?.message || 'Signup failed';

@@ -22,11 +22,9 @@ const {Navigator, Screen} = createNativeStackNavigator<MainStackParamList>();
 
 const MainStackNavigator: React.FC = () => {
   const phoneNumberVerified = useTypedSelector(phoneNumberVerifiedSelector);
-  const initialRouteName = __DEV__
-    ? SCREENS.MAIN_TABS
-    : phoneNumberVerified
-    ? SCREENS.MAIN_TABS
-    : SCREENS.VERIFT_OTP;
+  const initialRouteName =
+    // __DEV__? SCREENS.MAIN_TABS:
+    phoneNumberVerified ? SCREENS.MAIN_TABS : SCREENS.VERIFT_OTP;
   return (
     <Navigator
       screenOptions={{

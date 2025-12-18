@@ -94,7 +94,17 @@
     "phoneUpdateSuccessTitle": "Number saved",
     "phoneUpdateSuccessMessage": "We sent a verification code to {{phone}}",
     "phoneUpdateErrorTitle": "Unable to save number",
-    "phoneUpdateErrorMessage": "Please try again."
+    "phoneUpdateErrorMessage": "Please try again.",
+    "successTitle": "Success",
+    "errorTitle": "Error",
+    "otpSent": "Verification code sent successfully",
+    "sendError": "Failed to send verification code. Please try again.",
+    "verifySuccess": "Phone number verified successfully",
+    "verifyError": "Invalid verification code. Please try again.",
+    "otpResent": "Code Resent",
+    "otpResentMessage": "A new verification code has been sent",
+    "resendError": "Failed to resend code. Please try again.",
+    "sending": "Sending..."
   },
   "Signup": {
     "heading": "Create New Account",

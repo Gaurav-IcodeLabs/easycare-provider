@@ -29,3 +29,9 @@ export const createOpenIdpToken = (data: {
     '/api/auth/create-open-idp-token',
     data,
   );
+
+export const sendOTP = (data: {phoneNumber: string}) =>
+  apiClient.post('/api/otp/send', {recipient: data.phoneNumber});
+
+export const verifyOTP = (data: {phoneNumber: string; code: string}) =>
+  apiClient.post('/api/otp/verify', {to: data.phoneNumber, code: data.code});
