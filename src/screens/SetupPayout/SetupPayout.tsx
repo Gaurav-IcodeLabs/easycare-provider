@@ -122,6 +122,14 @@ export const SetupPayout: React.FC = () => {
             publicData: {
               payoutSetupCompleted: true,
             },
+            protectedData: {
+              payoutDetails: {
+                fullLegalName: data.fullLegalName,
+                bankName: data.bankName,
+                iban: data.iban,
+                country: data.country,
+              },
+            },
           }),
         ).unwrap();
       }

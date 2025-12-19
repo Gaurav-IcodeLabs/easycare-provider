@@ -120,7 +120,7 @@ export const CreateBusinessStepOne: FC<CreateBusinessStepOneProps> = ({
         control={control}
         name="images"
         maxImages={10}
-        labelKey=""
+        labelKey="CreateBusiness.businessPhotos"
       />
     </View>
   );

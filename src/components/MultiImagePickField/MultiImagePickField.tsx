@@ -22,6 +22,7 @@ import {useAppDispatch} from '../../sharetribeSetup';
 import {requestImageUpload} from '../../slices/editlisting.slice';
 import {useConfiguration} from '../../context';
 import {ErrorMessage} from '../ErrorMessage/ErrorMessage';
+import {uploadImageIcon} from '../../assets';
 
 interface ListingImage {
   id: {
@@ -186,6 +187,7 @@ export const MultiImagePickField = <T extends FieldValues>({
                 images.length >= maxImages && styles.uploadSectionDisabled,
               ]}
               disabled={images.length >= maxImages || hasUploadingImages}>
+              <Image source={uploadImageIcon} style={styles.imageIcon} />
               <AppText style={styles.uploadText}>
                 {t('MultiImagePickField.uploadText')}
               </AppText>
@@ -243,12 +245,11 @@ export const MultiImagePickField = <T extends FieldValues>({
 const styles = StyleSheet.create({
   container: {
     gap: scale(12),
-    marginTop: scale(16),
   },
   label: {
     fontSize: scale(16),
     color: colors.neutralDark,
-    ...primaryFont('500'),
+    ...primaryFont('400'),
   },
   uploadSection: {
     minHeight: scale(120),
@@ -328,5 +329,10 @@ const styles = StyleSheet.create({
     fontSize: scale(10),
     color: colors.deepBlue,
     ...primaryFont('500'),
+  },
+  imageIcon: {
+    height: scale(45),
+    width: scale(45),
+    objectFit: 'contain',
   },
 });

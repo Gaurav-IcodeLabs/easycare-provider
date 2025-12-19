@@ -24,6 +24,9 @@ export const colors: AppColors = {
   placeholder: '#B0B0B0',
   grey: '#6C7278',
   focusBlue: '#5BC1EE',
+  lightBlue: '#F4F8FF',
+  borderBlue: '#E2EDFF',
+  positiveGreen: '#25CA6F',
 
   // Aliases for common usage
   primary: '#0E397E',

@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
     color: colors.textBlack,
     ...primaryFont('400'),
     marginBottom: scale(16),
-    paddingHorizontal: scale(16),
     ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
 });

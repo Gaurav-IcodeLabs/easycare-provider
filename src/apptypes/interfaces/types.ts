@@ -49,6 +49,10 @@ export type Colors =
   | 'lightGray'
   | 'border'
   | 'error'
+  | 'tintGrey'
+  | 'lightBlue'
+  | 'borderBlue'
+  | 'positiveGreen'
   | 'lightYellow';
 
 export type CategoryLevels =

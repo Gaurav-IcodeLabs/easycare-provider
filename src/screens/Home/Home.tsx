@@ -14,7 +14,12 @@ import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {scale, width} from '../../utils';
 import {colors, ListingType, SCREENS, secondaryFont} from '../../constants';
 import {GradientWrapper, AppText, ListingCard} from '../../components';
-import {avatarPlaceholder, easycare, magnify} from '../../assets';
+import {
+  avatarPlaceholder,
+  businessStepIcons,
+  easycare,
+  magnify,
+} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../../apptypes';
@@ -34,6 +39,7 @@ import {
   payoutSetupCompletedSelector,
   currentUserProfileImageUrlSelector,
 } from '../../slices/user.slice';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -50,6 +56,7 @@ export const Home: React.FC = () => {
   const services = getOwnListingsById(entities, servicesIds);
   const products = getOwnListingsById(entities, productsIds);
   const profileImageUrl = useTypedSelector(currentUserProfileImageUrlSelector);
+  const {top} = useSafeAreaInsets();
 
   const isLoading = useTypedSelector(fetchListingsInProgressSelector);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -145,17 +152,10 @@ export const Home: React.FC = () => {
         end={{x: 0, y: 0.5}}
         colors={[colors.deepBlue, colors.blue]}>
         <ScreenHeader
-          containerStyle={{paddingHorizontal: scale(20)}}
-          renderLeft={() => (
-            <TouchableOpacity onPress={handleProfilePress}>
-              <Image
-                source={
-                  profileImageUrl ? {uri: profileImageUrl} : avatarPlaceholder
-                }
-                style={styles.left}
-              />
-            </TouchableOpacity>
-          )}
+          containerStyle={{
+            paddingHorizontal: scale(20),
+            marginTop: Math.min(top, scale(20)),
+          }}
           renderCenter={() => <Image source={easycare} resizeMode="contain" />}
         />
         <View style={styles.setupContainer}>
@@ -173,19 +173,14 @@ export const Home: React.FC = () => {
                 isBusinessProfileSetup && styles.setupStepCompleted,
               ]}
               onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
-              <View
-                style={[
-                  styles.stepNumber,
-                  isBusinessProfileSetup && styles.stepNumberCompleted,
-                ]}>
-                <AppText
-                  style={[
-                    styles.stepNumberText,
-                    isBusinessProfileSetup && styles.stepNumberTextCompleted,
-                  ]}>
-                  {isBusinessProfileSetup ? '✓' : '1'}
-                </AppText>
-              </View>
+              <Image
+                source={
+                  isBusinessProfileSetup
+                    ? businessStepIcons.completed
+                    : businessStepIcons.info
+                }
+                style={styles.stepIcon}
+              />
               <View style={styles.stepContent}>
                 <AppText style={styles.stepTitle}>
                   {t('HOME.setupBusiness')}
@@ -202,19 +197,15 @@ export const Home: React.FC = () => {
                 isAvailabilitySetup && styles.setupStepCompleted,
               ]}
               onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
-              <View
-                style={[
-                  styles.stepNumber,
-                  isAvailabilitySetup && styles.stepNumberCompleted,
-                ]}>
-                <AppText
-                  style={[
-                    styles.stepNumberText,
-                    isAvailabilitySetup && styles.stepNumberTextCompleted,
-                  ]}>
-                  {isAvailabilitySetup ? '✓' : '2'}
-                </AppText>
-              </View>
+              <Image
+                source={
+                  isAvailabilitySetup
+                    ? businessStepIcons.completed
+                    : businessStepIcons.availability
+                }
+                style={styles.stepIcon}
+              />
+
               <View style={styles.stepContent}>
                 <AppText style={styles.stepTitle}>
                   {t('HOME.setupAvailability')}
@@ -231,19 +222,15 @@ export const Home: React.FC = () => {
                 isPayoutSetup && styles.setupStepCompleted,
               ]}
               onPress={() => navigation.navigate(SCREENS.SETUP_PAYOUT)}>
-              <View
-                style={[
-                  styles.stepNumber,
-                  isPayoutSetup && styles.stepNumberCompleted,
-                ]}>
-                <AppText
-                  style={[
-                    styles.stepNumberText,
-                    isPayoutSetup && styles.stepNumberTextCompleted,
-                  ]}>
-                  {isPayoutSetup ? '✓' : '3'}
-                </AppText>
-              </View>
+              <Image
+                source={
+                  isPayoutSetup
+                    ? businessStepIcons.completed
+                    : businessStepIcons.payout
+                }
+                style={styles.stepIcon}
+              />
+
               <View style={styles.stepContent}>
                 <AppText style={styles.stepTitle}>
                   {t('HOME.setupPayout')}
@@ -254,14 +241,6 @@ export const Home: React.FC = () => {
               </View>
             </TouchableOpacity>
           </View>
-
-          {/* <TouchableOpacity
-            style={styles.setupButton}
-            onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
-            <AppText style={styles.setupButtonText}>
-              {t('HOME.getStarted')}
-            </AppText>
-          </TouchableOpacity> */}
         </View>
       </GradientWrapper>
     );
@@ -422,7 +401,7 @@ const styles = StyleSheet.create({
     paddingTop: scale(40),
   },
   setupTitle: {
-    fontSize: scale(24),
+    fontSize: scale(32),
     ...secondaryFont('600'),
     color: colors.white,
     marginBottom: scale(12),
@@ -443,7 +422,7 @@ const styles = StyleSheet.create({
   setupStep: {
     flexDirection: 'row',
     gap: scale(16),
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: colors.deepBlue + '70',
     padding: scale(16),
     borderRadius: scale(12),
   },
@@ -498,5 +477,10 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     ...secondaryFont('600'),
     color: colors.deepBlue,
+  },
+  stepIcon: {
+    height: scale(48),
+    width: scale(48),
+    objectFit: 'contain',
   },
 });

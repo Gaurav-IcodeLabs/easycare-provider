@@ -600,7 +600,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(2),
   },
   stepIndicatorActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.blue,
   },
   stepConnector: {
     width: scale(8),
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     fontSize: fontScale(20),
-    color: colors.textBlack,
+    color: colors.deepBlue,
     ...primaryFont('600'),
     marginBottom: scale(20),
     ...(I18nManager.isRTL && {textAlign: 'left'}),
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
     ...primaryFont('600'),
   },
   primaryButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.blue,
   },
   primaryButtonText: {
     color: colors.white,

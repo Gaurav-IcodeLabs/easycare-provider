@@ -15,7 +15,7 @@ import {
 import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {AppText} from '../AppText/AppText';
 import {colors, primaryFont} from '../../constants';
-import {scale} from '../../utils';
+import {height, scale} from '../../utils';
 import {MAPBOX_ACCESS_TOKEN} from '@env';
 import {useTranslation} from 'react-i18next';
 
@@ -45,8 +45,6 @@ export const LocationPickerBottomSheet: React.FC<
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<LocationResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const snapPoints = useMemo(() => ['75%'], []);
 
   useEffect(() => {
     console.log('🔄 isVisible changed:', isVisible);
@@ -133,10 +131,10 @@ export const LocationPickerBottomSheet: React.FC<
       style={styles.resultItem}
       onPress={() => handleSelectLocation(item)}>
       <AppText style={[styles.resultTitle, styles.rtlText]}>
-        {item.text}
+        {item.place_name}
       </AppText>
       <AppText style={[styles.resultSubtitle, styles.rtlText]}>
-        {item.place_name}
+        {item.text}
       </AppText>
     </TouchableOpacity>
   );
@@ -154,7 +152,7 @@ export const LocationPickerBottomSheet: React.FC<
     <BottomSheetModal
       ref={bottomSheetRef}
       index={0}
-      snapPoints={snapPoints}
+      enableDynamicSizing
       enablePanDownToClose
       onDismiss={handleDismiss}
       backdropComponent={renderBackdrop}
@@ -202,6 +200,8 @@ export const LocationPickerBottomSheet: React.FC<
         <FlatList
           data={results}
           renderItem={renderItem}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           keyExtractor={item => item.id}
           style={styles.resultsList}
           contentContainerStyle={styles.resultsListContent}
@@ -225,6 +225,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: scale(20),
+    maxHeight: height / 1.2,
   },
   title: {
     fontSize: scale(20),
@@ -268,13 +269,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   resultsListContent: {
-    paddingBottom: scale(20),
+    paddingBottom: scale(50),
   },
   resultItem: {
     paddingVertical: scale(12),
     borderBottomWidth: 1,
     borderBottomColor: colors.lightGrey,
-    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    flexDirection: 'column',
   },
   resultTitle: {
     fontSize: scale(16),

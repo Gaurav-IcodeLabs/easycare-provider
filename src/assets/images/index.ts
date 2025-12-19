@@ -62,6 +62,8 @@ export const success = require('./success.png');
 export const editIcon = require('./editIcon.png');
 export const avatarPlaceholder = require('./avatarPlaceholder.png');
 export const phoneVerification = require('./phoneVerification.png');
+export const uploadImageIcon = require('./uploadImageIcon.png');
+export const trashIcon = require('./trashIcon.png');
 
 export const profileMenuIcons = {
   about: require('./aboutIcon.png'),
@@ -81,4 +83,11 @@ export const inputIcons = {
   email: require('./email.png'),
   lock: require('./lockInputIcon.png'),
   phone: require('./phoneInputIcon.png'),
+};
+
+export const businessStepIcons = {
+  info: require('./businessStep.png'),
+  availability: require('./calendarStep.png'),
+  payout: require('./payoutStep.png'),
+  completed: require('./completedStep.png'),
 };

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   I18nManager,
+  Image,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {AppText} from '../../../components';
@@ -16,6 +17,7 @@ import {
   formatDateShort,
   formatTimeRange,
 } from '../../../utils';
+import {trashIcon} from '../../../assets';
 
 interface TimeSlot {
   startTime: string;
@@ -131,7 +133,7 @@ export const AvailabilityTab: FC<AvailabilityTabProps> = ({
               </AppText>
               <AppText style={styles.dayDate}>{formatDateMedium(date)}</AppText>
               {isAvailable ? (
-                <View>
+                <View style={styles.bottomrow}>
                   <View style={styles.availableBadge}>
                     <View style={styles.availableDot} />
                     <AppText style={styles.availableText}>
@@ -196,6 +198,10 @@ export const AvailabilityTab: FC<AvailabilityTabProps> = ({
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={() => deleteException(exception.id)}>
+                <Image
+                  source={trashIcon}
+                  style={{height: scale(24), width: scale(24)}}
+                />
                 <AppText style={styles.deleteButtonText}>
                   {t('CreateBusiness.delete')}
                 </AppText>
@@ -217,7 +223,6 @@ const styles = StyleSheet.create({
   },
   editScheduleButton: {
     paddingVertical: scale(12),
-    paddingHorizontal: scale(16),
     marginBottom: scale(16),
   },
   editScheduleText: {
@@ -231,21 +236,23 @@ const styles = StyleSheet.create({
     marginBottom: scale(24),
   },
   dayPreviewCard: {
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.lightBlue,
     padding: scale(16),
     borderRadius: scale(8),
+    borderWidth: 1,
+    borderColor: colors.borderBlue,
   },
   dayName: {
     fontSize: fontScale(16),
-    color: colors.textBlack,
-    ...primaryFont('600'),
+    color: colors.deepBlue,
+    ...primaryFont('500'),
     marginBottom: scale(4),
     textTransform: 'capitalize',
     ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   dayDate: {
     fontSize: fontScale(14),
-    color: colors.textGray,
+    color: colors.neutralDark,
     ...primaryFont('400'),
     marginBottom: scale(12),
     ...(I18nManager.isRTL && {textAlign: 'left'}),
@@ -253,19 +260,17 @@ const styles = StyleSheet.create({
   availableBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    marginBottom: scale(12),
   },
   availableDot: {
     width: scale(8),
     height: scale(8),
     borderRadius: scale(4),
-    backgroundColor: colors.primary,
-    ...(I18nManager.isRTL ? {marginLeft: scale(8)} : {marginRight: scale(8)}),
+    backgroundColor: colors.positiveGreen,
+    ...(I18nManager.isRTL ? {marginLeft: scale(5)} : {marginRight: scale(5)}),
   },
   availableText: {
     fontSize: fontScale(14),
-    color: colors.textBlack,
+    color: colors.positiveGreen,
     ...primaryFont('400'),
   },
   unavailableCard: {
@@ -276,16 +281,15 @@ const styles = StyleSheet.create({
     paddingLeft: scale(16),
   },
   slotTime: {
-    fontSize: fontScale(13),
-    color: colors.textBlack,
-    ...primaryFont('500'),
+    fontSize: fontScale(14),
+    color: colors.deepBlue,
+    ...primaryFont('400'),
     ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   slotSeats: {
-    fontSize: fontScale(12),
-    color: colors.textGray,
+    fontSize: fontScale(14),
+    color: colors.neutralDark,
     ...primaryFont('400'),
-    marginTop: scale(2),
     ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   addExceptionButton: {
@@ -340,15 +344,25 @@ const styles = StyleSheet.create({
   deleteButton: {
     paddingVertical: scale(8),
     paddingHorizontal: scale(16),
-    backgroundColor: colors.lightYellow,
-    borderRadius: scale(6),
+    backgroundColor: colors.error,
+    borderRadius: scale(10),
+    flexDirection: 'row',
+    gap: scale(5),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   deleteButtonText: {
     fontSize: fontScale(14),
-    color: colors.textBlack,
+    color: colors.white,
     ...primaryFont('400'),
   },
   bottomSpacer: {
     height: scale(100),
+  },
+  bottomrow: {
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

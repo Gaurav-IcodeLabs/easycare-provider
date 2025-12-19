@@ -7,14 +7,16 @@ import {
   ScrollView,
   I18nManager,
   Alert,
+  Image,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {Dropdown} from 'react-native-element-dropdown';
 import {AppText, Button, GradientWrapper} from '../../../components';
 import {CheckBoxStandalone} from '../../../components/CheckBox/CheckBoxStandalone';
-import {colors, primaryFont} from '../../../constants';
+import {colors, primaryFont, secondaryFont} from '../../../constants';
 import {scale, fontScale, formatTime12Hour} from '../../../utils';
 import {TimePickerModal} from './TimePickerModal';
+import {trashIcon} from '../../../assets';
 
 interface TimeSlot {
   startTime: string;
@@ -358,7 +360,13 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
                                       Math.max(1, slot.seats - 1),
                                     )
                                   }
-                                  style={styles.seatsButton}>
+                                  style={[
+                                    styles.seatsButton,
+                                    {
+                                      borderTopLeftRadius: scale(20),
+                                      borderBottomLeftRadius: scale(20),
+                                    },
+                                  ]}>
                                   <AppText style={styles.seatsButtonText}>
                                     -
                                   </AppText>
@@ -375,22 +383,33 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
                                       slot.seats + 1,
                                     )
                                   }
-                                  style={styles.seatsButton}>
+                                  style={[
+                                    styles.seatsButton,
+                                    {
+                                      borderTopRightRadius: scale(20),
+                                      borderBottomRightRadius: scale(20),
+                                    },
+                                  ]}>
                                   <AppText style={styles.seatsButtonText}>
                                     +
                                   </AppText>
                                 </TouchableOpacity>
                               </View>
                             </View>
+                            {localSchedule[day].slots.length > 1 && (
+                              <TouchableOpacity
+                                onPress={() => removeTimeSlot(day, index)}
+                                style={styles.removeSlotButton}>
+                                <Image
+                                  source={trashIcon}
+                                  style={{
+                                    width: scale(20),
+                                    height: scale(20),
+                                  }}
+                                />
+                              </TouchableOpacity>
+                            )}
                           </View>
-
-                          {localSchedule[day].slots.length > 1 && (
-                            <TouchableOpacity
-                              onPress={() => removeTimeSlot(day, index)}
-                              style={styles.removeSlotButton}>
-                              <AppText style={styles.removeSlotText}>✕</AppText>
-                            </TouchableOpacity>
-                          )}
                         </View>
                       ))}
 
@@ -469,18 +488,18 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   sectionTitle: {
-    fontSize: fontScale(16),
-    color: colors.textBlack,
-    ...primaryFont('600'),
+    fontSize: fontScale(20),
+    color: colors.deepBlue,
+    ...secondaryFont('600'),
     marginBottom: scale(12),
     ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   timezoneDropdown: {
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.lightBlue,
     padding: scale(16),
-    borderRadius: scale(8),
+    borderRadius: scale(50),
     borderWidth: 1,
-    borderColor: colors.lightGray,
+    borderColor: colors.borderBlue,
   },
   timezoneText: {
     fontSize: fontScale(16),
@@ -542,20 +561,20 @@ const styles = StyleSheet.create({
     marginBottom: scale(4),
   },
   timePicker: {
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.lightBlue,
     padding: scale(12),
-    borderRadius: scale(6),
+    borderRadius: scale(100),
     alignItems: 'center',
   },
   timeText: {
     fontSize: fontScale(14),
-    color: colors.textBlack,
+    color: colors.neutralDark,
     ...primaryFont('400'),
   },
   seatsInput: {
     flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     alignItems: 'center',
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.lightBlue,
     borderRadius: scale(6),
     overflow: 'hidden',
   },
@@ -579,13 +598,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   removeSlotButton: {
-    position: 'absolute',
-    top: 0,
     ...(I18nManager.isRTL ? {left: 0} : {right: 0}),
-    width: scale(24),
-    height: scale(24),
     backgroundColor: colors.error,
-    borderRadius: scale(12),
+    borderRadius: scale(100),
+    width: scale(40),
+    height: scale(40),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -597,9 +614,11 @@ const styles = StyleSheet.create({
   addSlotButton: {
     paddingVertical: scale(8),
     paddingHorizontal: scale(12),
-    backgroundColor: colors.lightGray,
-    borderRadius: scale(6),
+    backgroundColor: colors.lightBlue,
+    height: scale(50),
+    borderRadius: scale(100),
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: scale(8),
   },
   addSlotText: {

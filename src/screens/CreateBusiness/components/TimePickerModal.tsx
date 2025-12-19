@@ -80,7 +80,7 @@ export const TimePickerModal: FC<TimePickerModalProps> = ({
               is24Hour={true}
               display={Platform.OS === 'ios' ? 'spinner' : 'default'}
               onChange={handleTimeChange}
-              minuteInterval={30}
+              minuteInterval={60}
               style={styles.picker}
             />
           </View>

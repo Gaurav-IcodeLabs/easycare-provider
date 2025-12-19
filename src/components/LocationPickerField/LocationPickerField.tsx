@@ -84,10 +84,10 @@ const styles = StyleSheet.create({
     marginBottom: scale(16),
   },
   label: {
-    fontSize: scale(14),
-    color: colors.textBlack,
+    fontSize: scale(16),
+    color: colors.neutralDark,
+    ...primaryFont('400'),
     marginBottom: scale(8),
-    ...primaryFont('500'),
     ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   inputContainer: {
