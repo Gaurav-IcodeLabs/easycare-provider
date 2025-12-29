@@ -54,7 +54,7 @@ const SignupForm = ({
     defaultValues: {
       firstName: '',
       lastName: '',
-      fullName: '',
+      // fullName: '',
       email: '',
       phoneNumber: '',
       password: '',
@@ -99,14 +99,14 @@ const SignupForm = ({
             leftIcon={inputIcons.person}
             leftIconStyle={styles.iconStyle}
           />
-          <TextInputField
+          {/* <TextInputField
             control={control}
             name={'fullName'}
             labelKey="Signup.fullNameLabel"
             placeholder={'Signup.fullNamePlaceholder'}
             leftIcon={inputIcons.person}
             leftIconStyle={styles.iconStyle}
-          />
+          /> */}
 
           <TextInputField
             control={control}

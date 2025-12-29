@@ -82,7 +82,7 @@ export const EditProfile: React.FC = () => {
       defaultValues: {
         firstName: currentUser?.attributes?.profile?.firstName || '',
         lastName: currentUser?.attributes?.profile?.lastName || '',
-        displayName: currentUser?.attributes?.profile?.displayName || '',
+        // displayName: currentUser?.attributes?.profile?.displayName || '',
         phoneNumber: '',
       },
     });
@@ -174,7 +174,7 @@ export const EditProfile: React.FC = () => {
         const updateParams: any = {
           firstName: data.firstName,
           lastName: data.lastName,
-          displayName: data.displayName,
+          // displayName: data.displayName,
           protectedData: {
             phoneNumber: data.phoneNumber,
           },
@@ -283,13 +283,13 @@ export const EditProfile: React.FC = () => {
               placeholder="EditProfile.lastNamePlaceholder"
             />
 
-            <TextInputField
+            {/* <TextInputField
               control={control}
               labelStyle={styles.inputLabel}
               name="displayName"
               labelKey="EditProfile.displayNameLabel"
               placeholder="EditProfile.displayNamePlaceholder"
-            />
+            /> */}
 
             {/* Email Field - Navigate to Change Email */}
             {!hasIdp && (

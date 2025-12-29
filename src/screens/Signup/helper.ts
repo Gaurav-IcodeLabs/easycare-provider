@@ -21,9 +21,9 @@ export const formSchemaSignup = (t: TranslationTS) =>
     lastName: z.string().min(2, {
       message: t('Signup.fullNameIsRequired'),
     }),
-    fullName: z.string().min(2, {
-      message: t('Signup.fullNameIsRequired'),
-    }),
+    // fullName: z.string().min(2, {
+    //   message: t('Signup.fullNameIsRequired'),
+    // }),
     email: z.string().email({
       message: t('Signup.emailIsRequired'),
     }),

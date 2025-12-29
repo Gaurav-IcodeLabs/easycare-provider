@@ -36,7 +36,7 @@ export const Signup: React.FC = () => {
         lastName: values.lastName,
         email: values.email,
         password: values.password,
-        displayName: values.fullName,
+        // displayName: values.fullName,
         protectedData: {
           phoneNumber: values.phoneNumber,
         },
