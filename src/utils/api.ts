@@ -8,7 +8,13 @@ export const postDummyData = (data: any) =>
   apiClient.post('/dummy-endpoint', data);
 
 export const checkPhoneNumberExists = (data: any) =>
-  apiClient.post('/api/check_phone_number_exists', data);
+  apiClient.post<{phoneNumberExists: boolean}>(
+    '/api/check_phone_number_exists',
+    data,
+  );
+
+export const getEmailWithPhoneNumber = (data: any) =>
+  apiClient.post<{email: string}>('/api/email_by_phone_number', data);
 
 // export const createUserWithIdp = (data: {
 //   idpId: string;

@@ -8,7 +8,12 @@ import {
 } from 'react-native';
 import {scale, width} from '../../../utils';
 import {colors, primaryFont, AUTH, secondaryFont} from '../../../constants';
-import {AppText, Button, TextInputField} from '../../../components';
+import {
+  AppText,
+  Button,
+  PhoneInputField,
+  TextInputField,
+} from '../../../components';
 import {
   emailIcon,
   facebookIcon,
@@ -56,9 +61,12 @@ const LoginForm = ({
     control,
     handleSubmit,
     formState: {isValid},
+    setError,
+    clearErrors,
   } = useForm<LoginFormValues>({
     defaultValues: {
-      email: '',
+      // email: '',
+      phoneNumber: '',
       password: '',
     },
     resolver: zodResolver(formSchemaLogin(t)),
@@ -90,7 +98,7 @@ const LoginForm = ({
             <AppText style={styles.heading}>{t('Login.heading')}</AppText>
             <AppText style={styles.subheading}>{t('Login.subheading')}</AppText>
           </View>
-          <TextInputField
+          {/* <TextInputField
             control={control}
             name={'email'}
             labelKey="Login.emailLabel"
@@ -98,6 +106,14 @@ const LoginForm = ({
             placeholder={'Login.emailPlaceholder'}
             leftIcon={emailIcon}
             leftIconStyle={styles.iconStyle}
+          /> */}
+          <PhoneInputField
+            control={control}
+            name={'phoneNumber'}
+            setError={setError}
+            clearErrors={clearErrors}
+            labelKey="Signup.phoneLabel"
+            placeholderKey="Signup.phoneLabel"
           />
 
           <TextInputField

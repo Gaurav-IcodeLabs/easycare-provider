@@ -35,6 +35,7 @@ export interface SignupWithIdpParam extends Omit<SignupParams, 'password'> {
 export interface LoginThunkParams {
   username: string;
   password: string;
+  shouldEnableBiometric?: boolean;
 }
 
 export interface CreateUserParams

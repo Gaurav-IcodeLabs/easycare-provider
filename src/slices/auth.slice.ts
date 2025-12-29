@@ -2,7 +2,11 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {AuthState, LoginThunkParams, SignupParams, Thunk} from '../apptypes';
 import {resetAllSlices, RootState} from '../sharetribeSetup';
 import {storableError} from '../utils';
-import {checkPhoneNumberExists, sendOTP} from '../utils/api';
+import {
+  checkPhoneNumberExists,
+  getEmailWithPhoneNumber,
+  sendOTP,
+} from '../utils/api';
 
 const authenticated = (authInfo: AuthInfoResponse) =>
   authInfo?.isAnonymous === false;
@@ -167,9 +171,11 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
   async (params, {dispatch, extra: sdk, rejectWithValue}) => {
     try {
       const {phoneNumber} = params?.protectedData;
-      const {phoneNumberExists} = await checkPhoneNumberExists({
+      const response = await checkPhoneNumberExists({
         phoneNumber,
       });
+      const phoneNumberExists = (response as any)?.phoneNumberExists;
+
       if (phoneNumberExists) {
         return rejectWithValue({
           message: 'Phone number already exists',
@@ -260,7 +266,24 @@ export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
   'auth/loginStatus',
   async (params, {extra: sdk, rejectWithValue}) => {
     try {
-      const currentUser = await sdk.login(params);
+      // Get email from phone number
+      const emailResponse = await getEmailWithPhoneNumber({
+        phoneNumber: params.username,
+      });
+      const email = (emailResponse as any)?.email;
+
+      if (!email) {
+        return rejectWithValue({
+          message: 'Phone number not found',
+          statusCode: 404,
+        });
+      }
+
+      // Login with email and password
+      const currentUser = await sdk.login({
+        username: email,
+        password: params.password,
+      });
 
       const userResponse = await sdk.currentUser.show();
       const user = userResponse.data.data;

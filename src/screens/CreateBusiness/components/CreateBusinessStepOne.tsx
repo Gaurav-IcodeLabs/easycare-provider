@@ -30,20 +30,23 @@ interface CreateBusinessStepOneProps {
   inProgress: boolean;
   onSubmit: (values: any) => void;
   onChange?: (values: any) => void;
+  onValidationChange?: (isValid: boolean) => void;
   initialValues?: any;
 }
 
 export const CreateBusinessStepOne: FC<CreateBusinessStepOneProps> = ({
   onChange,
+  onValidationChange,
   initialValues,
 }) => {
   const {
     control,
     watch,
     reset,
-    formState: {errors},
+    formState: {errors, isValid},
   } = useForm<BusinessStepOneFormData>({
     resolver: zodResolver(businessStepOneSchema),
+    mode: 'onChange',
     defaultValues: initialValues || {
       title: '',
       description: '',
@@ -74,6 +77,13 @@ export const CreateBusinessStepOne: FC<CreateBusinessStepOneProps> = ({
     });
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
+
+  // Watch validation state and call onValidationChange
+  React.useEffect(() => {
+    if (onValidationChange) {
+      onValidationChange(isValid);
+    }
+  }, [isValid, onValidationChange]);
 
   return (
     <View style={styles.container}>

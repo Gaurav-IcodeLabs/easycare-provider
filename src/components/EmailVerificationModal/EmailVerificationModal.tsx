@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet, Modal, TouchableOpacity, Text} from 'react-native';
+import {View, StyleSheet, Modal, TouchableOpacity} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {useTranslation} from 'react-i18next';
 import {AppText} from '../AppText/AppText';
@@ -80,7 +80,7 @@ export const EmailVerificationModal: React.FC = () => {
               styles.close,
               isArabic ? styles.closeRTL : styles.closeLTR,
             ]}>
-            <Text style={styles.closeText}>✕</Text>
+            <AppText style={styles.closeText}>✕</AppText>
           </TouchableOpacity>
 
           <AppText style={[styles.title, {color: colors.black}]}>
@@ -103,9 +103,9 @@ export const EmailVerificationModal: React.FC = () => {
           />
 
           <TouchableOpacity onPress={handleClose}>
-            <Text style={[styles.laterText, {color: colors.lightblack}]}>
+            <AppText style={[styles.laterText, {color: colors.lightblack}]}>
               {t('EmailVerification.laterButton')}
-            </Text>
+            </AppText>
           </TouchableOpacity>
         </View>
       </View>

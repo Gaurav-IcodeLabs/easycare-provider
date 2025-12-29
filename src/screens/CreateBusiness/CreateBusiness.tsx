@@ -28,7 +28,6 @@ import {
   resetCreateBusiness,
   fetchBusinessListing,
 } from '../../slices/createBusiness.slice';
-import {getOwnListingsById} from '../../slices/marketplaceData.slice';
 import {CreateBusinessStepOne} from './components/CreateBusinessStepOne';
 import {CreateBusinessStepTwo} from './components/CreateBusinessStepTwo';
 import {types as sdkTypes} from '../../utils';
@@ -59,6 +58,12 @@ export const CreateBusiness: FC = () => {
   // Refs to hold form data from both components
   const stepOneDataRef = useRef<FormValues | null>(null);
   const stepTwoDataRef = useRef<FormValues | null>(null);
+
+  // Refs to track validation state
+  const stepOneValidRef = useRef<boolean>(false);
+  const stepTwoValidRef = useRef<boolean>(false);
+  const [isStepOneValid, setIsStepOneValid] = useState(false);
+  const [isStepTwoValid, setIsStepTwoValid] = useState(false);
 
   const isLoading = createInProgress || loading;
 
@@ -198,6 +203,18 @@ export const CreateBusiness: FC = () => {
   const handleStepTwoChange = React.useCallback((values: FormValues) => {
     console.log('📝 StepTwo changed:', values);
     stepTwoDataRef.current = values;
+  }, []);
+
+  const handleStepOneValidation = React.useCallback((isValid: boolean) => {
+    console.log('✅ StepOne validation:', isValid);
+    stepOneValidRef.current = isValid;
+    setIsStepOneValid(isValid);
+  }, []);
+
+  const handleStepTwoValidation = React.useCallback((isValid: boolean) => {
+    console.log('✅ StepTwo validation:', isValid);
+    stepTwoValidRef.current = isValid;
+    setIsStepTwoValid(isValid);
   }, []);
 
   // Initialize refs with existing data when it loads
@@ -408,6 +425,7 @@ export const CreateBusiness: FC = () => {
             inProgress={isLoading}
             onSubmit={handleStepOneChange}
             onChange={handleStepOneChange}
+            onValidationChange={handleStepOneValidation}
             initialValues={
               existingBusinessData
                 ? {
@@ -431,6 +449,7 @@ export const CreateBusiness: FC = () => {
             inProgress={isLoading}
             onSubmit={handleStepTwoChange}
             onChange={handleStepTwoChange}
+            onValidationChange={handleStepTwoValidation}
             initialValues={
               existingBusinessData
                 ? {
@@ -448,6 +467,8 @@ export const CreateBusiness: FC = () => {
       existingBusinessData,
       handleStepOneChange,
       handleStepTwoChange,
+      handleStepOneValidation,
+      handleStepTwoValidation,
       isLoading,
       t,
     ],
@@ -515,12 +536,16 @@ export const CreateBusiness: FC = () => {
           )}
           <TouchableOpacity
             onPress={handleNext}
-            disabled={isLoading}
+            disabled={
+              isLoading || (index === 0 ? !isStepOneValid : !isStepTwoValid)
+            }
             style={[
               styles.button,
               styles.primaryButton,
               index === 0 && styles.fullWidthButton,
-              isLoading && styles.buttonDisabled,
+              (isLoading ||
+                (index === 0 ? !isStepOneValid : !isStepTwoValid)) &&
+                styles.buttonDisabled,
             ]}
             activeOpacity={0.7}>
             {isLoading ? (

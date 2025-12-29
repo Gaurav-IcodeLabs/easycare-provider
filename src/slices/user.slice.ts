@@ -64,6 +64,7 @@ const mergeCurrentUser = (
 
 const initialState: UserState = {
   currentUser: null,
+  fetchCurrentUserInProgress: false,
   currentUserShowError: null,
   updateCurrentUserError: null,
   updateCurrentUserInProgress: false,
@@ -82,6 +83,7 @@ const userSlice = createSlice({
     builder
       .addCase(fetchCurrentUser.pending, state => {
         state.currentUserShowError = null;
+        state.fetchCurrentUserInProgress = true;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         if (action.payload) {
@@ -91,10 +93,12 @@ const userSlice = createSlice({
           );
         } else {
         }
+        state.fetchCurrentUserInProgress = false;
         state.currentUserShowError = null;
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.currentUserShowError = storableError(action.error as any);
+        state.fetchCurrentUserInProgress = false;
       })
       .addCase(updateCurrentUser.pending, state => {
         state.updateCurrentUserError = null;
@@ -298,6 +302,8 @@ export const {setCurrentUser} = userSlice.actions;
 
 export const currentUserDisplayNameSelector = (state: RootState) =>
   state.user.currentUser?.attributes.profile.displayName;
+export const fetchCurrentUserInProgressSelector = (state: RootState) =>
+  state.user.fetchCurrentUserInProgress;
 export const currentUserFirstNameSelector = (state: RootState) =>
   state.user.currentUser?.attributes.profile.firstName;
 export const currentUserLastNameSelector = (state: RootState) =>
@@ -311,7 +317,8 @@ export const currentUserEmailSelector = (state: RootState) =>
 export const currentUserPhoneNumberSelector = (state: RootState) =>
   state.user.currentUser?.attributes.profile.protectedData?.phoneNumber;
 export const phoneNumberVerifiedSelector = (state: RootState) =>
-  state.user.currentUser?.attributes.profile.publicData?.phoneNumberVerified;
+  state.user.currentUser?.attributes.profile.publicData?.phoneNumberVerified ??
+  false;
 export const businessListingIdSelector = (state: RootState) =>
   state.user.currentUser?.attributes.profile.publicData?.businessListingId;
 export const businessListingSetupCompletedSelector = (state: RootState) =>

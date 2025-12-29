@@ -1,7 +1,8 @@
 import React from 'react';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MainStackParamList} from '../apptypes';
-import {SCREENS} from '../constants';
+import {SCREENS, colors} from '../constants';
 import {
   CreateService,
   CreateProduct,
@@ -16,16 +17,31 @@ import {
 } from '../screens';
 import {BottomTabNavigator} from './BottomTabNavigator';
 import {OtpVerified, VerifyOtp} from '../screens';
-import {phoneNumberVerifiedSelector} from '../slices/user.slice';
+import {
+  fetchCurrentUserInProgressSelector,
+  phoneNumberVerifiedSelector,
+} from '../slices/user.slice';
 import {useTypedSelector} from '../sharetribeSetup';
 
 const {Navigator, Screen} = createNativeStackNavigator<MainStackParamList>();
 
 const MainStackNavigator: React.FC = () => {
+  const fetchCurrentUserInProcess = useTypedSelector(
+    fetchCurrentUserInProgressSelector,
+  );
   const phoneNumberVerified = useTypedSelector(phoneNumberVerifiedSelector);
-  const initialRouteName =
-    // __DEV__? SCREENS.MAIN_TABS:
-    phoneNumberVerified ? SCREENS.MAIN_TABS : SCREENS.VERIFT_OTP;
+
+  if (fetchCurrentUserInProcess) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={colors.deepBlue} />
+      </View>
+    );
+  }
+
+  const initialRouteName = phoneNumberVerified
+    ? SCREENS.MAIN_TABS
+    : SCREENS.VERIFT_OTP;
   return (
     <Navigator
       screenOptions={{
@@ -48,5 +64,14 @@ const MainStackNavigator: React.FC = () => {
     </Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+  },
+});
 
 export default MainStackNavigator;

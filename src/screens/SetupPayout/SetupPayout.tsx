@@ -119,10 +119,11 @@ export const SetupPayout: React.FC = () => {
         await dispatch(
           updateOwnListing({
             id: businessListingId,
+            // id: new types.UUID(businessListingId),
             publicData: {
               payoutSetupCompleted: true,
             },
-            protectedData: {
+            privateData: {
               payoutDetails: {
                 fullLegalName: data.fullLegalName,
                 bankName: data.bankName,

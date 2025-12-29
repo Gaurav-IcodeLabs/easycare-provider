@@ -102,7 +102,10 @@ export const TextInputField = <T extends FieldValues>({
                       colors.placeholder || colors.neutralDark
                     }
                     secureTextEntry={isPassword && !showPassword}
-                    style={getInputStyle(isArabic)}
+                    style={[
+                      getInputStyle(isArabic),
+                      textInputProps.multiline && {paddingVertical: scale(10)},
+                    ]}
                     allowFontScaling={false}
                     {...textInputProps}
                   />

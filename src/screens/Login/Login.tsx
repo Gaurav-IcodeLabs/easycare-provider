@@ -34,6 +34,7 @@ import {
   signInWithApple,
   signInWithFacebook,
 } from '../../utils/socialAuth.helpers';
+import {getEmailWithPhoneNumber} from '../../utils/api';
 
 export const Login: React.FC = () => {
   const {t} = useTranslation();
@@ -76,17 +77,25 @@ export const Login: React.FC = () => {
     try {
       await dispatch(
         login({
-          username: values.email,
+          username: values.phoneNumber,
           password: values.password,
         }),
       ).unwrap();
 
       if (shouldEnableBiometric && biometricAvailable) {
-        await enableBiometricLogin({
-          username: values.email,
-          password: values.password,
+        // Get email for biometric storage
+        const emailResponse = await getEmailWithPhoneNumber({
+          phoneNumber: values.phoneNumber,
         });
-        dispatch(updateAppState({key: 'biometricEnabled', value: true}));
+        const email = (emailResponse as any)?.email;
+
+        if (email) {
+          await enableBiometricLogin({
+            username: email,
+            password: values.password,
+          });
+          dispatch(updateAppState({key: 'biometricEnabled', value: true}));
+        }
       }
 
       // Login successful - navigation will be handled by auth state change
@@ -104,6 +113,8 @@ export const Login: React.FC = () => {
         errorMessage = t('Login.errorInvalidCredentials');
       } else if (statusCode === 403) {
         errorMessage = t('Login.errorAccountDisabled');
+      } else if (statusCode === 404) {
+        errorMessage = t('Login.errorPhoneNotFound');
       } else if (statusCode === 429) {
         errorMessage = t('Login.errorTooManyAttempts');
       }

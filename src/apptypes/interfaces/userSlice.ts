@@ -2,6 +2,7 @@ import {CurrentUser} from './sdk';
 
 export interface UserState {
   currentUser: null | CurrentUser;
+  fetchCurrentUserInProgress: boolean;
   currentUserShowError: StorableError | null;
   updateCurrentUserError: null | StorableError;
   updateCurrentUserInProgress: boolean;

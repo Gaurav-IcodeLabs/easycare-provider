@@ -34,6 +34,7 @@ interface CreateBusinessStepTwoProps {
   inProgress: boolean;
   onSubmit: (values: any) => void;
   onChange?: (values: any) => void;
+  onValidationChange?: (isValid: boolean) => void;
   initialValues?: {
     weeklySchedule?: WeeklySchedule;
     timezone?: string;
@@ -53,6 +54,7 @@ const daysOfWeek = [
 
 export const CreateBusinessStepTwo: FC<CreateBusinessStepTwoProps> = ({
   onChange,
+  onValidationChange,
   initialValues,
 }) => {
   const {t} = useTranslation();
@@ -109,6 +111,16 @@ export const CreateBusinessStepTwo: FC<CreateBusinessStepTwoProps> = ({
       });
     }
   }, [weeklySchedule, exceptions, timezone, onChange]);
+
+  // Validate step two - at least one day should be enabled with valid slots
+  React.useEffect(() => {
+    if (onValidationChange) {
+      const hasEnabledDay = Object.values(weeklySchedule).some(
+        day => day.enabled && day.slots.length > 0,
+      );
+      onValidationChange(hasEnabledDay);
+    }
+  }, [weeklySchedule, onValidationChange]);
 
   const handleSaveSchedule = (
     schedule: WeeklySchedule,
