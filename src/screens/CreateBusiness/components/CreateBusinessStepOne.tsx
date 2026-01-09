@@ -92,7 +92,7 @@ export const CreateBusinessStepOne: FC<CreateBusinessStepOneProps> = ({
         name="title"
         labelKey="CreateBusiness.businessTitle"
         placeholder="CreateBusiness.businessTitlePlaceholder"
-        style={styles.inputContainer}
+        // style={styles.inputContainer}
       />
 
       <TextInputField
@@ -102,7 +102,7 @@ export const CreateBusinessStepOne: FC<CreateBusinessStepOneProps> = ({
         placeholder="CreateBusiness.descriptionPlaceholder"
         multiline
         numberOfLines={4}
-        style={styles.inputContainer}
+        // style={styles.inputContainer}
       />
 
       <TextInputField
@@ -138,9 +138,10 @@ export const CreateBusinessStepOne: FC<CreateBusinessStepOneProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    gap: scale(16),
+    // backgroundColor: 'red',
+    // gap: scale(16),
   },
   inputContainer: {
-    marginBottom: 0,
+    marginBottom: scale(16),
   },
 });

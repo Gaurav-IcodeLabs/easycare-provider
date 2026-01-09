@@ -14,7 +14,6 @@ import {
 } from '../../slices/auth.slice';
 import {SignupFormValues} from './helper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useLanguage} from '../../hooks';
 import {
   signInWithGoogle,
   signInWithApple,
@@ -27,7 +26,6 @@ export const Signup: React.FC = () => {
   const {top} = useSafeAreaInsets();
   const signupInProgress = useTypedSelector(signUpInProgressSelector);
   const {showToast} = useToast();
-  const {isArabic} = useLanguage();
 
   const handleSignup = async (values: SignupFormValues) => {
     try {
@@ -203,10 +201,7 @@ export const Signup: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={[styles.topSection, {paddingTop: top}]}>
-        <Image
-          source={logo}
-          style={[styles.appIcon, isArabic && {transform: [{scaleX: -1}]}]}
-        />
+        <Image source={logo} style={styles.appIcon} />
       </View>
       <SignupForm
         onSubmit={handleSignup}

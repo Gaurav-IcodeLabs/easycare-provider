@@ -29,6 +29,7 @@ interface CreateServiceFormProps {
   inProgress: boolean;
   initialValues?: any;
   isEditMode?: boolean;
+  onAddServicePress: () => void;
 }
 
 export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
@@ -41,6 +42,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
     inProgress,
     initialValues,
     isEditMode = false,
+    onAddServicePress,
   } = props;
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     initialValues?.categoryId || '',
@@ -360,6 +362,11 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
           disabled={inProgress || !isValid}
           loader={inProgress}
         />
+        <Button
+          title={t('CreateServiceForm.addServiceBtn')}
+          onPress={onAddServicePress}
+          style={{marginTop: scale(10)}}
+        />
       </View>
     </View>
   );
@@ -402,6 +409,7 @@ const styles = StyleSheet.create({
     paddingVertical: scale(10),
   },
   disabledInput: {
+    marginBottom: scale(16),
     backgroundColor: colors.milkWhite,
     borderColor: colors.lightGrey,
   },

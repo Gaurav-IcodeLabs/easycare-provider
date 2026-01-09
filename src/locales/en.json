@@ -214,7 +214,7 @@
   "EmailVerification": {
     "modalTitle": "Verify Your Email",
     "modalDescription": "Please verify your email address to access all features. We'll send a verification link to:",
-    "sendButton": "Send Verification Email",
+    "sendButton": "Resend Verification Email",
     "laterButton": "I'll do it later",
     "successTitle": "Verification email sent",
     "successMessage": "Please check your inbox at {{email}}",
@@ -329,7 +329,8 @@
     "submit": "Create Service",
     "submitting": "Creating...",
     "update": "Update Service",
-    "updating": "Updating..."
+    "updating": "Updating...",
+    "addServiceBtn": "Add Service Request"
   },
   "CustomExtendedDataField": {
     "numberTooSmall": "Number is too small",
@@ -364,6 +365,8 @@
     "setupAvailabilityDesc": "Configure your business hours and schedule",
     "setupPayout": "Setup Payout Details",
     "setupPayoutDesc": "Add your payment information to receive earnings",
+    "completeAccountSetup": "Complete Account Setup",
+    "completePayoutSetup": "Complete Payout Setup",
     "getStarted": "Get Started"
   },
   "CreateBusiness": {
@@ -537,5 +540,13 @@
     "error": "Error",
     "noUserEmail": "Unable to get user email. Please try again.",
     "sameEmailError": "New email must be different from current email"
+  },
+  "AddService": {
+    "heading": "Request service",
+    "title": "Title",
+    "titlePlaceholder": "Service name",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe you requirement",
+    "button": "Send Request"
   }
 }

@@ -13,7 +13,7 @@ import React, {useEffect} from 'react';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {scale, width} from '../../utils';
 import {colors, ListingType, SCREENS, secondaryFont} from '../../constants';
-import {GradientWrapper, AppText, ListingCard} from '../../components';
+import {GradientWrapper, AppText, ListingCard, Button} from '../../components';
 import {
   avatarPlaceholder,
   businessStepIcons,
@@ -40,6 +40,7 @@ import {
   currentUserProfileImageUrlSelector,
 } from '../../slices/user.slice';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useStatusBar} from '../../hooks';
 
 type HomeNavigationProp = NativeStackNavigationProp<
   MainStackParamList,
@@ -50,6 +51,7 @@ export const Home: React.FC = () => {
   const navigation = useNavigation<HomeNavigationProp>();
   const dispatch = useAppDispatch();
   const {t} = useTranslation();
+  useStatusBar('light-content');
   const entities = useTypedSelector(state => state.marketplaceData.entities);
   const servicesIds = useTypedSelector(serviceIdsSelector);
   const productsIds = useTypedSelector(productIdsSelector);
@@ -167,12 +169,11 @@ export const Home: React.FC = () => {
           </AppText>
 
           <View style={styles.setupSteps}>
-            <TouchableOpacity
+            <View
               style={[
                 styles.setupStep,
                 isBusinessProfileSetup && styles.setupStepCompleted,
-              ]}
-              onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
+              ]}>
               <Image
                 source={
                   isBusinessProfileSetup
@@ -189,14 +190,13 @@ export const Home: React.FC = () => {
                   {t('HOME.setupBusinessDesc')}
                 </AppText>
               </View>
-            </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity
+            <View
               style={[
                 styles.setupStep,
                 isAvailabilitySetup && styles.setupStepCompleted,
-              ]}
-              onPress={() => navigation.navigate(SCREENS.CREATE_BUSINESS)}>
+              ]}>
               <Image
                 source={
                   isAvailabilitySetup
@@ -214,14 +214,13 @@ export const Home: React.FC = () => {
                   {t('HOME.setupAvailabilityDesc')}
                 </AppText>
               </View>
-            </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity
+            <View
               style={[
                 styles.setupStep,
                 isPayoutSetup && styles.setupStepCompleted,
-              ]}
-              onPress={() => navigation.navigate(SCREENS.SETUP_PAYOUT)}>
+              ]}>
               <Image
                 source={
                   isPayoutSetup
@@ -239,8 +238,25 @@ export const Home: React.FC = () => {
                   {t('HOME.setupPayoutDesc')}
                 </AppText>
               </View>
-            </TouchableOpacity>
+            </View>
           </View>
+
+          <Button
+            title={t(
+              isBusinessProfileSetup
+                ? 'HOME.completePayoutSetup'
+                : 'HOME.completeAccountSetup',
+            )}
+            onPress={() =>
+              navigation.navigate(
+                isBusinessProfileSetup
+                  ? SCREENS.SETUP_PAYOUT
+                  : SCREENS.CREATE_BUSINESS,
+              )
+            }
+            style={styles.setupButton}
+            titleStyle={{color: colors.deepBlue}}
+          />
         </View>
       </GradientWrapper>
     );
@@ -416,7 +432,7 @@ const styles = StyleSheet.create({
     ...(I18nManager.isRTL && {textAlign: 'left'}),
   },
   setupSteps: {
-    gap: scale(20),
+    gap: scale(16),
     marginBottom: scale(40),
   },
   setupStep: {

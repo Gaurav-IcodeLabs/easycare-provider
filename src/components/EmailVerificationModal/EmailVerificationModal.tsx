@@ -8,6 +8,7 @@ import {useAppDispatch, useTypedSelector} from '../../sharetribeSetup';
 import {
   currentUserEmailSelector,
   currentUserEmailVerifiedSelector,
+  phoneNumberVerifiedSelector,
 } from '../../slices/user.slice';
 import {
   sendVerificationEmail,
@@ -24,18 +25,23 @@ export const EmailVerificationModal: React.FC = () => {
   const {isArabic} = useLanguage();
   const email = useTypedSelector(currentUserEmailSelector);
   const emailVerified = useTypedSelector(currentUserEmailVerifiedSelector);
+  const phoneNumberVerified = useTypedSelector(phoneNumberVerifiedSelector);
   const isAuthenticated = useTypedSelector(isAuthenticatedSelector);
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (isAuthenticated && emailVerified === false) {
+      if (
+        isAuthenticated &&
+        emailVerified === false &&
+        phoneNumberVerified === true
+      ) {
         setIsVisible(true);
       }
     }, 1000);
     return () => clearTimeout(timer);
-  }, [isAuthenticated, emailVerified]);
+  }, [isAuthenticated, emailVerified, phoneNumberVerified]);
 
   // Close modal when email becomes verified
   useEffect(() => {

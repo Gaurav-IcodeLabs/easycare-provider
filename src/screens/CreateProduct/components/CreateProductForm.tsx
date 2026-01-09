@@ -84,6 +84,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
             labelKey="CreateProductForm.stock"
             placeholder="CreateProductForm.stockPlaceholder"
             keyboardType="numeric"
+            inputContainerStyles={{marginBottom: scale(16)}}
           />
 
           <MultiImagePickField

@@ -48,6 +48,7 @@ export type MainStackParamList = {
   [SCREENS.OTP_VERIFIED]: undefined;
   [SCREENS.LISTINGS]: {listingType: string};
   [SCREENS.SETUP_PAYOUT]: undefined;
+  [SCREENS.ADD_SERVICE]: undefined;
 };
 
 export type BottomTabParamList = {
@@ -69,6 +70,11 @@ export type VerifyOtpScreenProps = NativeStackScreenProps<
 export type OtpVerifiedScreenProps = NativeStackScreenProps<
   AuthStackParamList,
   typeof AUTH.OTP_VERIFIED
+>;
+
+export type CreateServiceScreenProps = NativeStackScreenProps<
+  MainStackParamList,
+  typeof SCREENS.CREATE_SERVICE
 >;
 
 // export type SignupScreenProps = NativeStackScreenProps<

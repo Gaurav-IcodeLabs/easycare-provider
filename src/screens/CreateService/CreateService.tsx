@@ -1,6 +1,6 @@
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import React, {FC, useState, useEffect} from 'react';
-import {colors, primaryFont} from '../../constants';
+import {colors, primaryFont, SCREENS} from '../../constants';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {backIcon} from '../../assets';
 import {AppText, ListingSuccessModal} from '../../components';
@@ -24,6 +24,7 @@ import {CreateServiceForm} from './components/CreateServiceForm';
 import {useConfiguration} from '../../context';
 import {types as sdkTypes} from '../../utils';
 import {denormalisedResponseEntities} from '../../utils/data';
+import {CreateServiceScreenProps} from '../../apptypes';
 
 interface FormValues {
   [key: string]: any;
@@ -44,7 +45,7 @@ export const CreateService: FC = () => {
   const {t} = useTranslation();
   const {top} = useSafeAreaInsets();
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<CreateServiceScreenProps['navigation']>();
   const route = useRoute<CreateServiceRouteProp>();
   const config = useConfiguration() as any;
   const {showToast} = useToast();
@@ -228,6 +229,10 @@ export const CreateService: FC = () => {
     navigation.goBack();
   };
 
+  const handleAddServicePress = () => {
+    navigation.replace(SCREENS.ADD_SERVICE);
+  };
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <ScreenHeader
@@ -248,6 +253,7 @@ export const CreateService: FC = () => {
             onSubmit={onSubmit}
             initialValues={isEditMode ? initialValues : undefined}
             isEditMode={isEditMode}
+            onAddServicePress={handleAddServicePress}
           />
         )}
       </View>

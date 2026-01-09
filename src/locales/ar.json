@@ -211,7 +211,7 @@
   "EmailVerification": {
     "modalTitle": "تحقق من بريدك الإلكتروني",
     "modalDescription": "يرجى التحقق من عنوان بريدك الإلكتروني للوصول إلى جميع الميزات. سنرسل رابط التحقق إلى:",
-    "sendButton": "إرسال بريد التحقق",
+    "sendButton": "إعادة إرسال بريد التحقق",
     "laterButton": "سأفعل ذلك لاحقاً",
     "successTitle": "تم إرسال بريد التحقق",
     "successMessage": "يرجى التحقق من صندوق الوارد الخاص بك على {{email}}",
@@ -329,7 +329,8 @@
     "submit": "إنشاء الخدمة",
     "submitting": "جاري الإنشاء...",
     "update": "تحديث الخدمة",
-    "updating": "جاري التحديث..."
+    "updating": "جاري التحديث...",
+    "addServiceBtn": "إضافة طلب خدمة"
   },
   "CustomExtendedDataField": {
     "numberTooSmall": "الرقم صغير جداً",
@@ -363,6 +364,8 @@
     "setupAvailabilityDesc": "قم بتكوين ساعات عملك وجدولك الزمني",
     "setupPayout": "إعداد تفاصيل الدفع",
     "setupPayoutDesc": "أضف معلومات الدفع الخاصة بك لتلقي الأرباح",
+    "completeAccountSetup": "إكمال إعداد الحساب",
+    "completePayoutSetup": "إكمال إعداد المدفوعات",
     "getStarted": "ابدأ الآن"
   },
   "CreateBusiness": {
@@ -536,5 +539,13 @@
     "error": "خطأ",
     "noUserEmail": "تعذر الحصول على البريد الإلكتروني للمستخدم. يرجى المحاولة مرة أخرى.",
     "sameEmailError": "يجب أن يكون البريد الإلكتروني الجديد مختلفاً عن البريد الحالي"
+  },
+  "AddService": {
+    "heading": "طلب خدمة",
+    "title": "العنوان",
+    "titlePlaceholder": "اسم الخدمة",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صف متطلباتك",
+    "button": "إرسال الطلب"
   }
 }

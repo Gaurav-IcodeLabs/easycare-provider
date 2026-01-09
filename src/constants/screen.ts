@@ -26,4 +26,5 @@ export const SCREENS = {
   CREATE_BUSINESS: 'CreateBusiness',
   LISTINGS: 'Listings',
   SETUP_PAYOUT: 'SetupPayout',
+  ADD_SERVICE: 'AddService',
 } as const;

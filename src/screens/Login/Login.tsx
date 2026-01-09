@@ -22,7 +22,6 @@ import {
   loginWithIdp,
 } from '../../slices/auth.slice';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useLanguage} from '../../hooks';
 import {
   biometricAvailableSelector,
   biometricEnabledSelector,
@@ -42,11 +41,9 @@ export const Login: React.FC = () => {
   const {top} = useSafeAreaInsets();
   const loginInProgress = useTypedSelector(loginInProgressSelector);
   const biometricAvailable = useTypedSelector(biometricAvailableSelector);
-  console.log('biometricAvailable', biometricAvailable);
   const biometricType = useTypedSelector(biometricTypeSelector);
   const biometricEnabled = useTypedSelector(biometricEnabledSelector);
   const {showToast} = useToast();
-  const {isArabic} = useLanguage();
 
   useEffect(() => {
     checkBiometricAvailability();
@@ -65,7 +62,6 @@ export const Login: React.FC = () => {
 
     if (available) {
       const enabled = await isBiometricEnabled();
-      console.log('enabled', enabled);
       dispatch(updateAppState({key: 'biometricEnabled', value: enabled}));
     }
   };
@@ -321,10 +317,7 @@ export const Login: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={[styles.topSection, {paddingTop: top}]}>
-        <Image
-          source={logo}
-          style={[styles.appIcon, isArabic && {transform: [{scaleX: -1}]}]}
-        />
+        <Image source={logo} style={styles.appIcon} />
       </View>
       <LoginForm
         onSubmit={handleLogin}

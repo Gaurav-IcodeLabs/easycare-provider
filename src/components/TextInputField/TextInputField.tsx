@@ -81,6 +81,14 @@ export const TextInputField = <T extends FieldValues>({
                     styles.inputContainer,
                     inputContainerStyles,
                     isFocused && styles.focused,
+
+                    textInputProps.multiline && {
+                      height: undefined,
+                      minHeight: scale(120),
+                      maxHeight: scale(240),
+                      alignItems: 'flex-start',
+                      paddingVertical: scale(10),
+                    },
                   ]}>
                   {leftIcon && (
                     <Image
