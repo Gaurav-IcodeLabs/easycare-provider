@@ -90,6 +90,8 @@
 	<string>This app needs access to save images to your photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to photo library to select and upload images</string>
+	<key>NSAppleMusicUsageDescription</key>
+    <string>This app does not access your music library.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Arimo-Bold.ttf</string>
