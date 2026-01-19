@@ -102,6 +102,7 @@ export const CreateBusinessStepOne: FC<CreateBusinessStepOneProps> = ({
         placeholder="CreateBusiness.descriptionPlaceholder"
         multiline
         numberOfLines={4}
+        inputContainerStyles={{borderRadius: scale(12)}}
         // style={styles.inputContainer}
       />
 

@@ -48,7 +48,7 @@ export const PhoneInputField = <T extends FieldValues>({
   clearErrors,
   placeholderKey,
   phoneInputRef,
-  defaultCode = 'IN',
+  defaultCode = 'SA',
   labelStyle = {},
 }: PhoneInputFieldProps<T>) => {
   const {t} = useTranslation();
@@ -60,7 +60,7 @@ export const PhoneInputField = <T extends FieldValues>({
 
   const placeholderString = t(placeholderKey ?? '');
 
-  const validatePhoneNumber = () => {
+  const validatePhoneNumber = (onChangeCallback?: (value: string) => void) => {
     if (!phoneInput.current) {
       return;
     }
@@ -74,6 +74,20 @@ export const PhoneInputField = <T extends FieldValues>({
     const isValid = phoneInput.current.isValidNumber(currentValue);
     if (isValid) {
       clearErrors(name);
+      // Only normalize if valid AND onChange callback is provided
+      if (onChangeCallback) {
+        const callingCode = phoneInput.current.getCallingCode();
+        const result =
+          phoneInput.current.getNumberAfterPossiblyEliminatingZero();
+        if (result?.number && callingCode) {
+          // onChangeCallback(result.number);
+          const normalizedNumber = `+${callingCode}${result.number.replace(
+            `+${callingCode}`,
+            '',
+          )}`;
+          onChangeCallback(normalizedNumber);
+        }
+      }
     } else {
       setError(name, {
         type: 'manual',
@@ -116,12 +130,12 @@ export const PhoneInputField = <T extends FieldValues>({
               textInputStyle={getInputStyle(isArabic)}
               codeTextStyle={styles.codeText}
               flagButtonStyle={styles.flagButton}
-              onChangeCountry={validatePhoneNumber}
+              onChangeCountry={() => validatePhoneNumber()}
               countryPickerButtonStyle={styles.countryPickerButton}
               textInputProps={{
                 onFocus: () => setIsFocused(true),
                 onBlur: () => {
-                  setIsFocused(false), validatePhoneNumber(); // ← now uses fresh value from ref
+                  setIsFocused(false), validatePhoneNumber(onChange); // ← now uses fresh value from ref
                 },
                 placeholderTextColor: colors.placeholder || colors.neutralDark,
                 allowFontScaling: false,

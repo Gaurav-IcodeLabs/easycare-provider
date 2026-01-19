@@ -30,6 +30,7 @@ interface TextInputFieldProps<T extends FieldValues> extends TextInputProps {
   inputContainerStyles?: ViewStyle;
   labelStyle?: TextStyle;
   rightView?: ReactNode;
+  innerLeftView?: ReactNode;
 }
 
 // Stable styles (outside render)
@@ -52,6 +53,7 @@ export const TextInputField = <T extends FieldValues>({
   leftIcon,
   leftIconStyle,
   rightView,
+  innerLeftView,
   ...textInputProps
 }: TextInputFieldProps<T>) => {
   const {t} = useTranslation();
@@ -95,6 +97,11 @@ export const TextInputField = <T extends FieldValues>({
                       style={[styles.leftIcon, leftIconStyle]}
                       source={leftIcon}
                     />
+                  )}
+                  {innerLeftView && (
+                    <View style={{paddingRight: scale(5)}}>
+                      {innerLeftView}
+                    </View>
                   )}
 
                   <TextInput

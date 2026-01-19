@@ -458,7 +458,7 @@
     "bankNamePlaceholder": "أدخل اسم البنك",
     "bankNameRequired": "اسم البنك مطلوب",
     "ibanLabel": "رقم الآيبان",
-    "ibanPlaceholder": "SA0000000000000000000000",
+    "ibanPlaceholder": "0000000000000000000000",
     "ibanRequired": "رقم الآيبان مطلوب",
     "ibanInvalid": "الرجاء إدخال رقم آيبان صحيح",
     "countryLabel": "الدولة",

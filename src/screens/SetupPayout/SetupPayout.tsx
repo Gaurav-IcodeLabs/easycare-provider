@@ -14,7 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
-import {AppText, TextInputField, DropdownField} from '../../components';
+import {AppText, TextInputField, DropdownField, Button} from '../../components';
 import {backIcon} from '../../assets';
 import {colors, primaryFont} from '../../constants';
 import {scale, fontScale, useToast} from '../../utils';
@@ -71,10 +71,14 @@ export const SetupPayout: React.FC = () => {
           .string()
           .min(1, t('SetupPayout.fullLegalNameRequired')),
         bankName: z.string().min(1, t('SetupPayout.bankNameRequired')),
+        // iban: z
+        //   .string()
+        //   .min(1, t('SetupPayout.ibanRequired'))
+        //   .regex(/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/, t('SetupPayout.ibanInvalid')),
         iban: z
           .string()
-          .min(1, t('SetupPayout.ibanRequired'))
-          .regex(/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/, t('SetupPayout.ibanInvalid')),
+          .length(22, t('SetupPayout.ibanInvalid'))
+          .regex(/^[0-9]{22}$/, t('SetupPayout.ibanInvalid')),
         country: z.string().min(1, t('SetupPayout.countryRequired')),
       }),
     [t],
@@ -86,7 +90,11 @@ export const SetupPayout: React.FC = () => {
     [i18n.language],
   );
 
-  const {control, handleSubmit} = useForm<PayoutFormData>({
+  const {
+    control,
+    handleSubmit,
+    formState: {isValid},
+  } = useForm<PayoutFormData>({
     resolver: zodResolver(payoutFormSchema),
     defaultValues: {
       fullLegalName: existingPayoutData?.fullLegalName || '',
@@ -94,9 +102,11 @@ export const SetupPayout: React.FC = () => {
       iban: existingPayoutData?.iban || '',
       country: existingPayoutData?.country || 'SA',
     },
+    mode: 'onChange',
   });
 
   const onSubmit = async (data: PayoutFormData) => {
+    const fullIban = `SA${data.iban}`;
     try {
       setIsSubmitting(true);
 
@@ -107,7 +117,7 @@ export const SetupPayout: React.FC = () => {
             payoutDetails: {
               fullLegalName: data.fullLegalName,
               bankName: data.bankName,
-              iban: data.iban,
+              iban: fullIban,
               country: data.country,
             },
           } as any,
@@ -127,7 +137,7 @@ export const SetupPayout: React.FC = () => {
               payoutDetails: {
                 fullLegalName: data.fullLegalName,
                 bankName: data.bankName,
-                iban: data.iban,
+                iban: fullIban,
                 country: data.country,
               },
             },
@@ -194,6 +204,10 @@ export const SetupPayout: React.FC = () => {
           labelKey="SetupPayout.ibanLabel"
           placeholder="SetupPayout.ibanPlaceholder"
           autoCapitalize="characters"
+          maxLength={22}
+          innerLeftView={
+            <AppText style={{fontSize: fontScale(18)}}>SA</AppText>
+          }
         />
 
         <DropdownField
@@ -209,7 +223,14 @@ export const SetupPayout: React.FC = () => {
 
       <View
         style={[styles.buttonContainer, {paddingBottom: bottom || scale(20)}]}>
-        <TouchableOpacity
+        <Button
+          onPress={handleSubmit(onSubmit)}
+          title="SetupPayout.saveButton"
+          loader={isSubmitting}
+          disabled={!isValid || isSubmitting}
+          style={{backgroundColor: colors.deepBlue}}
+        />
+        {/* <TouchableOpacity
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
           style={[styles.button, isSubmitting && styles.buttonDisabled]}
@@ -221,7 +242,7 @@ export const SetupPayout: React.FC = () => {
               {t('SetupPayout.saveButton')}
             </AppText>
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

@@ -459,7 +459,7 @@
     "bankNamePlaceholder": "Enter your bank name",
     "bankNameRequired": "Bank name is required",
     "ibanLabel": "IBAN",
-    "ibanPlaceholder": "SA0000000000000000000000",
+    "ibanPlaceholder": "0000000000000000000000",
     "ibanRequired": "IBAN is required",
     "ibanInvalid": "Please enter a valid IBAN",
     "countryLabel": "Country",
