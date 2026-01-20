@@ -9,10 +9,10 @@ export const getServiceFormSchema = (t: TFunction) => {
     subcategoryId: z
       .string()
       .min(1, t('CreateServiceForm.subcategoryRequired')),
-    title: z
+    subsubcategoryId: z
       .string()
-      .min(1, t('CreateServiceForm.titleRequired'))
-      .max(TITLE_MAX_LENGTH, t('CreateServiceForm.maxLength')),
+      .min(1, t('CreateServiceForm.subsubcategoryRequired')),
+    title: z.string().optional(), // Auto-generated from sub-subcategory
     description: z.string().min(10, t('CreateServiceForm.descriptionRequired')),
     price: z
       .string()
@@ -36,6 +36,7 @@ export const getDefaultServiceValues = () => {
   return {
     categoryId: '',
     subcategoryId: '',
+    subsubcategoryId: '',
     title: '',
     description: '',
     price: '',

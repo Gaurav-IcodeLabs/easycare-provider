@@ -19,6 +19,7 @@ import {
 import {
   categoriesSelector,
   subcategoriesByKeysSelector,
+  subsubcategoriesByKeysSelector,
 } from '../../slices/marketplaceData.slice';
 import {CreateServiceForm} from './components/CreateServiceForm';
 import {useConfiguration} from '../../context';
@@ -51,6 +52,9 @@ export const CreateService: FC = () => {
   const {showToast} = useToast();
   const categories = useTypedSelector(categoriesSelector);
   const subcategoriesByKeys = useTypedSelector(subcategoriesByKeysSelector);
+  const subsubcategoriesByKeys = useTypedSelector(
+    subsubcategoriesByKeysSelector,
+  );
   const createInProgress = useTypedSelector(createServiceInProgressSelector);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -165,10 +169,13 @@ export const CreateService: FC = () => {
         cat => cat.id === values.categoryId,
       );
       const selectedSubcategory = subcategoriesByKeys[values.subcategoryId];
+      const selectedSubSubcategory =
+        subsubcategoriesByKeys[values.subsubcategoryId];
 
       const serviceData = {
         categoryId: values.categoryId,
         subcategoryId: values.subcategoryId,
+        subsubcategoryId: values.subsubcategoryId,
         title: values.title,
         description: values.description,
         price: parseFloat(values.price),
@@ -178,15 +185,16 @@ export const CreateService: FC = () => {
         customAttributes: values.customAttributes || {},
         categoryConfig: selectedCategory,
         subcategoryConfig: selectedSubcategory,
+        subsubcategoryConfig: selectedSubSubcategory,
       };
 
       if (isEditMode) {
         // Update existing service
-        console.log('Updating service with data:', {
-          ...serviceData,
-          listingId,
-          images: imageIds,
-        });
+        // console.log('Updating service with data:', {
+        //   ...serviceData,
+        //   listingId,
+        //   images: imageIds,
+        // });
 
         await dispatch(
           requestUpdateService({
@@ -204,10 +212,10 @@ export const CreateService: FC = () => {
         navigation.goBack();
       } else {
         // Create new service
-        console.log('Creating service with data:', {
-          ...serviceData,
-          images: imageIds,
-        });
+        // console.log('Creating service with data:', {
+        //   ...serviceData,
+        //   images: imageIds,
+        // });
 
         await dispatch(requestCreateService(serviceData)).unwrap();
         setShowModal(true);
@@ -249,6 +257,7 @@ export const CreateService: FC = () => {
           <CreateServiceForm
             categories={categories}
             subcategoriesByKeys={subcategoriesByKeys}
+            subsubcategoriesByKeys={subsubcategoriesByKeys}
             inProgress={isLoading}
             onSubmit={onSubmit}
             initialValues={isEditMode ? initialValues : undefined}

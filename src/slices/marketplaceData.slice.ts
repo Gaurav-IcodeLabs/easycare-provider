@@ -7,13 +7,16 @@ import {
   Category,
   Subcategory,
   ServicesConfigResponse,
+  SubSubCategory,
 } from '../apptypes/interfaces/serviceConfig';
+// const ADMIN_PANEL_URL = 'http://192.168.68.110:5378';
 
 interface MarketplaceDataState {
   entities: Record<string, any>;
   categories: Category[];
   categoriesByKeys: Record<string, Category>;
   subcategoriesByKeys: Record<string, Subcategory>;
+  subsubcategoriesByKeys: Record<string, SubSubCategory>;
 }
 
 const merge = (state: MarketplaceDataState, payload: any) => {
@@ -30,6 +33,7 @@ const initialState: MarketplaceDataState = {
   categories: [],
   categoriesByKeys: {},
   subcategoriesByKeys: {},
+  subsubcategoriesByKeys: {},
 };
 
 const marketplaceDataSlice = createSlice({
@@ -48,6 +52,7 @@ const marketplaceDataSlice = createSlice({
       // Build categoriesByKeys
       const categoriesByKeys: Record<string, Category> = {};
       const subcategoriesByKeys: Record<string, Subcategory> = {};
+      const subsubcategoriesByKeys: Record<string, SubSubCategory> = {};
 
       action.payload.forEach(category => {
         categoriesByKeys[category.id] = category;
@@ -55,11 +60,16 @@ const marketplaceDataSlice = createSlice({
         // Build subcategoriesByKeys
         category.subcategories.forEach(subcategory => {
           subcategoriesByKeys[subcategory.id] = subcategory;
+
+          subcategory.subSubcategories.forEach(subsubCateggory => {
+            subsubcategoriesByKeys[subsubCateggory.id] = subsubCateggory;
+          });
         });
       });
 
       state.categoriesByKeys = categoriesByKeys;
       state.subcategoriesByKeys = subcategoriesByKeys;
+      state.subsubcategoriesByKeys = subsubcategoriesByKeys;
     });
   },
 });
@@ -158,6 +168,11 @@ export const subcategoriesByKeysSelector = (
   state: RootState,
 ): Record<string, Subcategory> => state.marketplaceData.subcategoriesByKeys;
 
+export const subsubcategoriesByKeysSelector = (
+  state: RootState,
+): Record<string, SubSubCategory> =>
+  state.marketplaceData.subsubcategoriesByKeys;
+
 export const selectCategoryById = (
   state: RootState,
   categoryId: string,
@@ -168,6 +183,12 @@ export const selectSubcategoryById = (
   subcategoryId: string,
 ): Subcategory | undefined =>
   state.marketplaceData.subcategoriesByKeys[subcategoryId];
+
+export const selectSubSubcategoryById = (
+  state: RootState,
+  subsubcategoryId: string,
+): SubSubCategory | undefined =>
+  state.marketplaceData.subsubcategoriesByKeys[subsubcategoryId];
 
 export const {addMarketplaceEntities} = marketplaceDataSlice.actions;
 

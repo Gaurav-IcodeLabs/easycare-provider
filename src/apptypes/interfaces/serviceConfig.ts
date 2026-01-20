@@ -8,7 +8,7 @@ export interface EstimatedDuration {
   unit: string;
 }
 
-export interface Subcategory {
+export interface SubSubCategory {
   estimatedDuration: EstimatedDuration;
   id: string;
   name: LocalizedText;
@@ -20,6 +20,14 @@ export interface Subcategory {
   currency: string;
   priceUnit: string;
   attributes: Record<string, any>;
+  _id: string;
+}
+export interface Subcategory {
+  id: string;
+  name: LocalizedText;
+  slug: string;
+  icon: string;
+  subSubcategories: SubSubCategory[];
   _id: string;
 }
 

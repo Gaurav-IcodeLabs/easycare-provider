@@ -1,5 +1,5 @@
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
@@ -19,12 +19,14 @@ import {colors, primaryFont} from '../../../constants';
 import {
   Category,
   Subcategory,
+  SubSubCategory,
 } from '../../../apptypes/interfaces/serviceConfig';
 import {getServiceFormSchema, getDefaultServiceValues} from './helper';
 
 interface CreateServiceFormProps {
   categories: Category[];
   subcategoriesByKeys: Record<string, Subcategory>;
+  subsubcategoriesByKeys: Record<string, SubSubCategory>;
   onSubmit: (values: any) => void;
   inProgress: boolean;
   initialValues?: any;
@@ -38,34 +40,52 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
   const {
     categories,
     subcategoriesByKeys,
+    subsubcategoriesByKeys,
     onSubmit,
     inProgress,
     initialValues,
     isEditMode = false,
     onAddServicePress,
   } = props;
+
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     initialValues?.categoryId || '',
   );
   const [selectedSubcategory, setSelectedSubcategory] =
     useState<Subcategory | null>(null);
+  const [selectedSubSubcategory, setSelectedSubSubcategory] =
+    useState<SubSubCategory | null>(null);
 
   const currentLang = i18n.language === 'ar' ? 'ar' : 'en';
 
-  const categoryOptions = categories.map(cat => ({
-    label: cat.name[currentLang] || cat.name.en,
-    value: cat.id,
-  }));
+  // Memoized options for better performance
+  const categoryOptions = useMemo(
+    () =>
+      categories.map(cat => ({
+        label: cat.name[currentLang] || cat.name.en,
+        value: cat.id,
+      })),
+    [categories, currentLang],
+  );
 
-  const subcategoryOptions =
-    selectedCategoryId && categories.find(c => c.id === selectedCategoryId)
-      ? categories
-          .find(c => c.id === selectedCategoryId)!
-          .subcategories.map(sub => ({
-            label: sub.name[currentLang] || sub.name.en,
-            value: sub.id,
-          }))
+  const subcategoryOptions = useMemo(() => {
+    if (!selectedCategoryId) return [];
+    const category = categories.find(c => c.id === selectedCategoryId);
+    return category
+      ? category.subcategories.map(sub => ({
+          label: sub.name[currentLang] || sub.name.en,
+          value: sub.id,
+        }))
       : [];
+  }, [selectedCategoryId, categories, currentLang]);
+
+  const subsubcategoryOptions = useMemo(() => {
+    if (!selectedSubcategory?.subSubcategories) return [];
+    return selectedSubcategory.subSubcategories.map(subSub => ({
+      label: subSub.name[currentLang] || subSub.name.en,
+      value: subSub.id,
+    }));
+  }, [selectedSubcategory, currentLang]);
 
   const {
     control,
@@ -81,96 +101,131 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
     mode: 'onChange',
   });
 
+  // Watch form values
+  const watchedCategoryId = watch('categoryId');
+  const watchedSubcategoryId = watch('subcategoryId');
+  const watchedSubSubcategoryId = watch('subsubcategoryId');
+  const watchedCustomAttributes = watch('customAttributes');
+
   // Reset form when initialValues change (for edit mode)
   useEffect(() => {
     if (initialValues) {
-      console.log('CreateServiceForm received initialValues:', initialValues);
-      console.log('Images in initialValues:', initialValues.images);
       reset(initialValues);
       setSelectedCategoryId(initialValues.categoryId || '');
     }
   }, [initialValues, reset]);
 
-  const watchedCategoryId = watch('categoryId');
-  const watchedSubcategoryId = watch('subcategoryId');
-  const watchedCustomAttributes = watch('customAttributes');
-
+  // Handle category selection
   useEffect(() => {
     if (watchedCategoryId && watchedCategoryId !== selectedCategoryId) {
       setSelectedCategoryId(watchedCategoryId);
       setValue('subcategoryId', '');
+      setValue('subsubcategoryId', '');
+      setValue('title', '');
       setSelectedSubcategory(null);
+      setSelectedSubSubcategory(null);
       setValue('customAttributes', {});
     }
   }, [watchedCategoryId, selectedCategoryId, setValue]);
 
+  // Handle subcategory selection
   useEffect(() => {
     if (watchedSubcategoryId) {
       const subcategory = subcategoriesByKeys[watchedSubcategoryId];
       if (subcategory) {
         setSelectedSubcategory(subcategory);
-        // Only auto-fill price and duration if not in edit mode (no initialValues)
+        setValue('subsubcategoryId', '');
+        setValue('title', '');
+        setSelectedSubSubcategory(null);
+        setValue('customAttributes', {});
+      }
+    }
+  }, [watchedSubcategoryId, subcategoriesByKeys, setValue]);
+
+  // Handle sub-subcategory selection and auto-set title
+  useEffect(() => {
+    if (watchedSubSubcategoryId) {
+      const subSubcategory = subsubcategoriesByKeys[watchedSubSubcategoryId];
+      if (subSubcategory) {
+        setSelectedSubSubcategory(subSubcategory);
+
+        // Auto-set title from sub-subcategory name
+        const title =
+          subSubcategory.name[currentLang] || subSubcategory.name.en;
+        setValue('title', title);
+
+        // Only auto-fill price and duration if not in edit mode
         if (!initialValues) {
-          setValue('price', subcategory.basePrice.toString());
-          setValue('duration', subcategory.estimatedDuration.value.toString());
+          setValue('price', subSubcategory.basePrice.toString());
+          setValue(
+            'duration',
+            subSubcategory.estimatedDuration.value.toString(),
+          );
           setValue('customAttributes', {});
         }
       }
     }
-  }, [watchedSubcategoryId, subcategoriesByKeys, setValue, initialValues]);
+  }, [
+    watchedSubSubcategoryId,
+    subsubcategoriesByKeys,
+    currentLang,
+    initialValues,
+    setValue,
+  ]);
 
-  const toggleAttributeOption = (
-    attributeKey: string,
-    optionKey: string,
-    optionData: any,
-  ) => {
-    const currentAttributes = watchedCustomAttributes || {};
-    const newAttributes = {...currentAttributes};
+  // Memoized attribute functions for better performance
+  const toggleAttributeOption = useCallback(
+    (attributeKey: string, optionKey: string, optionData: any) => {
+      const currentAttributes = watchedCustomAttributes || {};
+      const newAttributes = {...currentAttributes};
 
-    // Always allow multiple selections for providers
-    if (!newAttributes[attributeKey]) {
-      newAttributes[attributeKey] = {};
-    }
-
-    if (newAttributes[attributeKey][optionKey]) {
-      delete newAttributes[attributeKey][optionKey];
-      // Remove the attribute key if no options are selected
-      if (Object.keys(newAttributes[attributeKey]).length === 0) {
-        delete newAttributes[attributeKey];
+      if (!newAttributes[attributeKey]) {
+        newAttributes[attributeKey] = {};
       }
-    } else {
-      newAttributes[attributeKey][optionKey] = optionData;
-    }
 
-    setValue('customAttributes', newAttributes);
-  };
+      if (newAttributes[attributeKey][optionKey]) {
+        delete newAttributes[attributeKey][optionKey];
+        if (Object.keys(newAttributes[attributeKey]).length === 0) {
+          delete newAttributes[attributeKey];
+        }
+      } else {
+        newAttributes[attributeKey][optionKey] = optionData;
+      }
 
-  const isAttributeOptionSelected = (
-    attributeKey: string,
-    optionKey: string,
-  ) => {
-    return !!watchedCustomAttributes?.[attributeKey]?.[optionKey];
-  };
+      setValue('customAttributes', newAttributes);
+    },
+    [watchedCustomAttributes, setValue],
+  );
 
-  const getAttributesList = () => {
-    if (!selectedSubcategory?.attributes) {
+  const isAttributeOptionSelected = useCallback(
+    (attributeKey: string, optionKey: string) => {
+      return !!watchedCustomAttributes?.[attributeKey]?.[optionKey];
+    },
+    [watchedCustomAttributes],
+  );
+
+  const getAttributesList = useMemo(() => {
+    if (!selectedSubSubcategory?.attributes) {
       return [];
     }
-    return Object.entries(selectedSubcategory.attributes).map(
+    return Object.entries(selectedSubSubcategory.attributes).map(
       ([key, value]: [string, any]) => ({
         key,
         data: value,
       }),
     );
-  };
+  }, [selectedSubSubcategory?.attributes]);
 
-  const onSubmitForm = (data: any) => {
-    if (isValid) {
-      onSubmit(data);
-    } else {
-      trigger();
-    }
-  };
+  const onSubmitForm = useCallback(
+    (data: any) => {
+      if (isValid) {
+        onSubmit(data);
+      } else {
+        trigger();
+      }
+    },
+    [isValid, onSubmit, trigger],
+  );
 
   return (
     <View style={styles.wrapper}>
@@ -196,12 +251,15 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             />
           )}
 
-          <TextInputField
-            control={control}
-            name="title"
-            labelKey="CreateServiceForm.title"
-            placeholder="CreateServiceForm.titlePlaceholder"
-          />
+          {selectedSubcategory && (
+            <DropdownField
+              control={control}
+              name="subsubcategoryId"
+              labelKey="CreateServiceForm.subsubcategory"
+              placeholder="CreateServiceForm.subsubcategoryPlaceholder"
+              options={subsubcategoryOptions}
+            />
+          )}
 
           <TextInputField
             control={control}
@@ -222,23 +280,23 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             inputContainerStyles={styles.disabledInput}
           />
 
-          {selectedSubcategory &&
-            selectedSubcategory.locationTypes.length > 0 && (
+          {selectedSubSubcategory &&
+            selectedSubSubcategory.locationTypes.length > 0 && (
               <DropdownField
                 control={control}
                 name="locationType"
                 labelKey="CreateServiceForm.locationType"
                 placeholder="CreateServiceForm.locationTypePlaceholder"
-                options={selectedSubcategory.locationTypes.map(type => ({
+                options={selectedSubSubcategory.locationTypes.map(type => ({
                   label: type,
                   value: type,
                 }))}
               />
             )}
 
-          {selectedSubcategory &&
-            selectedSubcategory.attributes &&
-            Object.keys(selectedSubcategory.attributes).length > 0 && (
+          {selectedSubSubcategory &&
+            selectedSubSubcategory.attributes &&
+            Object.keys(selectedSubSubcategory.attributes).length > 0 && (
               <View style={styles.attributesSection}>
                 <AppText style={styles.attributesTitle}>
                   {t('CreateServiceForm.additionalAttributes')}
@@ -247,94 +305,97 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
                   {t('CreateServiceForm.selectAttributesDescription')}
                 </AppText>
 
-                {getAttributesList().map(({key, data}) => {
-                  const attributeType =
-                    data.type === 'select' ? 'single' : 'multiple';
-                  const isRequired = data.required || false;
-                  const attributeName =
-                    data.label?.[currentLang] || data.label?.en || key;
-                  const options = data.options || [];
+                {getAttributesList.map(
+                  ({key, data}: {key: string; data: any}) => {
+                    const attributeType =
+                      data.type === 'select' ? 'single' : 'multiple';
+                    const isRequired = data.required || false;
+                    const attributeName =
+                      data.label?.[currentLang] || data.label?.en || key;
+                    const options = data.options || [];
 
-                  return (
-                    <View key={key} style={styles.attributeGroup}>
-                      <View style={styles.attributeHeader}>
-                        <View style={styles.attributeTitleRow}>
-                          <AppText style={styles.attributeGroupName}>
-                            {attributeName}
+                    return (
+                      <View key={key} style={styles.attributeGroup}>
+                        <View style={styles.attributeHeader}>
+                          <View style={styles.attributeTitleRow}>
+                            <AppText style={styles.attributeGroupName}>
+                              {attributeName}
+                            </AppText>
+                            {isRequired && (
+                              <AppText style={styles.requiredBadge}>
+                                {t('CreateServiceForm.required')}
+                              </AppText>
+                            )}
+                          </View>
+                        </View>
+                        <View style={styles.attributeTypeContainer}>
+                          <AppText style={styles.attributeType}>
+                            {t('CreateServiceForm.selectMultiple')}
                           </AppText>
-                          {isRequired && (
-                            <AppText style={styles.requiredBadge}>
-                              {t('CreateServiceForm.required')}
+                          {attributeType === 'single' && (
+                            <AppText style={styles.attributeTypeNote}>
+                              ({t('CreateServiceForm.customerSelectsOne')})
                             </AppText>
                           )}
                         </View>
-                      </View>
-                      <View style={styles.attributeTypeContainer}>
-                        <AppText style={styles.attributeType}>
-                          {t('CreateServiceForm.selectMultiple')}
-                        </AppText>
-                        {attributeType === 'single' && (
-                          <AppText style={styles.attributeTypeNote}>
-                            ({t('CreateServiceForm.customerSelectsOne')})
-                          </AppText>
-                        )}
-                      </View>
 
-                      {options.map((option: any, index: number) => {
-                        const optionValue = option.value;
-                        const isSelected = isAttributeOptionSelected(
-                          key,
-                          optionValue,
-                        );
-                        const optionLabel =
-                          option.label?.[currentLang] ||
-                          option.label?.en ||
-                          optionValue;
-                        const priceModifier = option.priceModifier;
+                        {options.map((option: any, index: number) => {
+                          const optionValue = option.value;
+                          const isSelected = isAttributeOptionSelected(
+                            key,
+                            optionValue,
+                          );
+                          const optionLabel =
+                            option.label?.[currentLang] ||
+                            option.label?.en ||
+                            optionValue;
+                          const priceModifier = option.priceModifier;
 
-                        return (
-                          <TouchableOpacity
-                            key={`${optionValue}-${index}`}
-                            style={[
-                              styles.attributeOption,
-                              isSelected && styles.attributeOptionSelected,
-                            ]}
-                            onPress={() =>
-                              toggleAttributeOption(key, optionValue, option)
-                            }
-                            activeOpacity={0.7}>
-                            <View style={styles.attributeOptionContent}>
-                              <View style={styles.attributeOptionInfo}>
-                                <AppText style={styles.attributeOptionName}>
-                                  {optionLabel}
-                                </AppText>
-                              </View>
-                              <View style={styles.attributeOptionRight}>
-                                {priceModifier && priceModifier !== 0 && (
-                                  <AppText style={styles.attributeOptionPrice}>
-                                    +{selectedSubcategory.currency}{' '}
-                                    {priceModifier}
+                          return (
+                            <TouchableOpacity
+                              key={`${optionValue}-${index}`}
+                              style={[
+                                styles.attributeOption,
+                                isSelected && styles.attributeOptionSelected,
+                              ]}
+                              onPress={() =>
+                                toggleAttributeOption(key, optionValue, option)
+                              }
+                              activeOpacity={0.7}>
+                              <View style={styles.attributeOptionContent}>
+                                <View style={styles.attributeOptionInfo}>
+                                  <AppText style={styles.attributeOptionName}>
+                                    {optionLabel}
                                   </AppText>
-                                )}
-                                <CheckBoxStandalone
-                                  checked={isSelected}
-                                  onPress={() =>
-                                    toggleAttributeOption(
-                                      key,
-                                      optionValue,
-                                      option,
-                                    )
-                                  }
-                                  color={colors.deepBlue}
-                                />
+                                </View>
+                                <View style={styles.attributeOptionRight}>
+                                  {priceModifier && priceModifier !== 0 && (
+                                    <AppText
+                                      style={styles.attributeOptionPrice}>
+                                      +{selectedSubSubcategory.currency}{' '}
+                                      {priceModifier}
+                                    </AppText>
+                                  )}
+                                  <CheckBoxStandalone
+                                    checked={isSelected}
+                                    onPress={() =>
+                                      toggleAttributeOption(
+                                        key,
+                                        optionValue,
+                                        option,
+                                      )
+                                    }
+                                    color={colors.deepBlue}
+                                  />
+                                </View>
                               </View>
-                            </View>
-                          </TouchableOpacity>
-                        );
-                      })}
-                    </View>
-                  );
-                })}
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+                    );
+                  },
+                )}
               </View>
             )}
 
@@ -378,7 +439,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: scale(100), // Space for sticky button
+    paddingBottom: scale(150), // Space for sticky button
   },
   container: {
     paddingHorizontal: scale(20),
