@@ -297,7 +297,9 @@
     "submitting": "Creating...",
     "update": "Update Product",
     "updating": "Updating...",
-    "addProductBtn": "Add Product Request"
+    "addProductBtn": "Add Product Request",
+    "linkServices": "Link to Services (optional)",
+    "linkServicesPlaceholder": "Select the services"
   },
   "CreateServiceForm": {
     "category": "Category",

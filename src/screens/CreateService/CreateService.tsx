@@ -79,27 +79,20 @@ export const CreateService: FC = () => {
         fetchServiceListing({id: new sdkTypes.UUID(listingId), config}),
       ).unwrap();
 
-      console.log('Fetch service listing response:', response);
-
       // Denormalize the response to get listing with images included
       const denormalizedListings = denormalisedResponseEntities(response);
       const listing = denormalizedListings[0];
-      console.log('Denormalized listing:', listing);
 
       if (listing) {
         const {attributes} = listing;
         const {publicData, title, description, price} = attributes;
 
-        console.log('Listing publicData:', publicData);
-
         // Extract service data from publicData
         const serviceConfig = publicData?.serviceConfig || {};
         const categoryId = serviceConfig?.category?.id || '';
         const subcategoryId = serviceConfig?.subcategory?.id || '';
-
+        const subsubcategoryId = serviceConfig?.subsubcategory?.id || '';
         // Extract images - they should be in listing.images after denormalization
-        console.log('Listing.images:', listing.images);
-
         const images =
           listing.images?.map((img: any) => {
             console.log('Processing image:', img);
@@ -108,8 +101,6 @@ export const CreateService: FC = () => {
               url: img.attributes?.variants?.default?.url || '',
             };
           }) || [];
-
-        console.log('Extracted images:', JSON.stringify(images, null, 2));
 
         // Extract custom attributes
         const customAttributes: Record<string, any> = {};
@@ -121,11 +112,10 @@ export const CreateService: FC = () => {
           );
         }
 
-        console.log('Extracted customAttributes:', customAttributes);
-
         const initialData = {
           categoryId,
           subcategoryId,
+          subsubcategoryId,
           title: title || '',
           description: description || '',
           price: price ? (price.amount / 100).toString() : '',
@@ -135,7 +125,6 @@ export const CreateService: FC = () => {
           images,
         };
 
-        console.log('Setting initial values:', initialData);
         setInitialValues(initialData);
       }
     } catch (error) {
@@ -190,11 +179,7 @@ export const CreateService: FC = () => {
 
       if (isEditMode) {
         // Update existing service
-        // console.log('Updating service with data:', {
-        //   ...serviceData,
-        //   listingId,
-        //   images: imageIds,
-        // });
+        // console.log('Updating service with data:', JSON.stringify(serviceData));
 
         await dispatch(
           requestUpdateService({
@@ -247,7 +232,11 @@ export const CreateService: FC = () => {
         containerStyle={{marginBottom: scale(22)}}
         leftIcon={backIcon}
         renderCenter={() => (
-          <AppText style={styles.heading}>{t('CreateService.heading')}</AppText>
+          <AppText style={styles.heading}>
+            {isEditMode
+              ? t('CreateService.editHeading')
+              : t('CreateService.heading')}
+          </AppText>
         )}
       />
       <View style={styles.formWrapper}>

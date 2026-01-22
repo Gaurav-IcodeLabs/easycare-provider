@@ -278,6 +278,7 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
         listingId,
         categoryId,
         subcategoryId,
+        subsubcategoryId,
         title,
         description,
         price,
@@ -287,6 +288,7 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
         customAttributes,
         categoryConfig,
         subcategoryConfig,
+        subsubcategoryConfig,
       } = serviceData;
 
       // Build serviceConfig with all pricing information
@@ -300,10 +302,15 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
           id: subcategoryConfig.id,
           name: subcategoryConfig.name,
           slug: subcategoryConfig.slug,
-          basePrice: subcategoryConfig.basePrice,
-          currency: subcategoryConfig.currency,
-          pricingModel: subcategoryConfig.pricingModel,
-          estimatedDuration: subcategoryConfig.estimatedDuration,
+        },
+        subsubcategory: {
+          id: subsubcategoryConfig.id,
+          name: subsubcategoryConfig.name,
+          slug: subsubcategoryConfig.slug,
+          basePrice: subsubcategoryConfig.basePrice,
+          currency: subsubcategoryConfig.currency,
+          pricingModel: subsubcategoryConfig.pricingModel,
+          estimatedDuration: subsubcategoryConfig.estimatedDuration,
         },
         selectedAttributes: {},
       };
@@ -312,7 +319,7 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
       if (customAttributes && Object.keys(customAttributes).length > 0) {
         Object.entries(customAttributes).forEach(
           ([attrKey, attrValue]: [string, any]) => {
-            const attributeConfig = subcategoryConfig.attributes[attrKey];
+            const attributeConfig = subsubcategoryConfig.attributes[attrKey];
 
             serviceConfig.selectedAttributes[attrKey] = {
               type: attributeConfig.type,
@@ -344,6 +351,7 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
         unitType: UnitType.HOUR,
         category: categoryId,
         subcategory: subcategoryId,
+        subsubcategory: subsubcategoryId,
         duration,
         locationType,
         serviceConfig,

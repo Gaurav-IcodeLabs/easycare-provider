@@ -51,6 +51,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     initialValues?.categoryId || '',
   );
+
   const [selectedSubcategory, setSelectedSubcategory] =
     useState<Subcategory | null>(null);
   const [selectedSubSubcategory, setSelectedSubSubcategory] =
@@ -110,10 +111,26 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
   // Reset form when initialValues change (for edit mode)
   useEffect(() => {
     if (initialValues) {
+      if (initialValues.categoryId) {
+        setSelectedCategoryId(initialValues.categoryId);
+      }
+      if (initialValues.subcategoryId) {
+        const subcategory = subcategoriesByKeys[initialValues.subcategoryId];
+        if (subcategory) {
+          setSelectedSubcategory(subcategory);
+        }
+      }
+      if (initialValues.subsubcategoryId) {
+        const subsubcategory =
+          subsubcategoriesByKeys[initialValues.subsubcategoryId];
+        if (subsubcategory) {
+          setSelectedSubSubcategory(subsubcategory);
+        }
+      }
+
       reset(initialValues);
-      setSelectedCategoryId(initialValues.categoryId || '');
     }
-  }, [initialValues, reset]);
+  }, [initialValues, reset, subcategoriesByKeys, subsubcategoriesByKeys]);
 
   // Handle category selection
   useEffect(() => {
@@ -128,40 +145,56 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
     }
   }, [watchedCategoryId, selectedCategoryId, setValue]);
 
-  // Handle subcategory selection
+  // CHANGED: Handle subcategory selection
+  // Only reset child fields when user actively changes selection, not during init
   useEffect(() => {
     if (watchedSubcategoryId) {
       const subcategory = subcategoriesByKeys[watchedSubcategoryId];
       if (subcategory) {
         setSelectedSubcategory(subcategory);
-        setValue('subsubcategoryId', '');
-        setValue('title', '');
-        setSelectedSubSubcategory(null);
-        setValue('customAttributes', {});
+
+        // CHANGED: Only clear subsubcategory if this is NOT the initial load
+        // or if the subcategory actually changed from what was initially set
+        const isInitialValue =
+          initialValues?.subcategoryId === watchedSubcategoryId;
+
+        if (!isInitialValue) {
+          setValue('subsubcategoryId', '');
+          setValue('title', '');
+          setSelectedSubSubcategory(null);
+          setValue('customAttributes', {});
+        }
       }
     }
-  }, [watchedSubcategoryId, subcategoriesByKeys, setValue]);
+  }, [watchedSubcategoryId, subcategoriesByKeys, setValue, initialValues]);
 
-  // Handle sub-subcategory selection and auto-set title
+  // CHANGED: Handle sub-subcategory selection and auto-set title
+  // Only auto-fill when user actively selects, not during initialization
   useEffect(() => {
     if (watchedSubSubcategoryId) {
       const subSubcategory = subsubcategoriesByKeys[watchedSubSubcategoryId];
       if (subSubcategory) {
         setSelectedSubSubcategory(subSubcategory);
 
-        // Auto-set title from sub-subcategory name
-        const title =
-          subSubcategory.name[currentLang] || subSubcategory.name.en;
-        setValue('title', title);
+        // CHANGED: Only auto-set values if this is NOT the initial load
+        const isInitialValue =
+          initialValues?.subsubcategoryId === watchedSubSubcategoryId;
 
-        // Only auto-fill price and duration if not in edit mode
-        if (!initialValues) {
-          setValue('price', subSubcategory.basePrice.toString());
-          setValue(
-            'duration',
-            subSubcategory.estimatedDuration.value.toString(),
-          );
-          setValue('customAttributes', {});
+        if (!isInitialValue) {
+          // Auto-set title from sub-subcategory name
+          const title =
+            subSubcategory.name[currentLang] || subSubcategory.name.en;
+          setValue('title', title);
+
+          // Only auto-fill price and duration if not in edit mode
+          if (!initialValues) {
+            setValue('price', subSubcategory.basePrice.toString());
+            setValue(
+              'duration',
+              subSubcategory.estimatedDuration.value.toString(),
+            );
+            setValue('customAttributes', {});
+          }
         }
       }
     }

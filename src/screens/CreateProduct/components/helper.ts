@@ -5,6 +5,13 @@ const DESCRIPTION_MIN_LENGTH = 10;
 
 export const getProductFormSchema = (t: any) => {
   return z.object({
+    categoryId: z.string().min(1, t('CreateServiceForm.categoryRequired')),
+    subcategoryId: z
+      .string()
+      .min(1, t('CreateServiceForm.subcategoryRequired')),
+    subsubcategoryId: z
+      .string()
+      .min(1, t('CreateServiceForm.subsubcategoryRequired')),
     title: z
       .string()
       .min(1, t('CreateProductForm.titleRequired'))
@@ -24,6 +31,8 @@ export const getProductFormSchema = (t: any) => {
       .refine(value => !isNaN(value) && value > 0, {
         message: t('CreateProductForm.stockRequired'),
       }),
+    customAttributes: z.record(z.any()).optional(),
+    linkedServices: z.array(z.any()).optional(),
     images: z
       .array(
         z.object({
@@ -48,10 +57,15 @@ export const getProductFormSchema = (t: any) => {
 
 export const getDefaultProductValues = () => {
   return {
+    categoryId: '',
+    subcategoryId: '',
+    subsubcategoryId: '',
     title: '',
     description: '',
     price: '',
     stock: '',
     images: [],
+    customAttributes: {},
+    linkedServices: [],
   };
 };

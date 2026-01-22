@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {TFunction} from 'i18next';
 
-export const getAddServiceRequestSchema = (t: TFunction) => {
+export const getAddProductRequestSchema = (t: TFunction) => {
   return z
     .object({
       categoryId: z.string().min(1, t('CreateServiceForm.categoryRequired')),
@@ -58,12 +58,12 @@ export interface AttributeOption {
   suggestedPrice: string;
 }
 
-export interface ServiceAttribute {
+export interface ProductAttribute {
   name: string;
   options: AttributeOption[];
 }
 
-export interface AddServiceFormValues {
+export interface AddProductFormValues {
   categoryId: string;
   subcategoryId?: string;
   subSubcategory: string;
@@ -73,10 +73,10 @@ export interface AddServiceFormValues {
   isOtherCategory?: boolean;
   customCategoryName?: string;
   customSubcategoryName?: string;
-  attributes?: ServiceAttribute[];
+  attributes?: ProductAttribute[];
 }
 
-export const getDefaultAddServiceValues = (): AddServiceFormValues => {
+export const getDefaultAddProductValues = (): AddProductFormValues => {
   return {
     categoryId: '',
     subcategoryId: '',

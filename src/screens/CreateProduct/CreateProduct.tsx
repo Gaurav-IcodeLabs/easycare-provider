@@ -1,9 +1,8 @@
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
-import React, {FC, useState, useEffect} from 'react';
-import {colors, primaryFont} from '../../constants';
-import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
+import React, {FC, useState, useEffect, useMemo} from 'react';
+import {colors, primaryFont, SCREENS} from '../../constants';
 import {backIcon} from '../../assets';
-import {AppText, ListingSuccessModal} from '../../components';
+import {AppText, ListingSuccessModal, ScreenHeader} from '../../components';
 import {useTranslation} from 'react-i18next';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {fontScale, scale, useToast} from '../../utils';
@@ -20,6 +19,14 @@ import {CreateProductForm} from './components/CreateProductForm';
 import {useConfiguration} from '../../context';
 import {types as sdkTypes} from '../../utils';
 import {denormalisedResponseEntities} from '../../utils/data';
+import {
+  getOwnListingsById,
+  productCategoriesSelector,
+  productSubcategoriesByKeysSelector,
+  productSubsubcategoriesByKeysSelector,
+} from '../../slices/marketplaceData.slice';
+import {CreateProductScreenProps} from '../../apptypes';
+import {serviceIdsSelector} from '../../slices/home.slice';
 
 interface FormValues {
   [key: string]: any;
@@ -40,10 +47,29 @@ export const CreateProduct: FC = () => {
   const {t} = useTranslation();
   const {top} = useSafeAreaInsets();
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<CreateProductScreenProps['navigation']>();
   const route = useRoute<CreateProductRouteProp>();
   const config = useConfiguration() as any;
   const {showToast} = useToast();
+  const categories = useTypedSelector(productCategoriesSelector);
+  const subcategoriesByKeys = useTypedSelector(
+    productSubcategoriesByKeysSelector,
+  );
+  const subsubcategoriesByKeys = useTypedSelector(
+    productSubsubcategoriesByKeysSelector,
+  );
+  const entities = useTypedSelector(state => state.marketplaceData.entities);
+  const servicesIds = useTypedSelector(serviceIdsSelector);
+  const services = getOwnListingsById(entities, servicesIds);
+  const serviceOptions = useMemo(
+    () =>
+      services.map((service: any) => ({
+        label: service.attributes.title,
+        value: service.id.uuid,
+      })),
+    [services],
+  );
+
   const createInProgress = useTypedSelector(createProductInProgressSelector);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -60,7 +86,6 @@ export const CreateProduct: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listingId]);
-  console.log('CreateProduct');
 
   const fetchListingData = async () => {
     try {
@@ -71,11 +96,23 @@ export const CreateProduct: FC = () => {
 
       const denormalizedListings = denormalisedResponseEntities(response);
       const listing = denormalizedListings[0];
-      console.log('Fetched product listing:', listing);
 
       if (listing) {
         const {attributes} = listing;
-        const {title, description, price} = attributes;
+        const {title, description, price, publicData} = attributes;
+
+        const productConfig = publicData?.productConfig || {};
+        const categoryId = productConfig?.category?.id || '';
+        const subcategoryId = productConfig?.subcategory?.id || '';
+        const subsubcategoryId = productConfig?.subsubcategory?.id || '';
+        const customAttributes: Record<string, any> = {};
+        if (productConfig.selectedAttributes) {
+          Object.entries(productConfig.selectedAttributes).forEach(
+            ([attrKey, attrValue]: [string, any]) => {
+              customAttributes[attrKey] = attrValue.selectedOptions || {};
+            },
+          );
+        }
 
         const images =
           listing.images?.map((img: any) => ({
@@ -87,11 +124,16 @@ export const CreateProduct: FC = () => {
         const currentStock = listing.currentStock?.attributes?.quantity || 0;
 
         const initialData = {
+          categoryId,
+          subcategoryId,
+          subsubcategoryId,
           title: title || '',
           description: description || '',
           price: price ? (price.amount / 100).toString() : '',
           stock: currentStock.toString(),
           images,
+          customAttributes,
+          linkedServices: publicData?.linkedServices,
         };
 
         setInitialValues(initialData);
@@ -120,24 +162,31 @@ export const CreateProduct: FC = () => {
           })
           .filter(Boolean) || [];
 
+      const selectedCategory = categories.find(
+        cat => cat.id === values.categoryId,
+      );
+      const selectedSubcategory = subcategoriesByKeys[values.subcategoryId];
+      const selectedSubSubcategory =
+        subsubcategoriesByKeys[values.subsubcategoryId];
+
       const productData = {
+        categoryId: values.categoryId,
+        subcategoryId: values.subcategoryId,
+        subsubcategoryId: values.subsubcategoryId,
         title: values.title,
         description: values.description,
         price: parseFloat(values.price),
         stock: parseInt(values.stock, 10),
         images: imageIds,
+        customAttributes: values.customAttributes || {},
+        categoryConfig: selectedCategory,
+        subcategoryConfig: selectedSubcategory,
+        subsubcategoryConfig: selectedSubSubcategory,
+        linkedServices: values.linkedServices,
       };
-
-      console.log('Submitting product data:', productData);
 
       if (isEditMode) {
         const oldStockValue = parseInt(initialValues?.stock || '0', 10);
-        console.log(
-          'Update mode - oldStock:',
-          oldStockValue,
-          'newStock:',
-          productData.stock,
-        );
 
         await dispatch(
           requestUpdateProduct({
@@ -173,6 +222,10 @@ export const CreateProduct: FC = () => {
     navigation.goBack();
   };
 
+  const handleAddProductPress = () => {
+    navigation.replace(SCREENS.ADD_PRODUCT);
+  };
+
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <ScreenHeader
@@ -191,10 +244,15 @@ export const CreateProduct: FC = () => {
           <ActivityIndicator />
         ) : (
           <CreateProductForm
-            inProgress={isLoading}
+            categories={categories}
+            subcategoriesByKeys={subcategoriesByKeys}
+            subsubcategoriesByKeys={subsubcategoriesByKeys}
+            inProgress={false}
             onSubmit={onSubmit}
             initialValues={isEditMode ? initialValues : undefined}
             isEditMode={isEditMode}
+            onAddProductPress={handleAddProductPress}
+            serviceOptions={serviceOptions}
           />
         )}
       </View>

@@ -82,7 +82,8 @@ export const DropdownMultiSelectField = <T extends FieldValues>({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: scale(16),
+    // marginTop: scale(16),
+    marginBottom: scale(16),
   },
   labelContainer: {
     marginBottom: scale(10),

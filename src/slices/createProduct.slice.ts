@@ -9,6 +9,7 @@ import {
   UnitType,
 } from '../apptypes/interfaces/listing';
 import {addMarketplaceEntities} from './marketplaceData.slice';
+import {linkProductToService, updatelinkedProductToService} from '../utils/api';
 
 interface ProductImage {
   id: string;
@@ -35,6 +36,12 @@ const initialState: CreateProductState = {
   submittedProductId: null,
   fetchListingInProgress: false,
   fetchListingError: null,
+};
+
+const areArraysEqual = (a: string[] = [], b: string[] = []) => {
+  if (a.length !== b.length) return false;
+  const setA = new Set(a);
+  return b.every(item => setA.has(item));
 };
 
 const createProductSlice = createSlice({
@@ -102,7 +109,74 @@ export const requestCreateProduct = createAsyncThunk<any, any, Thunk>(
   'createProduct/requestCreateProductStatus',
   async (productData, {rejectWithValue, extra: sdk}) => {
     try {
-      const {title, description, price, stock, images} = productData;
+      const {
+        categoryId,
+        subcategoryId,
+        subsubcategoryId,
+        title,
+        description,
+        price,
+        stock,
+        images,
+        customAttributes,
+        categoryConfig,
+        subcategoryConfig,
+        subsubcategoryConfig,
+        linkedServices,
+      } = productData;
+
+      // Build serviceConfig with all pricing information
+      const productConfig: any = {
+        category: {
+          id: categoryConfig.id,
+          name: categoryConfig.name,
+          slug: categoryConfig.slug,
+        },
+        subcategory: {
+          id: subcategoryConfig.id,
+          name: subcategoryConfig.name,
+          slug: subcategoryConfig.slug,
+        },
+        subsubcategory: {
+          id: subsubcategoryConfig.id,
+          name: subsubcategoryConfig.name,
+          slug: subsubcategoryConfig.slug,
+          basePrice: subsubcategoryConfig.basePrice,
+          currency: subsubcategoryConfig.currency,
+          pricingModel: subsubcategoryConfig.pricingModel,
+          estimatedDuration: subsubcategoryConfig.estimatedDuration,
+        },
+        selectedAttributes: {},
+      };
+
+      // Add selected attributes with their pricing information
+      if (customAttributes && Object.keys(customAttributes).length > 0) {
+        Object.entries(customAttributes).forEach(
+          ([attrKey, attrValue]: [string, any]) => {
+            const attributeConfig = subsubcategoryConfig.attributes[attrKey];
+
+            productConfig.selectedAttributes[attrKey] = {
+              type: attributeConfig.type,
+              required: attributeConfig.required,
+              label: attributeConfig.label,
+              selectedOptions: {},
+            };
+
+            // Add selected options with their pricing
+            Object.entries(attrValue).forEach(
+              ([optionKey, optionData]: [string, any]) => {
+                productConfig.selectedAttributes[attrKey].selectedOptions[
+                  optionKey
+                ] = {
+                  value: optionData.value,
+                  label: optionData.label,
+                  priceModifier: optionData.priceModifier || 0,
+                };
+              },
+            );
+          },
+        );
+      }
 
       const publicData: any = {
         listingType: ListingTypes.PRODUCT,
@@ -110,6 +184,13 @@ export const requestCreateProduct = createAsyncThunk<any, any, Thunk>(
         unitType: UnitType.ITEM,
         pickupEnabled: true,
         shippingEnabled: true,
+        category: categoryId,
+        subcategory: subcategoryId,
+        subsubcategory: subsubcategoryId,
+        productConfig, // Store complete config for checkout calculations
+        ...(linkedServices?.length && {
+          linkedServices,
+        }),
       };
 
       // Create the listing first
@@ -134,6 +215,12 @@ export const requestCreateProduct = createAsyncThunk<any, any, Thunk>(
           {expand: true},
         );
       }
+      if (linkedServices?.length) {
+        await linkProductToService({
+          productId: listingId.uuid,
+          serviceIds: linkedServices,
+        });
+      }
 
       return response.data;
     } catch (error: any) {
@@ -152,8 +239,88 @@ export const requestUpdateProduct = createAsyncThunk<any, any, Thunk>(
   'createProduct/requestUpdateProductStatus',
   async (productData, {dispatch, rejectWithValue, extra: sdk}) => {
     try {
-      const {listingId, title, description, price, stock, images, oldStock} =
-        productData;
+      const {
+        categoryId,
+        subcategoryId,
+        subsubcategoryId,
+        listingId,
+        title,
+        description,
+        price,
+        stock,
+        images,
+        oldStock,
+        customAttributes,
+        categoryConfig,
+        subcategoryConfig,
+        subsubcategoryConfig,
+        linkedServices,
+      } = productData;
+
+      // Build serviceConfig with all pricing information
+      const productConfig: any = {
+        category: {
+          id: categoryConfig.id,
+          name: categoryConfig.name,
+          slug: categoryConfig.slug,
+        },
+        subcategory: {
+          id: subcategoryConfig.id,
+          name: subcategoryConfig.name,
+          slug: subcategoryConfig.slug,
+        },
+        subsubcategory: {
+          id: subsubcategoryConfig.id,
+          name: subsubcategoryConfig.name,
+          slug: subsubcategoryConfig.slug,
+          basePrice: subsubcategoryConfig.basePrice,
+          currency: subsubcategoryConfig.currency,
+          pricingModel: subsubcategoryConfig.pricingModel,
+          estimatedDuration: subsubcategoryConfig.estimatedDuration,
+        },
+        selectedAttributes: {},
+      };
+
+      // Add selected attributes with their pricing information
+      if (customAttributes && Object.keys(customAttributes).length > 0) {
+        Object.entries(customAttributes).forEach(
+          ([attrKey, attrValue]: [string, any]) => {
+            const attributeConfig = subsubcategoryConfig.attributes[attrKey];
+
+            productConfig.selectedAttributes[attrKey] = {
+              type: attributeConfig.type,
+              required: attributeConfig.required,
+              label: attributeConfig.label,
+              selectedOptions: {},
+            };
+
+            // Add selected options with their pricing
+            Object.entries(attrValue).forEach(
+              ([optionKey, optionData]: [string, any]) => {
+                productConfig.selectedAttributes[attrKey].selectedOptions[
+                  optionKey
+                ] = {
+                  value: optionData.value,
+                  label: optionData.label,
+                  priceModifier: optionData.priceModifier || 0,
+                };
+              },
+            );
+          },
+        );
+      }
+
+      const currentListingRes = await sdk.ownListings.show({
+        id: listingId,
+      });
+
+      const currentPublicData =
+        currentListingRes.data.data.attributes.publicData || {};
+      const oldLinkedServices = (currentPublicData as any).linkedServices || [];
+
+      const shouldUpdateLinkedServices =
+        Array.isArray(linkedServices) &&
+        !areArraysEqual(oldLinkedServices, linkedServices);
 
       const publicData: any = {
         listingType: ListingTypes.PRODUCT,
@@ -161,6 +328,13 @@ export const requestUpdateProduct = createAsyncThunk<any, any, Thunk>(
         unitType: UnitType.ITEM,
         pickupEnabled: true,
         shippingEnabled: true,
+        category: categoryId,
+        subcategory: subcategoryId,
+        subsubcategory: subsubcategoryId,
+        productConfig,
+        ...(shouldUpdateLinkedServices && {
+          linkedServices,
+        }),
       };
 
       // Update the listing
@@ -183,6 +357,14 @@ export const requestUpdateProduct = createAsyncThunk<any, any, Thunk>(
           },
           {expand: true},
         );
+      }
+
+      if (shouldUpdateLinkedServices) {
+        await updatelinkedProductToService({
+          productId: listingId?.uuid,
+          oldLinkedServices: oldLinkedServices,
+          newLinkedServices: linkedServices,
+        });
       }
 
       // Fetch the updated listing with includes for denormalization

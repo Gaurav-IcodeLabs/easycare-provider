@@ -297,7 +297,9 @@
     "submitting": "جاري الإنشاء...",
     "update": "تحديث المنتج",
     "updating": "جاري التحديث...",
-    "addProductBtn": "إضافة طلب منتج"
+    "addProductBtn": "إضافة طلب منتج",
+    "linkServices": "الربط بالخدمات (اختياري)",
+    "linkServicesPlaceholder": "اختر الخدمات"
   },
   "CreateServiceForm": {
     "category": "الفئة",
