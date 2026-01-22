@@ -44,7 +44,7 @@ type AddServiceRequestPayload = {
   attributes?: ServiceAttribute[];
 };
 
-const OTHER_CATEGORY_ID = 'other';
+export const OTHER_CATEGORY_ID = 'other';
 
 // AttributeField Component
 interface AttributeFieldProps {
@@ -54,7 +54,7 @@ interface AttributeFieldProps {
   t: any;
 }
 
-const AttributeField: React.FC<AttributeFieldProps> = ({
+export const AttributeField: React.FC<AttributeFieldProps> = ({
   control,
   attributeIndex,
   onRemove,
@@ -152,7 +152,7 @@ export const AddServiceRequest: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: {isValid, errors},
+    formState: {isValid},
     watch,
     setValue,
   } = useForm<AddServiceFormValues>({

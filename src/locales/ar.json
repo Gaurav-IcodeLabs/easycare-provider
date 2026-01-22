@@ -266,6 +266,7 @@
   },
   "CreateService": {
     "heading": "إنشاء خدمة",
+    "editHeading": "تحديث الخدمة",
     "updateSuccess": "تم تحديث الخدمة",
     "updateSuccessMessage": "تم تحديث خدمتك بنجاح"
   },
@@ -295,7 +296,8 @@
     "submit": "إنشاء المنتج",
     "submitting": "جاري الإنشاء...",
     "update": "تحديث المنتج",
-    "updating": "جاري التحديث..."
+    "updating": "جاري التحديث...",
+    "addProductBtn": "إضافة طلب منتج"
   },
   "CreateServiceForm": {
     "category": "الفئة",
@@ -569,6 +571,36 @@
     "options": "الخيارات",
     "addOption": "إضافة خيار",
     "optionLabel": "تسمية الخيار",
+    "optionLabelPlaceholder": "أدخل اسم الخيار",
+    "optionPrice": "السعر",
+    "optionPricePlaceholder": "0"
+  },
+  "AddProduct": {
+    "heading": "طلب منتج جديد",
+    "title": "العنوان",
+    "titlePlaceholder": "اسم المنتج",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صف متطلباتك للمنتج",
+    "button": "إرسال الطلب",
+    "subSubcategory": "الفئة الفرعية / اسم المنتج",
+    "subSubcategoryPlaceholder": "أدخل اسم المنتج المحدد",
+    "suggestedPrice": "السعر المقترح",
+    "suggestedPricePlaceholder": "أدخل السعر المقترح",
+    "otherCategory": "أخرى",
+    "customCategoryName": "اسم الفئة",
+    "customCategoryNamePlaceholder": "أدخل اسم الفئة",
+    "customSubcategoryName": "اسم الفئة الفرعية",
+    "customSubcategoryNamePlaceholder": "أدخل اسم الفئة الفرعية",
+    "customCategoryRequired": "اسم الفئة مطلوب عند اختيار \"أخرى\"",
+    "customSubcategoryRequired": "اسم الفئة الفرعية مطلوب عند اختيار \"أخرى\"",
+    "attributes": "خصائص المنتج",
+    "addAttribute": "إضافة خاصية",
+    "attribute": "خاصية",
+    "attributeName": "اسم الخاصية",
+    "attributeNamePlaceholder": "أدخل اسم الخاصية (مثل: الحجم، اللون، المدة)",
+    "options": "الخيارات",
+    "addOption": "إضافة خيار",
+    "optionLabel": "اسم الخيار",
     "optionLabelPlaceholder": "أدخل اسم الخيار",
     "optionPrice": "السعر",
     "optionPricePlaceholder": "0"

@@ -21,7 +21,10 @@ import {fetchAppAssets} from './src/slices/hostedAssets.slice';
 import {ColorsProvider, ConfigurationProvider} from './src/context';
 import {mergeColors} from './src/constants';
 import {configureGoogleSignIn} from './src/utils/socialAuth.helpers';
-import {fetchServicesConfig} from './src/slices/marketplaceData.slice';
+import {
+  fetchProductsConfig,
+  fetchServicesConfig,
+} from './src/slices/marketplaceData.slice';
 import {Settings} from 'react-native-fbsdk-next';
 import {authInfo} from './src/slices/auth.slice';
 
@@ -46,7 +49,11 @@ function App(): React.JSX.Element {
           colors: mergeColors(res?.appConfig?.branding),
         });
       }
-      await store.dispatch(fetchServicesConfig()).unwrap();
+
+      await Promise.all([
+        store.dispatch(fetchServicesConfig()).unwrap(),
+        store.dispatch(fetchProductsConfig()).unwrap(),
+      ]);
       // Add other async initializations here:
       // - Load fonts
       // - Preload critical data

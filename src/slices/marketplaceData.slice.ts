@@ -9,6 +9,12 @@ import {
   ServicesConfigResponse,
   SubSubCategory,
 } from '../apptypes/interfaces/serviceConfig';
+import {
+  ProductCategory,
+  ProductsConfigResponse,
+  ProductSubcategory,
+  ProductSubSubCategory,
+} from '../apptypes';
 // const ADMIN_PANEL_URL = 'http://192.168.68.110:5378';
 
 interface MarketplaceDataState {
@@ -17,6 +23,10 @@ interface MarketplaceDataState {
   categoriesByKeys: Record<string, Category>;
   subcategoriesByKeys: Record<string, Subcategory>;
   subsubcategoriesByKeys: Record<string, SubSubCategory>;
+  productCategories: ProductCategory[];
+  productCategoriesByKeys: Record<string, ProductCategory>;
+  productSubcategoriesByKeys: Record<string, ProductSubcategory>;
+  productSubsubcategoriesByKeys: Record<string, ProductSubSubCategory>;
 }
 
 const merge = (state: MarketplaceDataState, payload: any) => {
@@ -34,6 +44,10 @@ const initialState: MarketplaceDataState = {
   categoriesByKeys: {},
   subcategoriesByKeys: {},
   subsubcategoriesByKeys: {},
+  productCategories: [],
+  productCategoriesByKeys: {},
+  productSubcategoriesByKeys: {},
+  productSubsubcategoriesByKeys: {},
 };
 
 const marketplaceDataSlice = createSlice({
@@ -70,6 +84,32 @@ const marketplaceDataSlice = createSlice({
       state.categoriesByKeys = categoriesByKeys;
       state.subcategoriesByKeys = subcategoriesByKeys;
       state.subsubcategoriesByKeys = subsubcategoriesByKeys;
+    });
+
+    builder.addCase(fetchProductsConfig.fulfilled, (state, action) => {
+      state.productCategories = action.payload;
+
+      // Build categoriesByKeys
+      const categoriesByKeys: Record<string, ProductCategory> = {};
+      const subcategoriesByKeys: Record<string, ProductSubcategory> = {};
+      const subsubcategoriesByKeys: Record<string, ProductSubSubCategory> = {};
+
+      action.payload.forEach(category => {
+        categoriesByKeys[category.id] = category;
+
+        // Build subcategoriesByKeys
+        category.subcategories.forEach(subcategory => {
+          subcategoriesByKeys[subcategory.id] = subcategory;
+
+          subcategory.subSubcategories.forEach(subsubCateggory => {
+            subsubcategoriesByKeys[subsubCateggory.id] = subsubCateggory;
+          });
+        });
+      });
+
+      state.productCategoriesByKeys = categoriesByKeys;
+      state.productSubcategoriesByKeys = subcategoriesByKeys;
+      state.productSubsubcategoriesByKeys = subsubcategoriesByKeys;
     });
   },
 });
@@ -153,12 +193,36 @@ export const fetchServicesConfig = createAsyncThunk<
   }
 });
 
+export const fetchProductsConfig = createAsyncThunk<
+  ProductCategory[],
+  void,
+  {rejectValue: string}
+>('marketplaceData/fetchProductsConfig', async (_, {rejectWithValue}) => {
+  try {
+    const response = await axios.get<ProductsConfigResponse>(
+      `${ADMIN_PANEL_URL}/api/products/config`,
+    );
+    // console.log('response.data.data', JSON.stringify(response.data.data));
+    return response.data.data.categories;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message ||
+        error.message ||
+        'Failed to fetch services config',
+    );
+  }
+});
+
 // Selectors
 export const entitiesSelector = (state: RootState) =>
   state.marketplaceData.entities;
 
 export const categoriesSelector = (state: RootState): Category[] =>
   state.marketplaceData.categories;
+
+export const productCategoriesSelector = (
+  state: RootState,
+): ProductCategory[] => state.marketplaceData.productCategories;
 
 export const categoriesByKeysSelector = (
   state: RootState,
@@ -168,10 +232,20 @@ export const subcategoriesByKeysSelector = (
   state: RootState,
 ): Record<string, Subcategory> => state.marketplaceData.subcategoriesByKeys;
 
+export const productSubcategoriesByKeysSelector = (
+  state: RootState,
+): Record<string, ProductSubcategory> =>
+  state.marketplaceData.productSubcategoriesByKeys;
+
 export const subsubcategoriesByKeysSelector = (
   state: RootState,
 ): Record<string, SubSubCategory> =>
   state.marketplaceData.subsubcategoriesByKeys;
+
+export const productSubsubcategoriesByKeysSelector = (
+  state: RootState,
+): Record<string, ProductSubSubCategory> =>
+  state.marketplaceData.productSubsubcategoriesByKeys;
 
 export const selectCategoryById = (
   state: RootState,

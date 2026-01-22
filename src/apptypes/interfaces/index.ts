@@ -9,3 +9,4 @@ export * from './user';
 export * from './navigator';
 export * from './types';
 export * from './componentProps';
+export * from './productConfig';

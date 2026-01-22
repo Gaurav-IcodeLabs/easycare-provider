@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     paddingHorizontal: scale(20),
+    paddingBottom: scale(10),
   },
   profileImageContainer: {
     flexDirection: 'row',
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
   },
   contentSection: {
     flexGrow: 1,
-    paddingTop: scale(20),
+    paddingTop: scale(10),
     paddingHorizontal: scale(20),
     paddingBottom: scale(100),
   },

@@ -15,6 +15,7 @@ import {
   Listings,
   SetupPayout,
   AddServiceRequest,
+  AddProductRequest,
 } from '../screens';
 import {BottomTabNavigator} from './BottomTabNavigator';
 import {OtpVerified, VerifyOtp} from '../screens';
@@ -63,6 +64,7 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.LISTINGS} component={Listings} />
       <Screen name={SCREENS.SETUP_PAYOUT} component={SetupPayout} />
       <Screen name={SCREENS.ADD_SERVICE} component={AddServiceRequest} />
+      <Screen name={SCREENS.ADD_PRODUCT} component={AddProductRequest} />
     </Navigator>
   );
 };

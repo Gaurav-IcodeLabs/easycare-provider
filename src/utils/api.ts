@@ -41,3 +41,9 @@ export const sendOTP = (data: {phoneNumber: string}) =>
 
 export const verifyOTP = (data: {phoneNumber: string; code: string}) =>
   apiClient.post('/api/otp/verify', {to: data.phoneNumber, code: data.code});
+
+export const linkProductToService = (data: any) =>
+  apiClient.post('/api/listing/link-service', data);
+
+export const updatelinkedProductToService = (data: any) =>
+  apiClient.post('/api/listing/update-linked-service', data);

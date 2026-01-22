@@ -26,3 +26,4 @@ export * from './AddOptionsPopover';
 export * from './DropdownField/DropdownField';
 export * from './ScreenHeader/ScreenHeader';
 export * from './LocationPickerField';
+export * from './DropdownMultiSelectField/DropdownMultiSelectField';

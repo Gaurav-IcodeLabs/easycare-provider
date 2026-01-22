@@ -19,3 +19,4 @@ export * from './Listings/Listings';
 export * from './CreateBusiness';
 export * from './SetupPayout';
 export * from './AddServiceRequest/AddServiceRequest';
+export * from './AddProductRequest/AddProductRequest';

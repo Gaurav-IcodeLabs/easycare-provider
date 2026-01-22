@@ -27,4 +27,5 @@ export const SCREENS = {
   LISTINGS: 'Listings',
   SETUP_PAYOUT: 'SetupPayout',
   ADD_SERVICE: 'AddService',
+  ADD_PRODUCT: 'AddProduct',
 } as const;

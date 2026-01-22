@@ -49,6 +49,7 @@ export type MainStackParamList = {
   [SCREENS.LISTINGS]: {listingType: string};
   [SCREENS.SETUP_PAYOUT]: undefined;
   [SCREENS.ADD_SERVICE]: undefined;
+  [SCREENS.ADD_PRODUCT]: undefined;
 };
 
 export type BottomTabParamList = {
@@ -75,6 +76,11 @@ export type OtpVerifiedScreenProps = NativeStackScreenProps<
 export type CreateServiceScreenProps = NativeStackScreenProps<
   MainStackParamList,
   typeof SCREENS.CREATE_SERVICE
+>;
+
+export type CreateProductScreenProps = NativeStackScreenProps<
+  MainStackParamList,
+  typeof SCREENS.CREATE_PRODUCT
 >;
 
 // export type SignupScreenProps = NativeStackScreenProps<
