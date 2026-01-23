@@ -82,8 +82,8 @@ export const AttributeField: React.FC<AttributeFieldProps> = ({
 
       <TextInputField
         control={control}
+        style={styles.noMarginTop}
         name={`attributes.${attributeIndex}.name`}
-        labelKey="AddService.attributeName"
         placeholder="AddService.attributeNamePlaceholder"
       />
 
@@ -92,45 +92,46 @@ export const AttributeField: React.FC<AttributeFieldProps> = ({
           <AppText style={styles.optionsTitle}>
             {t('AddService.options')}
           </AppText>
-          <TouchableOpacity
-            style={styles.addOptionButton}
-            onPress={() => appendOption({label: '', suggestedPrice: 0})}>
-            <AppText style={styles.addOptionButtonText}>
-              {t('AddService.addOption')}
-            </AppText>
-          </TouchableOpacity>
+          <Button
+            title={t('AddService.addOption')}
+            onPress={() => appendOption({label: '', suggestedPrice: 0})}
+            style={styles.addOptionButtonInline}
+            titleStyle={styles.addOptionButtonTitleInline}
+          />
         </View>
-
-        {optionFields.map((option, optionIndex) => (
-          <View key={option.id} style={styles.optionRow}>
-            <View style={styles.optionFields}>
-              <View style={styles.optionLabelField}>
-                <TextInputField
-                  control={control}
-                  name={`attributes.${attributeIndex}.options.${optionIndex}.label`}
-                  labelKey="AddService.optionLabel"
-                  placeholder="AddService.optionLabelPlaceholder"
-                />
-              </View>
-              <View style={styles.optionPriceField}>
-                <TextInputField
-                  control={control}
-                  name={`attributes.${attributeIndex}.options.${optionIndex}.suggestedPrice`}
-                  labelKey="AddService.optionPrice"
-                  placeholder="0"
-                  keyboardType="numeric"
-                />
+        <View style={styles.optionsContainer}>
+          {optionFields.map((option, optionIndex) => (
+            <View key={option.id} style={styles.optionRow}>
+              <View style={styles.optionFields}>
+                <View style={styles.optionLabelField}>
+                  <TextInputField
+                    control={control}
+                    style={styles.noMarginTop}
+                    name={`attributes.${attributeIndex}.options.${optionIndex}.label`}
+                    // labelKey="AddService.optionLabel"
+                    placeholder="AddService.optionLabelPlaceholder"
+                  />
+                </View>
+                <View style={styles.optionPriceField}>
+                  <TextInputField
+                    control={control}
+                    style={styles.noMarginTop}
+                    name={`attributes.${attributeIndex}.options.${optionIndex}.suggestedPrice`}
+                    placeholder="AddService.optionPricePlaceholder"
+                    keyboardType="numeric"
+                  />
+                </View>
+                {optionFields.length > 1 && (
+                  <TouchableOpacity
+                    style={styles.removeOptionButton}
+                    onPress={() => removeOption(optionIndex)}>
+                    <AppText style={styles.removeOptionButtonText}>×</AppText>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
-            {optionFields.length > 1 && (
-              <TouchableOpacity
-                style={styles.removeOptionButton}
-                onPress={() => removeOption(optionIndex)}>
-                <AppText style={styles.removeOptionButtonText}>×</AppText>
-              </TouchableOpacity>
-            )}
-          </View>
-        ))}
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -372,24 +373,6 @@ export const AddServiceRequest: React.FC = () => {
 
               {/* Attributes Section */}
               <View style={styles.attributesSection}>
-                <View style={styles.attributesHeader}>
-                  <AppText style={styles.attributesTitle}>
-                    {t('AddService.attributes')}
-                  </AppText>
-                  <TouchableOpacity
-                    style={styles.addAttributeButton}
-                    onPress={() =>
-                      appendAttribute({
-                        name: '',
-                        options: [{label: '', suggestedPrice: ''}],
-                      })
-                    }>
-                    <AppText style={styles.addAttributeButtonText}>
-                      {t('AddService.addAttribute')}
-                    </AppText>
-                  </TouchableOpacity>
-                </View>
-
                 {attributeFields.map((attribute, attributeIndex) => (
                   <AttributeField
                     key={attribute.id}
@@ -399,6 +382,25 @@ export const AddServiceRequest: React.FC = () => {
                     t={t}
                   />
                 ))}
+                {/* <View style={styles.attributesHeader}>
+                  <AppText style={styles.attributesTitle}>
+                    {t('AddService.attributes')}
+                  </AppText> */}
+                <Button
+                  title={
+                    attributeFields.length === 0
+                      ? 'AddService.addAttribute'
+                      : 'AddService.addMoreAttributes'
+                  }
+                  onPress={() =>
+                    appendAttribute({
+                      name: '',
+                      options: [{label: '', suggestedPrice: ''}],
+                    })
+                  }
+                  style={styles.addAttributeButton}
+                />
+                {/* </View> */}
               </View>
             </>
           )}
@@ -449,6 +451,7 @@ const styles = StyleSheet.create({
   },
   attributesSection: {
     marginTop: scale(20),
+    gap: scale(20),
   },
   attributesHeader: {
     flexDirection: 'row',
@@ -458,14 +461,14 @@ const styles = StyleSheet.create({
   },
   attributesTitle: {
     fontSize: scale(16),
-    color: colors.textBlack,
-    ...primaryFont('600'),
+    color: colors.neutralDark,
+    ...primaryFont('400'),
   },
   addAttributeButton: {
     backgroundColor: colors.deepBlue,
-    paddingHorizontal: scale(12),
+    paddingHorizontal: scale(20),
     paddingVertical: scale(6),
-    borderRadius: scale(6),
+    borderRadius: scale(50),
   },
   addAttributeButtonText: {
     color: colors.white,
@@ -476,18 +479,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.milkWhite,
     borderRadius: scale(12),
     padding: scale(16),
-    marginBottom: scale(16),
-    borderWidth: 1,
+    gap: scale(15),
     borderColor: colors.lightGrey,
   },
   attributeCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: scale(12),
   },
   attributeCardTitle: {
-    fontSize: scale(14),
+    fontSize: scale(16),
     color: colors.textBlack,
     ...primaryFont('600'),
   },
@@ -505,18 +506,17 @@ const styles = StyleSheet.create({
     ...primaryFont('600'),
   },
   optionsSection: {
-    marginTop: scale(12),
+    padding: scale(5),
   },
   optionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: scale(12),
   },
   optionsTitle: {
-    fontSize: scale(14),
+    fontSize: scale(16),
     color: colors.textBlack,
-    ...primaryFont('500'),
+    ...primaryFont('600'),
   },
   addOptionButton: {
     backgroundColor: colors.lightGrey,
@@ -531,8 +531,8 @@ const styles = StyleSheet.create({
   },
   optionRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    marginBottom: scale(8),
+    alignItems: 'center',
+    marginBottom: scale(10),
   },
   optionFields: {
     flex: 1,
@@ -553,11 +553,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: scale(8),
-    marginBottom: scale(8),
+    alignSelf: 'center',
   },
   removeOptionButtonText: {
     color: colors.white,
     fontSize: scale(12),
     ...primaryFont('600'),
+  },
+  noMarginTop: {
+    marginTop: 0,
+  },
+  addOptionButtonInline: {
+    height: scale(30),
+    borderRadius: scale(8),
+    paddingHorizontal: scale(10),
+    paddingVertical: scale(6),
+  },
+  addOptionButtonTitleInline: {
+    fontSize: scale(12),
+    ...primaryFont('400'),
+  },
+  optionsContainer: {
+    marginVertical: scale(10),
   },
 });

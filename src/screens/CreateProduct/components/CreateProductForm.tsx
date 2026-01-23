@@ -22,6 +22,7 @@ import {
   ProductSubcategory,
   ProductSubSubCategory,
 } from '../../../apptypes';
+import {useStatusBar} from '../../../hooks';
 
 interface ServiceOptions {
   label: string;
@@ -61,6 +62,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
     useState<ProductSubcategory | null>(null);
   const [selectedSubSubcategory, setSelectedSubSubcategory] =
     useState<ProductSubSubCategory | null>(null);
+  useStatusBar('dark-content');
 
   const currentLang = i18n.language === 'ar' ? 'ar' : 'en';
 

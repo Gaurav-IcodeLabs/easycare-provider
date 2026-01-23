@@ -22,6 +22,7 @@ import {
   SubSubCategory,
 } from '../../../apptypes/interfaces/serviceConfig';
 import {getServiceFormSchema, getDefaultServiceValues} from './helper';
+import {useStatusBar} from '../../../hooks';
 
 interface CreateServiceFormProps {
   categories: Category[];
@@ -56,6 +57,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
     useState<Subcategory | null>(null);
   const [selectedSubSubcategory, setSelectedSubSubcategory] =
     useState<SubSubCategory | null>(null);
+  useStatusBar('dark-content');
 
   const currentLang = i18n.language === 'ar' ? 'ar' : 'en';
 

@@ -276,7 +276,7 @@ export const AddProductRequest: React.FC = () => {
                 labelKey="AddProduct.description"
                 placeholder="AddProduct.descriptionPlaceholder"
                 multiline
-                inputContainerStyles={{borderRadius: scale(20)}}
+                inputContainerStyles={styles.descriptionInputContainer}
               />
 
               <TextInputField
@@ -289,24 +289,6 @@ export const AddProductRequest: React.FC = () => {
 
               {/* Attributes Section */}
               <View style={styles.attributesSection}>
-                <View style={styles.attributesHeader}>
-                  <AppText style={styles.attributesTitle}>
-                    {t('AddProduct.attributes')}
-                  </AppText>
-                  <TouchableOpacity
-                    style={styles.addAttributeButton}
-                    onPress={() =>
-                      appendAttribute({
-                        name: '',
-                        options: [{label: '', suggestedPrice: ''}],
-                      })
-                    }>
-                    <AppText style={styles.addAttributeButtonText}>
-                      {t('AddProduct.addAttribute')}
-                    </AppText>
-                  </TouchableOpacity>
-                </View>
-
                 {attributeFields.map((attribute, attributeIndex) => (
                   <AttributeField
                     key={attribute.id}
@@ -316,6 +298,20 @@ export const AddProductRequest: React.FC = () => {
                     t={t}
                   />
                 ))}
+                <Button
+                  title={
+                    attributeFields.length === 0
+                      ? 'AddProduct.addAttribute'
+                      : 'AddProduct.addMoreAttributes'
+                  }
+                  onPress={() =>
+                    appendAttribute({
+                      name: '',
+                      options: [{label: '', suggestedPrice: ''}],
+                    })
+                  }
+                  style={styles.addAttributeButton}
+                />
               </View>
             </>
           )}
@@ -368,6 +364,7 @@ const styles = StyleSheet.create({
   },
   attributesSection: {
     marginTop: scale(20),
+    gap: scale(20),
   },
   attributesHeader: {
     flexDirection: 'row',
@@ -377,14 +374,14 @@ const styles = StyleSheet.create({
   },
   attributesTitle: {
     fontSize: scale(16),
-    color: colors.textBlack,
-    ...primaryFont('600'),
+    color: colors.neutralDark,
+    ...primaryFont('400'),
   },
   addAttributeButton: {
     backgroundColor: colors.deepBlue,
-    paddingHorizontal: scale(12),
+    paddingHorizontal: scale(20),
     paddingVertical: scale(6),
-    borderRadius: scale(6),
+    borderRadius: scale(50),
   },
   addAttributeButtonText: {
     color: colors.white,
@@ -395,18 +392,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.milkWhite,
     borderRadius: scale(12),
     padding: scale(16),
-    marginBottom: scale(16),
-    borderWidth: 1,
+    gap: scale(15),
     borderColor: colors.lightGrey,
   },
   attributeCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: scale(12),
   },
   attributeCardTitle: {
-    fontSize: scale(14),
+    fontSize: scale(16),
     color: colors.textBlack,
     ...primaryFont('600'),
   },
@@ -424,18 +419,17 @@ const styles = StyleSheet.create({
     ...primaryFont('600'),
   },
   optionsSection: {
-    marginTop: scale(12),
+    padding: scale(5),
   },
   optionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: scale(12),
   },
   optionsTitle: {
-    fontSize: scale(14),
+    fontSize: scale(16),
     color: colors.textBlack,
-    ...primaryFont('500'),
+    ...primaryFont('600'),
   },
   addOptionButton: {
     backgroundColor: colors.lightGrey,
@@ -450,8 +444,8 @@ const styles = StyleSheet.create({
   },
   optionRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    marginBottom: scale(8),
+    alignItems: 'center',
+    marginBottom: scale(10),
   },
   optionFields: {
     flex: 1,
@@ -472,11 +466,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: scale(8),
-    marginBottom: scale(8),
+    alignSelf: 'center',
   },
   removeOptionButtonText: {
     color: colors.white,
     fontSize: scale(12),
     ...primaryFont('600'),
+  },
+  descriptionInputContainer: {
+    borderRadius: scale(20),
   },
 });

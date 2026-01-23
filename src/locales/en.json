@@ -549,7 +549,7 @@
     "sameEmailError": "New email must be different from current email"
   },
   "AddService": {
-    "heading": "Request service",
+    "heading": "Request Service",
     "title": "Title",
     "titlePlaceholder": "Service name",
     "description": "Description",
@@ -568,18 +568,19 @@
     "customSubcategoryRequired": "Sub-category name is required when selecting 'Other'",
     "attributes": "Service Attributes",
     "addAttribute": "Add Attribute",
+    "addMoreAttributes": "Add More Attributes",
     "attribute": "Attribute",
     "attributeName": "Attribute Name",
-    "attributeNamePlaceholder": "Enter attribute name (e.g., Size, Color, Duration)",
+    "attributeNamePlaceholder": "Attribute name (e.g., Size, Color, Duration)",
     "options": "Options",
     "addOption": "Add Option",
     "optionLabel": "Option Label",
-    "optionLabelPlaceholder": "Enter option name",
+    "optionLabelPlaceholder": "Option name",
     "optionPrice": "Price",
-    "optionPricePlaceholder": "0"
+    "optionPricePlaceholder": "0 SAR"
   },
   "AddProduct": {
-    "heading": "Request product",
+    "heading": "Request Product",
     "title": "Title",
     "titlePlaceholder": "Product name",
     "description": "Description",
@@ -598,14 +599,15 @@
     "customSubcategoryRequired": "Sub-category name is required when selecting 'Other'",
     "attributes": "Product Attributes",
     "addAttribute": "Add Attribute",
+    "addMoreAttributes": "Add More Attributes",
     "attribute": "Attribute",
     "attributeName": "Attribute Name",
-    "attributeNamePlaceholder": "Enter attribute name (e.g., Size, Color, Duration)",
+    "attributeNamePlaceholder": "Attribute name (e.g., Size, Color, Duration)",
     "options": "Options",
     "addOption": "Add Option",
     "optionLabel": "Option Label",
-    "optionLabelPlaceholder": "Enter option name",
+    "optionLabelPlaceholder": "Option name",
     "optionPrice": "Price",
-    "optionPricePlaceholder": "0"
+    "optionPricePlaceholder": "0 SAR"
   }
 }
