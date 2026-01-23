@@ -38,6 +38,7 @@ import {
   availabilitySetupCompletedSelector,
   payoutSetupCompletedSelector,
   currentUserProfileImageUrlSelector,
+  fetchCurrentUserInProgressSelector,
 } from '../../slices/user.slice';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useStatusBar} from '../../hooks';
@@ -62,6 +63,7 @@ export const Home: React.FC = () => {
 
   const isLoading = useTypedSelector(fetchListingsInProgressSelector);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [isInitializing, setIsInitializing] = React.useState(true);
 
   const isBusinessProfileSetup = useTypedSelector(
     businessProfileSetupCompletedSelector,
@@ -71,12 +73,37 @@ export const Home: React.FC = () => {
   );
   const isPayoutSetup = useTypedSelector(payoutSetupCompletedSelector);
 
-  // Show setup screen if any step is incomplete
+  // Check if user data is loaded to prevent flashing
+  const fetchCurrentUserInProgress = useTypedSelector(
+    fetchCurrentUserInProgressSelector,
+  );
+  const businessListingId = useTypedSelector(
+    state =>
+      state.user.currentUser?.attributes.profile.publicData?.businessListingId,
+  );
+  const businessListing = useTypedSelector(state =>
+    businessListingId
+      ? state.marketplaceData?.entities?.ownListing?.[businessListingId]
+      : null,
+  );
+
+  // Only show setup screen after data is loaded and setup is incomplete
+  const isDataLoaded =
+    !fetchCurrentUserInProgress && (businessListingId ? businessListing : true);
   const showSetupScreen =
-    !isBusinessProfileSetup || !isAvailabilitySetup || !isPayoutSetup;
+    !isInitializing &&
+    isDataLoaded &&
+    (!isBusinessProfileSetup || !isAvailabilitySetup || !isPayoutSetup);
 
   useEffect(() => {
     loadAllListings();
+
+    // Wait for user data to be loaded before showing the UI
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 300); // Slightly longer delay to ensure data is loaded
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -146,6 +173,27 @@ export const Home: React.FC = () => {
       </View>
     );
   };
+
+  // Show loading screen during initialization or while user data is loading
+  if (isInitializing || !isDataLoaded) {
+    return (
+      <GradientWrapper
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 0.5}}
+        colors={[colors.deepBlue, colors.blue]}>
+        <ScreenHeader
+          containerStyle={{
+            paddingHorizontal: scale(20),
+            marginTop: Math.min(top, scale(20)),
+          }}
+          renderCenter={() => <Image source={easycare} resizeMode="contain" />}
+        />
+        <View style={styles.loadingContainer}>
+          {/* <ActivityIndicator size="large" color={colors.white} /> */}
+        </View>
+      </GradientWrapper>
+    );
+  }
 
   if (showSetupScreen) {
     return (
