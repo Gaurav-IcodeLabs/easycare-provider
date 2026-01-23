@@ -149,6 +149,7 @@ export const BiometricSettings: React.FC = () => {
       await dispatch(
         login({
           username: currentUserEmail,
+          useEmail: true,
           password: values.password,
         }),
       ).unwrap();

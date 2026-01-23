@@ -135,6 +135,7 @@ export const Login: React.FC = () => {
       if (credentials) {
         await dispatch(
           login({
+            useEmail: true,
             username: credentials.username,
             password: credentials.password,
           }),

@@ -264,25 +264,30 @@ export const signupWithIdp = createAsyncThunk<
 
 export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
   'auth/loginStatus',
-  async (params, {extra: sdk, rejectWithValue}) => {
+  async (
+    {useEmail = false, username, password},
+    {extra: sdk, rejectWithValue},
+  ) => {
     try {
+      let email: string = '';
       // Get email from phone number
-      const emailResponse = await getEmailWithPhoneNumber({
-        phoneNumber: params.username,
-      });
-      const email = (emailResponse as any)?.email;
-
-      if (!email) {
-        return rejectWithValue({
-          message: 'Phone number not found',
-          statusCode: 404,
+      if (!useEmail) {
+        const emailResponse = await getEmailWithPhoneNumber({
+          phoneNumber: username,
         });
-      }
+        email = (emailResponse as any)?.email;
 
+        if (!email) {
+          return rejectWithValue({
+            message: 'Phone number not found',
+            statusCode: 404,
+          });
+        }
+      }
       // Login with email and password
       const currentUser = await sdk.login({
-        username: email,
-        password: params.password,
+        username: useEmail ? username : email,
+        password: password,
       });
 
       const userResponse = await sdk.currentUser.show();
