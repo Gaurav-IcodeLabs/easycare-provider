@@ -37,6 +37,7 @@ export interface LoginThunkParams {
   password: string;
   useEmail?: boolean;
   shouldEnableBiometric?: boolean;
+  isBiometricLogin?: boolean;
 }
 
 export interface CreateUserParams

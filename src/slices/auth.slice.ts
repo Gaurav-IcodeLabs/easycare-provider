@@ -7,6 +7,8 @@ import {
   getEmailWithPhoneNumber,
   sendOTP,
 } from '../utils/api';
+import {disableBiometricLogin} from '../utils/biometricAuth';
+import {updateAppState} from './app.slice';
 
 const authenticated = (authInfo: AuthInfoResponse) =>
   authInfo?.isAnonymous === false;
@@ -200,8 +202,16 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
         password: params.password,
       });
 
+      // Always clear biometric credentials for new user signup
+      try {
+        await disableBiometricLogin();
+        dispatch(updateAppState({key: 'biometricEnabled', value: false}));
+      } catch (error) {
+        // Ignore errors when clearing biometric data
+      }
+
       // Refresh auth info to update Redux state
-      await dispatch(authInfo());
+      await dispatch(authInfo() as any);
       await sendOTP({phoneNumber});
       return res;
     } catch (error: any) {
@@ -242,8 +252,16 @@ export const signupWithIdp = createAsyncThunk<
         idpToken: params.idpToken,
       });
 
+      // Always clear biometric credentials for IDP signup
+      try {
+        await disableBiometricLogin();
+        dispatch(updateAppState({key: 'biometricEnabled', value: false}));
+      } catch (error) {
+        // Ignore errors when clearing biometric data
+      }
+
       // Refresh auth info after successful signup
-      await dispatch(authInfo());
+      await dispatch(authInfo() as any);
 
       return res.data;
     } catch (error: any) {
@@ -265,8 +283,8 @@ export const signupWithIdp = createAsyncThunk<
 export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
   'auth/loginStatus',
   async (
-    {useEmail = false, username, password},
-    {extra: sdk, rejectWithValue},
+    {useEmail = false, username, password, isBiometricLogin = false},
+    {dispatch, extra: sdk, rejectWithValue},
   ) => {
     try {
       let email: string = '';
@@ -284,9 +302,12 @@ export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
           });
         }
       }
+
+      const loginEmail = useEmail ? username : email;
+
       // Login with email and password
       const currentUser = await sdk.login({
-        username: useEmail ? username : email,
+        username: loginEmail,
         password: password,
       });
 
@@ -299,6 +320,16 @@ export const login = createAsyncThunk<{}, LoginThunkParams, Thunk>(
           message: 'Only providers can access this app',
           statusCode: 403,
         } as any);
+      }
+
+      // Only clear biometric credentials if NOT using biometric login
+      if (!isBiometricLogin) {
+        try {
+          await disableBiometricLogin();
+          dispatch(updateAppState({key: 'biometricEnabled', value: false}));
+        } catch (error) {
+          // Ignore errors when clearing biometric data
+        }
       }
 
       return currentUser;
@@ -318,38 +349,50 @@ export const loginWithIdp = createAsyncThunk<
     idpToken: string;
   },
   Thunk
->('auth/loginWithIdp', async (params, {extra: sdk, rejectWithValue}) => {
-  try {
-    const currentUser = await (sdk as any).loginWithIdp(params);
+>(
+  'auth/loginWithIdp',
+  async (params, {dispatch, extra: sdk, rejectWithValue}) => {
+    try {
+      const currentUser = await (sdk as any).loginWithIdp(params);
 
-    // Fetch current user to check userType
-    const userResponse = await sdk.currentUser.show();
-    const user = userResponse.data.data;
-    const userType = (user?.attributes?.profile?.publicData as any)?.userType;
+      // Fetch current user to check userType
+      const userResponse = await sdk.currentUser.show();
+      const user = userResponse.data.data;
+      const userType = (user?.attributes?.profile?.publicData as any)?.userType;
 
-    // Only allow providers to login
-    if (userType !== 'provider') {
-      await sdk.logout();
+      // Only allow providers to login
+      if (userType !== 'provider') {
+        await sdk.logout();
+        return rejectWithValue({
+          message: 'Only providers can access this app',
+          statusCode: 403,
+        });
+      }
+
+      // Always clear biometric credentials for IDP login
+      try {
+        await disableBiometricLogin();
+        dispatch(updateAppState({key: 'biometricEnabled', value: false}));
+      } catch (error) {
+        // Ignore errors when clearing biometric data
+      }
+
+      return currentUser.data;
+    } catch (error: any) {
+      const statusCode = error?.response?.status || error?.status;
+      const errorData = error?.response?.data;
+      const errorCode = errorData?.code || errorData?.error || error?.code;
+      const message =
+        errorData?.message || error?.message || 'IDP login failed';
+
       return rejectWithValue({
-        message: 'Only providers can access this app',
-        statusCode: 403,
-      });
+        message,
+        statusCode,
+        ...(errorCode && {code: errorCode}),
+      } as any);
     }
-
-    return currentUser.data;
-  } catch (error: any) {
-    const statusCode = error?.response?.status || error?.status;
-    const errorData = error?.response?.data;
-    const errorCode = errorData?.code || errorData?.error || error?.code;
-    const message = errorData?.message || error?.message || 'IDP login failed';
-
-    return rejectWithValue({
-      message,
-      statusCode,
-      ...(errorCode && {code: errorCode}),
-    } as any);
-  }
-});
+  },
+);
 
 export const logout = createAsyncThunk<{}, void, Thunk>(
   'auth/logout',
@@ -375,7 +418,7 @@ export const verifyEmail = createAsyncThunk<
       await sdk.currentUser.verifyEmail({verificationToken});
       // Refresh current user to get updated emailVerified status
       const {fetchCurrentUser} = await import('./user.slice');
-      await dispatch(fetchCurrentUser({}));
+      await dispatch(fetchCurrentUser({}) as any);
     } catch (error: any) {
       return rejectWithValue({
         message: error?.message || 'Failed to verify email',

@@ -138,6 +138,7 @@ export const Login: React.FC = () => {
             useEmail: true,
             username: credentials.username,
             password: credentials.password,
+            isBiometricLogin:true,
           }),
         ).unwrap();
 
