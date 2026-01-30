@@ -29,14 +29,7 @@ import {
   fetchBusinessListing,
 } from '../../slices/createBusiness.slice';
 import {CreateBusinessStepOne} from './components/CreateBusinessStepOne';
-import {CreateBusinessStepTwo} from './components/CreateBusinessStepTwo';
 import {types as sdkTypes} from '../../utils';
-import {
-  convertToSharetribeAvailabilityPlan,
-  convertToSharetribeException,
-  convertFromSharetribeAvailabilityPlan,
-  convertFromSharetribeException,
-} from './components/SharetribeAvailabilityHelper';
 
 interface FormValues {
   [key: string]: any;
@@ -55,15 +48,12 @@ export const CreateBusiness: FC = () => {
   const {bottom} = useSafeAreaInsets();
   const flatListRef = useRef<FlatList>(null);
 
-  // Refs to hold form data from both components
+  // Ref to hold form data from business info component
   const stepOneDataRef = useRef<FormValues | null>(null);
-  const stepTwoDataRef = useRef<FormValues | null>(null);
 
-  // Refs to track validation state
+  // Ref to track validation state
   const stepOneValidRef = useRef<boolean>(false);
-  const stepTwoValidRef = useRef<boolean>(false);
   const [isStepOneValid, setIsStepOneValid] = useState(false);
-  const [isStepTwoValid, setIsStepTwoValid] = useState(false);
 
   const isLoading = createInProgress || loading;
 
@@ -122,41 +112,7 @@ export const CreateBusiness: FC = () => {
               (inc: any) => inc.id.uuid === img.id.uuid,
             )?.attributes?.variants?.default?.url || '',
         })) || [],
-      availabilityPlan: listing.attributes.availabilityPlan,
     };
-
-    // Convert availability plan to UI format
-    if (businessData.availabilityPlan) {
-      const {weeklySchedule, timezone} = convertFromSharetribeAvailabilityPlan(
-        businessData.availabilityPlan,
-      );
-      businessData.weeklySchedule = weeklySchedule;
-      businessData.timezone = timezone;
-    }
-
-    // Get exceptions from createBusiness slice
-    const exceptionsFromSlice = businessDataFromSlice.exceptions || [];
-    console.log('🔄 Memo: exceptions from slice:', exceptionsFromSlice);
-    console.log('🔄 Memo: exceptions count:', exceptionsFromSlice.length);
-
-    if (exceptionsFromSlice.length > 0) {
-      console.log(
-        '🔄 Converting exceptions to UI format:',
-        exceptionsFromSlice,
-      );
-      businessData.exceptions = exceptionsFromSlice.map(
-        convertFromSharetribeException,
-      );
-      console.log('✅ Converted exceptions:', businessData.exceptions);
-    } else {
-      console.log('⚠️ Memo: No exceptions to convert');
-      businessData.exceptions = [];
-    }
-
-    console.log(
-      '📦 Memo: Returning businessData with exceptions:',
-      businessData.exceptions,
-    );
     return businessData;
   }, [existingBusinessId, businessDataFromSlice]);
 
@@ -200,27 +156,16 @@ export const CreateBusiness: FC = () => {
     stepOneDataRef.current = values;
   }, []);
 
-  const handleStepTwoChange = React.useCallback((values: FormValues) => {
-    console.log('📝 StepTwo changed:', values);
-    stepTwoDataRef.current = values;
-  }, []);
-
   const handleStepOneValidation = React.useCallback((isValid: boolean) => {
     console.log('✅ StepOne validation:', isValid);
     stepOneValidRef.current = isValid;
     setIsStepOneValid(isValid);
   }, []);
 
-  const handleStepTwoValidation = React.useCallback((isValid: boolean) => {
-    console.log('✅ StepTwo validation:', isValid);
-    stepTwoValidRef.current = isValid;
-    setIsStepTwoValid(isValid);
-  }, []);
-
-  // Initialize refs with existing data when it loads
+  // Initialize ref with existing data when it loads
   React.useEffect(() => {
     if (existingBusinessData && isEditMode) {
-      console.log('🔄 Initializing refs with existing data');
+      console.log('🔄 Initializing ref with existing data');
 
       // Initialize stepOne ref
       if (!stepOneDataRef.current) {
@@ -233,16 +178,6 @@ export const CreateBusiness: FC = () => {
         };
         console.log('✅ StepOne ref initialized');
       }
-
-      // Initialize stepTwo ref
-      if (!stepTwoDataRef.current) {
-        stepTwoDataRef.current = {
-          weeklySchedule: existingBusinessData.weeklySchedule,
-          timezone: existingBusinessData.timezone,
-          exceptions: existingBusinessData.exceptions || [],
-        };
-        console.log('✅ StepTwo ref initialized');
-      }
     }
   }, [existingBusinessData, isEditMode]);
 
@@ -251,14 +186,10 @@ export const CreateBusiness: FC = () => {
       setLoading(true);
 
       console.log('📝 Submit - StepOne data:', stepOneDataRef.current);
-      console.log('📝 Submit - StepTwo data:', stepTwoDataRef.current);
 
-      // Validate both forms have data
-      if (!stepOneDataRef.current || !stepTwoDataRef.current) {
-        console.error('❌ Missing form data:', {
-          stepOne: !!stepOneDataRef.current,
-          stepTwo: !!stepTwoDataRef.current,
-        });
+      // Validate form has data
+      if (!stepOneDataRef.current) {
+        console.error('❌ Missing form data');
         showToast({
           type: 'error',
           title: t('CreateBusiness.error'),
@@ -269,9 +200,8 @@ export const CreateBusiness: FC = () => {
       }
 
       const stepOneData = stepOneDataRef.current;
-      const stepTwoData = stepTwoDataRef.current;
 
-      // Step 1: Create draft with basic info
+      // Create business with basic info only
       const imageIds =
         stepOneData.images
           ?.map((img: any) => {
@@ -304,58 +234,15 @@ export const CreateBusiness: FC = () => {
       const listingId = result.data.id.uuid;
       console.log('📝 Draft listing ID:', listingId);
 
-      // Step 2: Convert to Sharetribe format and publish
-      const availabilityPlan = convertToSharetribeAvailabilityPlan(
-        stepTwoData.weeklySchedule,
-        stepTwoData.timezone,
-      );
-
-      console.log('📅 Raw exceptions from form:', stepTwoData.exceptions);
-      console.log('📅 Exceptions count:', stepTwoData.exceptions?.length || 0);
-
-      const exceptions = (stepTwoData.exceptions || [])
-        .filter((ex: any) => {
-          // Validate exception has required fields
-          if (!ex.startDate || !ex.endDate) {
-            console.warn('⚠️ Skipping invalid exception (missing dates):', ex);
-            return false;
-          }
-
-          // Validate dates are valid
-          const startDate = new Date(ex.startDate);
-          const endDate = new Date(ex.endDate);
-
-          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            console.warn('⚠️ Skipping invalid exception (invalid dates):', ex);
-            return false;
-          }
-
-          // Validate start is before or equal to end
-          if (startDate > endDate) {
-            console.warn('⚠️ Skipping invalid exception (start > end):', ex);
-            return false;
-          }
-
-          return true;
-        })
-        .map((ex: any) => {
-          console.log('🔄 Converting exception:', ex);
-          const converted = convertToSharetribeException(ex, listingId);
-          console.log('✅ Converted to:', converted);
-          return converted;
-        });
-
-      console.log('📅 Final exceptions for API:', exceptions);
-      console.log('📅 Valid exceptions count:', exceptions.length);
-
+      // Publish business without availability data
       const publishData = {
         listingId: new sdkTypes.UUID(listingId),
-        availabilityPlan,
-        exceptions,
+        availabilityPlan: null, // No availability plan for business
+        exceptions: [], // No exceptions for business
       };
 
       console.log(
-        '📤 Publishing with data:',
+        '� Publishing with data:',
         JSON.stringify(publishData, null, 2),
       );
 
@@ -393,15 +280,8 @@ export const CreateBusiness: FC = () => {
   };
 
   const handleNext = () => {
-    if (currentStep < 1) {
-      setCurrentStep(currentStep + 1);
-      flatListRef.current?.scrollToIndex({
-        index: currentStep + 1,
-        animated: true,
-      });
-    } else {
-      handleSubmit();
-    }
+    // Since we only have one step now, directly submit
+    handleSubmit();
   };
 
   const handleBack = () => {
@@ -440,61 +320,14 @@ export const CreateBusiness: FC = () => {
           />
         ),
       },
-      {
-        id: '2',
-        title: t('CreateBusiness.availabilityTitle'),
-        component: (
-          <CreateBusinessStepTwo
-            key="step-two"
-            inProgress={isLoading}
-            onSubmit={handleStepTwoChange}
-            onChange={handleStepTwoChange}
-            onValidationChange={handleStepTwoValidation}
-            initialValues={
-              existingBusinessData
-                ? {
-                    weeklySchedule: existingBusinessData.weeklySchedule,
-                    timezone: existingBusinessData.timezone,
-                    exceptions: existingBusinessData.exceptions || [],
-                  }
-                : undefined
-            }
-          />
-        ),
-      },
     ],
     [
       existingBusinessData,
       handleStepOneChange,
-      handleStepTwoChange,
       handleStepOneValidation,
-      handleStepTwoValidation,
       isLoading,
       t,
     ],
-  );
-
-  const renderStepIndicator = () => (
-    <View style={styles.stepIndicatorContainer}>
-      {steps.map((step, index) => (
-        <React.Fragment key={step.id}>
-          <View
-            style={[
-              styles.stepIndicator,
-              index <= currentStep && styles.stepIndicatorActive,
-            ]}
-          />
-          {index < steps.length - 1 && (
-            <View
-              style={[
-                styles.stepConnector,
-                index < currentStep && styles.stepConnectorActive,
-              ]}
-            />
-          )}
-        </React.Fragment>
-      ))}
-    </View>
   );
 
   const renderStep = ({
@@ -536,27 +369,21 @@ export const CreateBusiness: FC = () => {
           )}
           <TouchableOpacity
             onPress={handleNext}
-            disabled={
-              isLoading || (index === 0 ? !isStepOneValid : !isStepTwoValid)
-            }
+            disabled={isLoading || !isStepOneValid}
             style={[
               styles.button,
               styles.primaryButton,
-              index === 0 && styles.fullWidthButton,
-              (isLoading ||
-                (index === 0 ? !isStepOneValid : !isStepTwoValid)) &&
-                styles.buttonDisabled,
+              styles.fullWidthButton, // Always full width since we only have one step
+              (isLoading || !isStepOneValid) && styles.buttonDisabled,
             ]}
             activeOpacity={0.7}>
             {isLoading ? (
               <ActivityIndicator color={colors.white} />
             ) : (
               <AppText style={styles.primaryButtonText}>
-                {index === steps.length - 1
-                  ? isEditMode
-                    ? t('CreateBusiness.updateBusiness')
-                    : t('CreateBusiness.publish')
-                  : t('CreateBusiness.next')}
+                {isEditMode
+                  ? t('CreateBusiness.updateBusiness')
+                  : t('CreateBusiness.publish')}
               </AppText>
             )}
           </TouchableOpacity>
@@ -576,8 +403,6 @@ export const CreateBusiness: FC = () => {
           </AppText>
         )}
       />
-
-      {renderStepIndicator()}
 
       <FlatList
         ref={flatListRef}

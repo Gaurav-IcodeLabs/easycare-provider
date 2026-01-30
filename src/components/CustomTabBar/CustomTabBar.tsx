@@ -28,7 +28,6 @@ import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import {AddOptionsModal} from '../AddOptionsModal';
 import {useTypedSelector} from '../../sharetribeSetup';
 import {
-  availabilitySetupCompletedSelector,
   businessProfileSetupCompletedSelector,
   payoutSetupCompletedSelector,
 } from '../../slices/user.slice';
@@ -133,14 +132,10 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
   const isBusinessProfileSetup = useTypedSelector(
     businessProfileSetupCompletedSelector,
   );
-  const isAvailabilitySetup = useTypedSelector(
-    availabilitySetupCompletedSelector,
-  );
   const isPayoutSetup = useTypedSelector(payoutSetupCompletedSelector);
 
   // Show setup screen if any step is incomplete
-  const disablePlusIcon =
-    !isBusinessProfileSetup || !isAvailabilitySetup || !isPayoutSetup;
+  const disablePlusIcon = !isBusinessProfileSetup || !isPayoutSetup;
   const onPress = useCallback(
     (route: any, index: number) => {
       if (state.index !== index) {

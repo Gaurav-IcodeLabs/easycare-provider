@@ -35,7 +35,6 @@ import {getOwnListingsById} from '../../slices/marketplaceData.slice';
 import {useTranslation} from 'react-i18next';
 import {
   businessProfileSetupCompletedSelector,
-  availabilitySetupCompletedSelector,
   payoutSetupCompletedSelector,
   currentUserProfileImageUrlSelector,
   fetchCurrentUserInProgressSelector,
@@ -68,9 +67,6 @@ export const Home: React.FC = () => {
   const isBusinessProfileSetup = useTypedSelector(
     businessProfileSetupCompletedSelector,
   );
-  const isAvailabilitySetup = useTypedSelector(
-    availabilitySetupCompletedSelector,
-  );
   const isPayoutSetup = useTypedSelector(payoutSetupCompletedSelector);
 
   // Check if user data is loaded to prevent flashing
@@ -93,7 +89,7 @@ export const Home: React.FC = () => {
   const showSetupScreen =
     !isInitializing &&
     isDataLoaded &&
-    (!isBusinessProfileSetup || !isAvailabilitySetup || !isPayoutSetup);
+    (!isBusinessProfileSetup || !isPayoutSetup);
 
   useEffect(() => {
     loadAllListings();
@@ -236,30 +232,6 @@ export const Home: React.FC = () => {
                 </AppText>
                 <AppText style={styles.stepDescription}>
                   {t('HOME.setupBusinessDesc')}
-                </AppText>
-              </View>
-            </View>
-
-            <View
-              style={[
-                styles.setupStep,
-                isAvailabilitySetup && styles.setupStepCompleted,
-              ]}>
-              <Image
-                source={
-                  isAvailabilitySetup
-                    ? businessStepIcons.completed
-                    : businessStepIcons.availability
-                }
-                style={styles.stepIcon}
-              />
-
-              <View style={styles.stepContent}>
-                <AppText style={styles.stepTitle}>
-                  {t('HOME.setupAvailability')}
-                </AppText>
-                <AppText style={styles.stepDescription}>
-                  {t('HOME.setupAvailabilityDesc')}
                 </AppText>
               </View>
             </View>

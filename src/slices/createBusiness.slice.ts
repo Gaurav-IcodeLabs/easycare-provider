@@ -296,7 +296,6 @@ export const requestPublishBusiness = createAsyncThunk<any, any, Thunk>(
         id: listingId,
         publicData: {
           businessProfileSetupCompleted: true,
-          availabilitySetupCompleted: true,
         },
       });
       console.log('✅ Setup flags updated in business listing');

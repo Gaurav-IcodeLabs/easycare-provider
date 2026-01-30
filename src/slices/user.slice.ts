@@ -343,20 +343,6 @@ export const businessProfileSetupCompletedSelector = (state: RootState) => {
   );
 };
 
-export const availabilitySetupCompletedSelector = (state: RootState) => {
-  const businessListingId =
-    state.user.currentUser?.attributes.profile.publicData?.businessListingId;
-  if (!businessListingId) {
-    return false;
-  }
-
-  const businessListing =
-    state.marketplaceData?.entities?.ownListing?.[businessListingId];
-  return (
-    businessListing?.attributes?.publicData?.availabilitySetupCompleted || false
-  );
-};
-
 export const payoutSetupCompletedSelector = (state: RootState) => {
   const businessListingId =
     state.user.currentUser?.attributes.profile.publicData?.businessListingId;
