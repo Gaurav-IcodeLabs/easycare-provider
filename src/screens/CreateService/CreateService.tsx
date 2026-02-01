@@ -1,5 +1,15 @@
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
-import React, {FC, useState, useEffect} from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  FlatList,
+  Dimensions,
+  ScrollView,
+  TouchableOpacity,
+  I18nManager,
+} from 'react-native';
+import {BlurView} from '@react-native-community/blur';
+import React, {FC, useState, useEffect, useRef} from 'react';
 import {colors, primaryFont, SCREENS} from '../../constants';
 import {ScreenHeader} from '../../components/ScreenHeader/ScreenHeader';
 import {backIcon} from '../../assets';
@@ -15,6 +25,11 @@ import {
   requestUpdateService,
   resetCreateService,
   fetchServiceListing,
+  fetchServiceAvailability,
+  requestUpdateServiceAvailability,
+  updateAvailabilityInProgressSelector,
+  serviceDataSelector,
+  availabilityDataSelector,
 } from '../../slices/createService.slice';
 import {
   categoriesSelector,
@@ -22,10 +37,18 @@ import {
   subsubcategoriesByKeysSelector,
 } from '../../slices/marketplaceData.slice';
 import {CreateServiceForm} from './components/CreateServiceForm';
+import {CreateServiceAvailability} from './components/CreateServiceAvailability';
 import {useConfiguration} from '../../context';
 import {types as sdkTypes} from '../../utils';
-import {denormalisedResponseEntities} from '../../utils/data';
 import {CreateServiceScreenProps} from '../../apptypes';
+import {
+  convertToSharetribeAvailabilityPlan,
+  convertToSharetribeException,
+  convertFromSharetribeAvailabilityPlan,
+  convertFromSharetribeException,
+} from '../CreateBusiness/components/SharetribeAvailabilityHelper';
+
+const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
 interface FormValues {
   [key: string]: any;
@@ -44,7 +67,7 @@ type CreateServiceRouteProp = RouteProp<
 
 export const CreateService: FC = () => {
   const {t} = useTranslation();
-  const {top} = useSafeAreaInsets();
+  const {top, bottom} = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const navigation = useNavigation<CreateServiceScreenProps['navigation']>();
   const route = useRoute<CreateServiceRouteProp>();
@@ -56,14 +79,36 @@ export const CreateService: FC = () => {
     subsubcategoriesByKeysSelector,
   );
   const createInProgress = useTypedSelector(createServiceInProgressSelector);
+  const availabilityInProgress = useTypedSelector(
+    updateAvailabilityInProgressSelector,
+  );
+  const serviceData = useTypedSelector(serviceDataSelector);
+  const availabilityData = useTypedSelector(availabilityDataSelector);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(false);
   const [initialValues, setInitialValues] = useState<any>(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
 
-  const listingId = route.params?.listingId;
-  const isEditMode = !!listingId;
-  const isLoading = createInProgress || loading || isInitialLoading;
+  // Refs to hold form data from both steps
+  const stepOneDataRef = useRef<FormValues | null>(null);
+  const stepTwoDataRef = useRef<FormValues | null>(null);
+
+  // Refs to track validation state
+  const stepOneValidRef = useRef<boolean>(false);
+  const stepTwoValidRef = useRef<boolean>(false);
+  const [isStepOneValid, setIsStepOneValid] = useState(false);
+  const [isStepTwoValid, setIsStepTwoValid] = useState(false);
+
+  const routeListingId = route.params?.listingId;
+  const [createdListingId, setCreatedListingId] = useState<string | null>(null);
+
+  // Use route listing ID for edit mode, or created listing ID for create mode
+  const listingId = routeListingId || createdListingId;
+  const isEditMode = !!routeListingId;
+  const isLoading =
+    createInProgress || availabilityInProgress || loading || isInitialLoading;
 
   useEffect(() => {
     if (listingId) {
@@ -72,61 +117,98 @@ export const CreateService: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listingId]);
 
+  // Cleanup effect to reset slice on unmount
+  useEffect(() => {
+    return () => {
+      console.log('🧹 Cleaning up CreateService slice on unmount');
+      dispatch(resetCreateService());
+    };
+  }, [dispatch]);
+
   const fetchListingData = async () => {
     try {
       setIsInitialLoading(true);
-      const response = await dispatch(
+
+      // Fetch listing data
+      const result = await dispatch(
         fetchServiceListing({id: new sdkTypes.UUID(listingId), config}),
       ).unwrap();
 
-      // Denormalize the response to get listing with images included
-      const denormalizedListings = denormalisedResponseEntities(response);
-      const listing = denormalizedListings[0];
+      let combinedInitialValues = result.processedData || {};
 
-      if (listing) {
-        const {attributes} = listing;
-        const {publicData, title, description, price} = attributes;
+      // Also fetch availability data if we have a listing ID
+      if (listingId) {
+        console.log('📅 Loading availability data alongside listing data');
+        try {
+          const fetchedAvailabilityData = await dispatch(
+            fetchServiceAvailability({
+              listingId: new sdkTypes.UUID(listingId),
+            }),
+          ).unwrap();
 
-        // Extract service data from publicData
-        const serviceConfig = publicData?.serviceConfig || {};
-        const categoryId = serviceConfig?.category?.id || '';
-        const subcategoryId = serviceConfig?.subcategory?.id || '';
-        const subsubcategoryId = serviceConfig?.subsubcategory?.id || '';
-        // Extract images - they should be in listing.images after denormalization
-        const images =
-          listing.images?.map((img: any) => {
-            console.log('Processing image:', img);
-            return {
-              id: img.id, // Keep the full id object with uuid and _sdkType
-              url: img.attributes?.variants?.default?.url || '',
-            };
-          }) || [];
-
-        // Extract custom attributes
-        const customAttributes: Record<string, any> = {};
-        if (serviceConfig.selectedAttributes) {
-          Object.entries(serviceConfig.selectedAttributes).forEach(
-            ([attrKey, attrValue]: [string, any]) => {
-              customAttributes[attrKey] = attrValue.selectedOptions || {};
-            },
+          console.log(
+            '📅 Received availability data:',
+            fetchedAvailabilityData,
           );
+
+          // Convert to UI format
+          let weeklySchedule = null;
+          let timezone = 'Asia/Kolkata';
+          let exceptions: any[] = [];
+
+          if (fetchedAvailabilityData.availabilityPlan) {
+            const converted = convertFromSharetribeAvailabilityPlan(
+              fetchedAvailabilityData.availabilityPlan,
+            );
+            weeklySchedule = converted.weeklySchedule;
+            timezone = converted.timezone;
+          }
+
+          if (
+            fetchedAvailabilityData.exceptions &&
+            fetchedAvailabilityData.exceptions.length > 0
+          ) {
+            exceptions = fetchedAvailabilityData.exceptions.map(
+              (exception: any) => convertFromSharetribeException(exception),
+            );
+          }
+
+          // Merge availability data into initial values
+          combinedInitialValues = {
+            ...combinedInitialValues,
+            weeklySchedule,
+            timezone,
+            exceptions,
+          };
+
+          // Update step two data ref
+          stepTwoDataRef.current = {
+            weeklySchedule,
+            timezone,
+            exceptions,
+          };
+
+          console.log(
+            '✅ Availability data loaded and merged with initial values',
+          );
+        } catch (availabilityError) {
+          console.error(
+            '❌ Error loading availability data:',
+            availabilityError,
+          );
+          // Don't fail the entire operation if availability loading fails
+          // Set default availability values
+          combinedInitialValues = {
+            ...combinedInitialValues,
+            weeklySchedule: null,
+            timezone: 'Asia/Kolkata',
+            exceptions: [],
+          };
         }
-
-        const initialData = {
-          categoryId,
-          subcategoryId,
-          subsubcategoryId,
-          title: title || '',
-          description: description || '',
-          price: price ? (price.amount / 100).toString() : '',
-          duration: publicData?.duration?.toString() || '',
-          locationType: publicData?.locationType || '',
-          customAttributes,
-          images,
-        };
-
-        setInitialValues(initialData);
       }
+
+      // Set the combined initial values
+      setInitialValues(combinedInitialValues);
     } catch (error) {
       console.error('Error fetching listing:', error);
     } finally {
@@ -134,85 +216,283 @@ export const CreateService: FC = () => {
     }
   };
 
-  const onSubmit = async (values: FormValues) => {
+  const handleStepOneChange = React.useCallback((values: FormValues) => {
+    console.log('📝 StepOne changed:', values);
+    stepOneDataRef.current = values;
+    // Note: Redux state will be updated on submit, not on every change
+  }, []);
+
+  const handleStepTwoChange = React.useCallback((values: FormValues) => {
+    console.log('📝 StepTwo changed:', values);
+    stepTwoDataRef.current = values;
+    // Note: Redux state will be updated on submit, not on every change
+  }, []);
+
+  const handleStepOneValidation = React.useCallback((isValid: boolean) => {
+    console.log('✅ StepOne validation:', isValid);
+    stepOneValidRef.current = isValid;
+    setIsStepOneValid(isValid);
+  }, []);
+
+  const handleStepTwoValidation = React.useCallback((isValid: boolean) => {
+    console.log('✅ StepTwo validation:', isValid);
+    stepTwoValidRef.current = isValid;
+    setIsStepTwoValid(isValid);
+  }, []);
+
+  // Initialize refs with existing data when it loads
+  useEffect(() => {
+    if (initialValues && isEditMode) {
+      console.log('🔄 Initializing refs with existing data');
+
+      // Initialize stepOne ref
+      if (!stepOneDataRef.current) {
+        stepOneDataRef.current = {
+          categoryId: initialValues.categoryId,
+          subcategoryId: initialValues.subcategoryId,
+          subsubcategoryId: initialValues.subsubcategoryId,
+          title: initialValues.title,
+          description: initialValues.description,
+          price: initialValues.price,
+          duration: initialValues.duration,
+          locationType: initialValues.locationType,
+          customAttributes: initialValues.customAttributes,
+          // images: initialValues.images,
+        };
+        console.log('✅ StepOne ref initialized');
+      }
+
+      // Initialize stepTwo ref
+      if (!stepTwoDataRef.current) {
+        stepTwoDataRef.current = {
+          weeklySchedule: initialValues.weeklySchedule,
+          timezone: initialValues.timezone,
+          exceptions: initialValues.exceptions || [],
+        };
+        console.log('✅ StepTwo ref initialized');
+      }
+    }
+  }, [initialValues, isEditMode]);
+
+  // Watch for Redux state changes and update initialValues - REMOVED to prevent infinite loops
+  // The fetchServiceListing thunk now handles populating both initialValues and Redux state
+
+  const handleStepTwoSubmit = async () => {
     try {
       setLoading(true);
 
-      // Extract image UUIDs from the uploaded images
-      const imageIds =
-        values.images
-          ?.map((img: any) => {
-            // Handle different image ID formats
-            if (typeof img.id === 'string') {
-              return img.id;
-            }
-            if (img.id?.uuid) {
-              return img.id.uuid;
-            }
-            return null;
-          })
-          .filter(Boolean) || [];
+      console.log('📝 Step 2 Submit - Availability:', stepTwoDataRef.current);
+
+      // Validate step two form has data
+      if (!stepTwoDataRef.current) {
+        console.error('❌ Missing step two data');
+        showToast({
+          type: 'error',
+          title: t('CreateService.error'),
+          message: t('CreateService.fillAvailabilityFields'),
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Validate we have a listing ID
+      if (!listingId) {
+        console.error('❌ Missing listing ID for availability update');
+        showToast({
+          type: 'error',
+          title: t('CreateService.error'),
+          message: t('CreateService.missingListingId'),
+        });
+        setLoading(false);
+        return;
+      }
+
+      const stepTwoFormData = stepTwoDataRef.current;
+
+      // Convert availability data
+      const availabilityPlan = convertToSharetribeAvailabilityPlan(
+        stepTwoFormData.weeklySchedule,
+        stepTwoFormData.timezone,
+      );
+
+      // Filter and convert exceptions
+      const validExceptions = (stepTwoFormData.exceptions || []).filter(
+        (ex: any) => {
+          if (!ex.startDate || !ex.endDate) {
+            console.warn('⚠️ Skipping invalid exception (missing dates):', ex);
+            return false;
+          }
+          const startDate = new Date(ex.startDate);
+          const endDate = new Date(ex.endDate);
+          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            console.warn('⚠️ Skipping invalid exception (invalid dates):', ex);
+            return false;
+          }
+          if (startDate > endDate) {
+            console.warn('⚠️ Skipping invalid exception (start > end):', ex);
+            return false;
+          }
+          return true;
+        },
+      );
+
+      // Convert exceptions to Sharetribe format
+      const convertedExceptions = validExceptions.map((ex: any) => {
+        console.log('🔄 Converting exception:', ex);
+        const converted = convertToSharetribeException(ex, listingId);
+        console.log('✅ Converted to:', converted);
+        return converted;
+      });
+
+      // Update service availability
+      await dispatch(
+        requestUpdateServiceAvailability({
+          listingId: new sdkTypes.UUID(listingId),
+          availabilityPlan,
+          exceptions: convertedExceptions,
+        }),
+      ).unwrap();
+
+      showToast({
+        type: 'success',
+        title: t('CreateService.success'),
+        message: isEditMode
+          ? t('CreateService.availabilityUpdated')
+          : t('CreateService.serviceCreated'),
+      });
+
+      if (isEditMode) {
+        navigation.goBack();
+      } else {
+        setShowModal(true);
+      }
+    } catch (error: any) {
+      console.error('❌ Error in step 2 submit:', error);
+      showToast({
+        type: 'error',
+        title: t('CreateService.error'),
+        message: error.message || t('CreateService.errorMessage'),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStepOneSubmit = async () => {
+    try {
+      setLoading(true);
+
+      console.log(
+        '📝 Step 1 Submit - Service details:',
+        stepOneDataRef.current,
+      );
+
+      // Validate step one form has data
+      if (!stepOneDataRef.current) {
+        console.error('❌ Missing step one data');
+        showToast({
+          type: 'error',
+          title: t('CreateService.error'),
+          message: t('CreateService.fillAllFields'),
+        });
+        setLoading(false);
+        return;
+      }
+
+      const stepOneFormData = stepOneDataRef.current;
 
       // Get the selected category and subcategory config
       const selectedCategory = categories.find(
-        cat => cat.id === values.categoryId,
+        cat => cat.id === stepOneFormData.categoryId,
       );
-      const selectedSubcategory = subcategoriesByKeys[values.subcategoryId];
+      const selectedSubcategory =
+        subcategoriesByKeys[stepOneFormData.subcategoryId];
       const selectedSubSubcategory =
-        subsubcategoriesByKeys[values.subsubcategoryId];
+        subsubcategoriesByKeys[stepOneFormData.subsubcategoryId];
 
-      const serviceData = {
-        categoryId: values.categoryId,
-        subcategoryId: values.subcategoryId,
-        subsubcategoryId: values.subsubcategoryId,
-        title: values.title,
-        description: values.description,
-        price: parseFloat(values.price),
-        duration: parseInt(values.duration, 10),
-        locationType: values.locationType,
-        images: imageIds,
-        customAttributes: values.customAttributes || {},
+      const serviceRequestData = {
+        categoryId: stepOneFormData.categoryId,
+        subcategoryId: stepOneFormData.subcategoryId,
+        subsubcategoryId: stepOneFormData.subsubcategoryId,
+        title: stepOneFormData.title,
+        description: stepOneFormData.description,
+        price: parseFloat(stepOneFormData.price),
+        duration: parseInt(stepOneFormData.duration, 10),
+        locationType: stepOneFormData.locationType,
+        customAttributes: stepOneFormData.customAttributes || {},
         categoryConfig: selectedCategory,
         subcategoryConfig: selectedSubcategory,
         subsubcategoryConfig: selectedSubSubcategory,
       };
 
       if (isEditMode) {
-        // Update existing service
-        // console.log('Updating service with data:', JSON.stringify(serviceData));
-
-        await dispatch(
-          requestUpdateService({
-            ...serviceData,
-            listingId: new sdkTypes.UUID(listingId),
-          }),
-        ).unwrap();
-
-        // Show success toast and navigate back
-        showToast({
-          type: 'success',
-          title: t('CreateService.updateSuccess'),
-          message: t('CreateService.updateSuccessMessage'),
-        });
-        navigation.goBack();
+        // Update existing service details
+        // await dispatch(
+        //   requestUpdateService({
+        //     ...serviceRequestData,
+        //     listingId: new sdkTypes.UUID(listingId),
+        //   }),
+        // ).unwrap();
+        // showToast({
+        //   type: 'success',
+        //   title: t('CreateService.updateSuccess'),
+        //   message: t('CreateService.detailsUpdated'),
+        // });
       } else {
         // Create new service
-        // console.log('Creating service with data:', {
-        //   ...serviceData,
-        //   images: imageIds,
-        // });
+        const result = await dispatch(
+          requestCreateService(serviceRequestData),
+        ).unwrap();
 
-        await dispatch(requestCreateService(serviceData)).unwrap();
-        setShowModal(true);
+        // Store the new listing ID for step 2
+        const newListingId = result.data.id.uuid;
+        console.log('✅ Service created with ID:', newListingId);
+
+        // Update the listingId for step 2
+        setCreatedListingId(newListingId);
+
+        showToast({
+          type: 'success',
+          title: t('CreateService.success'),
+          message: t('CreateService.detailsCreated'),
+        });
       }
+
+      // Move to step 2 automatically
+      setCurrentStep(1);
+      flatListRef.current?.scrollToIndex({
+        index: 1,
+        animated: true,
+      });
     } catch (error: any) {
-      console.error(
-        `Error ${isEditMode ? 'updating' : 'creating'} service:`,
-        error,
-      );
-      console.error('Error details:', error.data || error.message);
+      console.error('❌ Error in step 1 submit:', error);
+      showToast({
+        type: 'error',
+        title: t('CreateService.error'),
+        message: error.message || t('CreateService.errorMessage'),
+      });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentStep === 0) {
+      // Step 1: Submit service details and move to step 2
+      handleStepOneSubmit();
+    } else if (currentStep === 1) {
+      // Step 2: Submit availability
+      handleStepTwoSubmit();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      flatListRef.current?.scrollToIndex({
+        index: currentStep - 1,
+        animated: true,
+      });
     }
   };
 
@@ -222,14 +502,193 @@ export const CreateService: FC = () => {
     navigation.goBack();
   };
 
-  const handleAddServicePress = () => {
+  const handleAddServicePress = React.useCallback(() => {
     navigation.replace(SCREENS.ADD_SERVICE);
-  };
+  }, [navigation]);
+
+  const steps = React.useMemo(
+    () => [
+      {
+        id: '1',
+        title: t('CreateService.serviceInfoTitle'),
+        component: (
+          <CreateServiceForm
+            key="step-one"
+            categories={categories}
+            subcategoriesByKeys={subcategoriesByKeys}
+            subsubcategoriesByKeys={subsubcategoriesByKeys}
+            inProgress={isLoading}
+            onSubmit={handleStepOneChange}
+            onChange={handleStepOneChange}
+            onValidationChange={handleStepOneValidation}
+            initialValues={
+              initialValues || serviceData
+                ? {
+                    categoryId:
+                      (initialValues || serviceData)?.categoryId || '',
+                    subcategoryId:
+                      (initialValues || serviceData)?.subcategoryId || '',
+                    subsubcategoryId:
+                      (initialValues || serviceData)?.subsubcategoryId || '',
+                    title: (initialValues || serviceData)?.title || '',
+                    description:
+                      (initialValues || serviceData)?.description || '',
+                    price: (initialValues || serviceData)?.price || '',
+                    duration: (initialValues || serviceData)?.duration || '',
+                    locationType:
+                      (initialValues || serviceData)?.locationType || '',
+                    customAttributes:
+                      (initialValues || serviceData)?.customAttributes || {},
+                    // images: initialValues.images,
+                  }
+                : undefined
+            }
+            isEditMode={isEditMode}
+            onAddServicePress={handleAddServicePress}
+          />
+        ),
+      },
+      {
+        id: '2',
+        title: t('CreateService.availabilityTitle'),
+        component: (
+          <CreateServiceAvailability
+            key="step-two"
+            inProgress={isLoading}
+            onSubmit={handleStepTwoChange}
+            onChange={handleStepTwoChange}
+            onValidationChange={handleStepTwoValidation}
+            initialValues={
+              initialValues || availabilityData
+                ? {
+                    weeklySchedule:
+                      (initialValues || availabilityData)?.weeklySchedule ||
+                      null,
+                    timezone:
+                      (initialValues || availabilityData)?.timezone ||
+                      'Asia/Kolkata',
+                    exceptions:
+                      (initialValues || availabilityData)?.exceptions || [],
+                  }
+                : undefined
+            }
+          />
+        ),
+      },
+    ],
+    [
+      initialValues,
+      serviceData,
+      availabilityData,
+      categories,
+      subcategoriesByKeys,
+      subsubcategoriesByKeys,
+      handleStepOneChange,
+      handleStepTwoChange,
+      handleStepOneValidation,
+      handleStepTwoValidation,
+      isLoading,
+      isEditMode,
+      handleAddServicePress,
+      t,
+    ],
+  );
+
+  const renderStepIndicator = () => (
+    <View style={styles.stepIndicatorContainer}>
+      {steps.map((step, index) => (
+        <React.Fragment key={step.id}>
+          <View
+            style={[
+              styles.stepIndicator,
+              index <= currentStep && styles.stepIndicatorActive,
+            ]}
+          />
+          {index < steps.length - 1 && (
+            <View
+              style={[
+                styles.stepConnector,
+                index < currentStep && styles.stepConnectorActive,
+              ]}
+            />
+          )}
+        </React.Fragment>
+      ))}
+    </View>
+  );
+
+  const renderStep = ({
+    item,
+    index,
+  }: {
+    item: (typeof steps)[0];
+    index: number;
+  }) => (
+    <View style={styles.stepContainer}>
+      <ScrollView
+        style={styles.stepScrollView}
+        contentContainerStyle={styles.stepContent}
+        showsVerticalScrollIndicator={false}>
+        <AppText style={styles.stepTitle}>{item.title}</AppText>
+        {item.component}
+      </ScrollView>
+
+      {/* Sticky button inside each step */}
+      <View style={styles.stickyButtonContainer}>
+        <BlurView
+          style={styles.blurBackground}
+          blurType={'light'}
+          blurAmount={10}
+          reducedTransparencyFallbackColor={colors.white}
+        />
+        <View
+          style={[styles.buttonWrapper, {paddingBottom: bottom || scale(20)}]}>
+          {index > 0 && (
+            <TouchableOpacity
+              onPress={handleBack}
+              disabled={isLoading}
+              style={[styles.button, styles.backButton]}
+              activeOpacity={0.7}>
+              <AppText style={styles.backButtonText}>
+                {t('CreateService.back')}
+              </AppText>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            onPress={handleNext}
+            disabled={
+              isLoading || (index === 0 ? !isStepOneValid : !isStepTwoValid)
+            }
+            style={[
+              styles.button,
+              styles.primaryButton,
+              index === 0 && styles.fullWidthButton,
+              (isLoading ||
+                (index === 0 ? !isStepOneValid : !isStepTwoValid)) &&
+                styles.buttonDisabled,
+            ]}
+            activeOpacity={0.7}>
+            {isLoading ? (
+              <ActivityIndicator color={colors.white} />
+            ) : (
+              <AppText style={styles.primaryButtonText}>
+                {index === steps.length - 1
+                  ? isEditMode
+                    ? t('CreateService.updateService')
+                    : t('CreateService.publish')
+                  : t('CreateService.next')}
+              </AppText>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
       <ScreenHeader
-        containerStyle={{marginBottom: scale(22)}}
+        containerStyle={{marginBottom: scale(16)}}
         leftIcon={backIcon}
         renderCenter={() => (
           <AppText style={styles.heading}>
@@ -239,22 +698,33 @@ export const CreateService: FC = () => {
           </AppText>
         )}
       />
-      <View style={styles.formWrapper}>
-        {categories.length === 0 || (isEditMode && !initialValues) ? (
-          <ActivityIndicator />
-        ) : (
-          <CreateServiceForm
-            categories={categories}
-            subcategoriesByKeys={subcategoriesByKeys}
-            subsubcategoriesByKeys={subsubcategoriesByKeys}
-            inProgress={isLoading}
-            onSubmit={onSubmit}
-            initialValues={isEditMode ? initialValues : undefined}
-            isEditMode={isEditMode}
-            onAddServicePress={handleAddServicePress}
+
+      {categories.length === 0 || (isEditMode && !initialValues) ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.deepBlue} />
+        </View>
+      ) : (
+        <>
+          {renderStepIndicator()}
+
+          <FlatList
+            ref={flatListRef}
+            data={steps}
+            renderItem={renderStep}
+            keyExtractor={item => item.id}
+            horizontal
+            pagingEnabled
+            scrollEnabled={false}
+            showsHorizontalScrollIndicator={false}
+            style={styles.flatListContainer}
+            getItemLayout={(_data, index) => ({
+              length: SCREEN_WIDTH,
+              offset: SCREEN_WIDTH * index,
+              index,
+            })}
           />
-        )}
-      </View>
+        </>
+      )}
 
       <ListingSuccessModal visible={showModal} onClose={handleModalClose} />
     </View>
@@ -273,5 +743,100 @@ const styles = StyleSheet.create({
     fontSize: fontScale(18),
     color: colors.textBlack,
     ...primaryFont('500'),
+  },
+  stepIndicatorContainer: {
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: scale(20),
+    paddingVertical: scale(16),
+  },
+  stepIndicator: {
+    flex: 1,
+    height: scale(4),
+    backgroundColor: colors.lightGray,
+    borderRadius: scale(2),
+  },
+  stepIndicatorActive: {
+    backgroundColor: colors.blue,
+  },
+  stepConnector: {
+    width: scale(8),
+  },
+  stepConnectorActive: {},
+  stepContainer: {
+    width: SCREEN_WIDTH,
+    flex: 1,
+  },
+  stepScrollView: {
+    flex: 1,
+  },
+  stepContent: {
+    paddingHorizontal: scale(20),
+    paddingBottom: scale(100),
+  },
+  stepTitle: {
+    fontSize: fontScale(20),
+    color: colors.deepBlue,
+    ...primaryFont('600'),
+    marginBottom: scale(20),
+    ...(I18nManager.isRTL && {textAlign: 'left'}),
+  },
+  flatListContainer: {
+    flex: 1,
+  },
+  stickyButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'hidden',
+  },
+  blurBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  buttonWrapper: {
+    flexDirection: 'row',
+    paddingHorizontal: scale(20),
+    paddingVertical: scale(15),
+    gap: scale(12),
+  },
+  button: {
+    flex: 1,
+    height: scale(48),
+    borderRadius: scale(50),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButton: {
+    backgroundColor: colors.lightGray,
+  },
+  backButtonText: {
+    color: colors.textBlack,
+    fontSize: fontScale(16),
+    ...primaryFont('600'),
+  },
+  primaryButton: {
+    backgroundColor: colors.blue,
+  },
+  primaryButtonText: {
+    color: colors.white,
+    fontSize: fontScale(16),
+    ...primaryFont('600'),
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  fullWidthButton: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

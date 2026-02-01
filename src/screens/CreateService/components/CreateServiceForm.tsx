@@ -7,7 +7,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   Button,
-  MultiImagePickField,
+  // MultiImagePickField,
   TextInputField,
   AppText,
   CheckBoxStandalone,
@@ -29,6 +29,8 @@ interface CreateServiceFormProps {
   subcategoriesByKeys: Record<string, Subcategory>;
   subsubcategoriesByKeys: Record<string, SubSubCategory>;
   onSubmit: (values: any) => void;
+  onChange?: (values: any) => void;
+  onValidationChange?: (isValid: boolean) => void;
   inProgress: boolean;
   initialValues?: any;
   isEditMode?: boolean;
@@ -43,6 +45,8 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
     subcategoriesByKeys,
     subsubcategoriesByKeys,
     onSubmit,
+    onChange,
+    onValidationChange,
     inProgress,
     initialValues,
     isEditMode = false,
@@ -109,6 +113,21 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
   const watchedSubcategoryId = watch('subcategoryId');
   const watchedSubSubcategoryId = watch('subsubcategoryId');
   const watchedCustomAttributes = watch('customAttributes');
+  const watchedValues = watch();
+
+  // Call onChange when form values change
+  React.useEffect(() => {
+    if (onChange) {
+      onChange(watchedValues);
+    }
+  }, [watchedValues, onChange]);
+
+  // Call onValidationChange when validation state changes
+  React.useEffect(() => {
+    if (onValidationChange) {
+      onValidationChange(isValid);
+    }
+  }, [isValid, onValidationChange]);
 
   // Reset form when initialValues change (for edit mode)
   useEffect(() => {
@@ -434,36 +453,14 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
               </View>
             )}
 
-          <MultiImagePickField
+          {/* <MultiImagePickField
             control={control}
             name="images"
             labelKey="CreateServiceForm.images"
             maxImages={5}
-          />
+          /> */}
         </View>
       </KeyboardAwareScrollView>
-
-      <View style={[styles.stickyButtonContainer, {paddingBottom: bottom}]}>
-        <Button
-          title={
-            inProgress
-              ? isEditMode
-                ? t('CreateServiceForm.updating')
-                : t('CreateServiceForm.submitting')
-              : isEditMode
-              ? t('CreateServiceForm.update')
-              : t('CreateServiceForm.submit')
-          }
-          onPress={handleSubmit(onSubmitForm)}
-          disabled={inProgress || !isValid}
-          loader={inProgress}
-        />
-        <Button
-          title={t('CreateServiceForm.addServiceBtn')}
-          onPress={onAddServicePress}
-          style={{marginTop: scale(10)}}
-        />
-      </View>
     </View>
   );
 };
@@ -474,27 +471,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: scale(150), // Space for sticky button
+    paddingBottom: scale(20), // Reduced padding since no sticky button
   },
   container: {
-    paddingHorizontal: scale(20),
-    paddingTop: scale(8),
-  },
-  stickyButtonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: scale(20),
-    paddingTop: scale(16),
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+    // paddingHorizontal: scale(20),
+    // paddingTop: scale(8),
   },
   descriptionInputSection: {
     minHeight: scale(120),
