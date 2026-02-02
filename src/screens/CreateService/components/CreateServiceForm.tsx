@@ -293,6 +293,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             labelKey="CreateServiceForm.category"
             placeholder="CreateServiceForm.categoryPlaceholder"
             options={categoryOptions}
+            disabled={isEditMode}
           />
 
           {selectedCategoryId && (
@@ -302,6 +303,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
               labelKey="CreateServiceForm.subcategory"
               placeholder="CreateServiceForm.subcategoryPlaceholder"
               options={subcategoryOptions}
+              disabled={isEditMode}
             />
           )}
 
@@ -312,6 +314,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
               labelKey="CreateServiceForm.subsubcategory"
               placeholder="CreateServiceForm.subsubcategoryPlaceholder"
               options={subsubcategoryOptions}
+              disabled={isEditMode}
             />
           )}
 
@@ -334,6 +337,16 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             inputContainerStyles={styles.disabledInput}
           />
 
+          <TextInputField
+            control={control}
+            name="duration"
+            labelKey="CreateServiceForm.duration"
+            placeholder="CreateServiceForm.durationPlaceholder"
+            keyboardType="numeric"
+            editable={!isEditMode}
+            inputContainerStyles={isEditMode ? styles.disabledInput : undefined}
+          />
+
           {selectedSubSubcategory &&
             selectedSubSubcategory.locationTypes.length > 0 && (
               <DropdownField
@@ -345,6 +358,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
                   label: type,
                   value: type,
                 }))}
+                disabled={isEditMode}
               />
             )}
 
@@ -411,21 +425,31 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
                               style={[
                                 styles.attributeOption,
                                 isSelected && styles.attributeOptionSelected,
+                                isEditMode && styles.attributeOptionDisabled,
                               ]}
                               onPress={() =>
+                                !isEditMode &&
                                 toggleAttributeOption(key, optionValue, option)
                               }
-                              activeOpacity={0.7}>
+                              activeOpacity={isEditMode ? 1 : 0.7}
+                              disabled={isEditMode}>
                               <View style={styles.attributeOptionContent}>
                                 <View style={styles.attributeOptionInfo}>
-                                  <AppText style={styles.attributeOptionName}>
+                                  <AppText
+                                    style={[
+                                      styles.attributeOptionName,
+                                      isEditMode && styles.disabledText,
+                                    ]}>
                                     {optionLabel}
                                   </AppText>
                                 </View>
                                 <View style={styles.attributeOptionRight}>
                                   {priceModifier && priceModifier !== 0 && (
                                     <AppText
-                                      style={styles.attributeOptionPrice}>
+                                      style={[
+                                        styles.attributeOptionPrice,
+                                        isEditMode && styles.disabledText,
+                                      ]}>
                                       +{selectedSubSubcategory.currency}{' '}
                                       {priceModifier}
                                     </AppText>
@@ -433,6 +457,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
                                   <CheckBoxStandalone
                                     checked={isSelected}
                                     onPress={() =>
+                                      !isEditMode &&
                                       toggleAttributeOption(
                                         key,
                                         optionValue,
@@ -440,6 +465,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
                                       )
                                     }
                                     color={colors.deepBlue}
+                                    disabled={isEditMode}
                                   />
                                 </View>
                               </View>
@@ -606,5 +632,13 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: colors.deepBlue,
     ...primaryFont('600'),
+  },
+  attributeOptionDisabled: {
+    backgroundColor: colors.milkWhite,
+    borderColor: colors.lightGrey,
+    opacity: 0.6,
+  },
+  disabledText: {
+    color: colors.grey,
   },
 });

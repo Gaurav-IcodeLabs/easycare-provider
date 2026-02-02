@@ -22,7 +22,6 @@ import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {
   createServiceInProgressSelector,
   requestCreateService,
-  requestUpdateService,
   resetCreateService,
   fetchServiceListing,
   fetchServiceAvailability,
@@ -30,6 +29,7 @@ import {
   updateAvailabilityInProgressSelector,
   serviceDataSelector,
   availabilityDataSelector,
+  requestUpdateService,
 } from '../../slices/createService.slice';
 import {
   categoriesSelector,
@@ -427,17 +427,17 @@ export const CreateService: FC = () => {
 
       if (isEditMode) {
         // Update existing service details
-        // await dispatch(
-        //   requestUpdateService({
-        //     ...serviceRequestData,
-        //     listingId: new sdkTypes.UUID(listingId),
-        //   }),
-        // ).unwrap();
-        // showToast({
-        //   type: 'success',
-        //   title: t('CreateService.updateSuccess'),
-        //   message: t('CreateService.detailsUpdated'),
-        // });
+        await dispatch(
+          requestUpdateService({
+            ...serviceRequestData,
+            listingId: new sdkTypes.UUID(listingId),
+          }),
+        ).unwrap();
+        showToast({
+          type: 'success',
+          title: t('CreateService.updateSuccess'),
+          message: t('CreateService.detailsUpdated'),
+        });
       } else {
         // Create new service
         const result = await dispatch(
