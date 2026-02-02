@@ -11,7 +11,7 @@ import React, {useCallback} from 'react';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import {runOnJS} from 'react-native-reanimated';
 import {scale} from '../../utils';
-import {colors, primaryFont} from '../../constants';
+import {colors, primaryFont, SCREENS} from '../../constants';
 import {
   AppText,
   BiometricSettings,
@@ -87,11 +87,18 @@ export const Profile: React.FC = () => {
           }
           break;
         case 'navigation':
+          if (id === 'addProduct') {
+           (navigation as any).navigate(SCREENS.ADD_PRODUCT);
+          }
+          else if (id === 'addService') {
+            (navigation as any).navigate(SCREENS.ADD_SERVICE);
+          }
+          break;
         default:
           break;
       }
     },
-    [handleLogout],
+    [handleLogout, navigation],
   );
 
   const renderProfileHeader = useCallback(

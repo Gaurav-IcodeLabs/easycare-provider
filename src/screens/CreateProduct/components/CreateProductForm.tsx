@@ -11,7 +11,6 @@ import {
   CheckBoxStandalone,
   DropdownField,
   DropdownMultiSelectField,
-  MultiImagePickField,
   TextInputField,
 } from '../../../components';
 import {scale} from '../../../utils';
@@ -36,7 +35,7 @@ interface CreateProductFormProps {
   inProgress: boolean;
   initialValues?: any;
   isEditMode?: boolean;
-  onAddProductPress: () => void;
+  // onAddProductPress: () => void;
   serviceOptions?: ServiceOptions[];
 }
 
@@ -51,7 +50,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
     inProgress,
     initialValues,
     isEditMode = false,
-    onAddProductPress,
+    // onAddProductPress,
     serviceOptions,
   } = props;
 
@@ -273,6 +272,12 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
+          {isEditMode && (
+            <AppText style={styles.editModeNoticeText}>
+              {t('CreateProductForm.editModeNotice')}
+            </AppText>
+          )}
+
           {/* <TextInputField
             control={control}
             name="title"
@@ -286,6 +291,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
             labelKey="CreateServiceForm.category"
             placeholder="CreateServiceForm.categoryPlaceholder"
             options={categoryOptions}
+            disabled={isEditMode}
           />
 
           {selectedCategoryId && (
@@ -295,6 +301,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
               labelKey="CreateServiceForm.subcategory"
               placeholder="CreateServiceForm.subcategoryPlaceholder"
               options={subcategoryOptions}
+              disabled={isEditMode}
             />
           )}
 
@@ -305,6 +312,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
               labelKey="CreateServiceForm.subsubcategory"
               placeholder="CreateServiceForm.subsubcategoryPlaceholder"
               options={subsubcategoryOptions}
+              disabled={isEditMode}
             />
           )}
 
@@ -336,7 +344,8 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
 
           {selectedSubSubcategory &&
             selectedSubSubcategory.attributes &&
-            Object.keys(selectedSubSubcategory.attributes).length > 0 && (
+            Object.keys(selectedSubSubcategory.attributes).length > 0 &&
+            !isEditMode && (
               <View style={styles.attributesSection}>
                 <AppText style={styles.attributesTitle}>
                   {t('CreateServiceForm.additionalAttributes')}
@@ -446,15 +455,16 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
               labelKey="CreateProductForm.linkServices"
               placeholderKey="CreateProductForm.linkServicesPlaceholder"
               options={serviceOptions}
+              disabled={isEditMode}
             />
           )}
 
-          <MultiImagePickField
+          {/* <MultiImagePickField
             control={control}
             name="images"
             labelKey="CreateProductForm.images"
             maxImages={5}
-          />
+          /> */}
         </View>
       </KeyboardAwareScrollView>
 
@@ -474,11 +484,11 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
           loader={inProgress}
         />
 
-        <Button
+        {/* <Button
           title={t('CreateProductForm.addProductBtn')}
           onPress={onAddProductPress}
           style={{marginTop: scale(10)}}
-        />
+        /> */}
       </View>
     </View>
   );
@@ -636,5 +646,15 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: colors.deepBlue,
     ...primaryFont('600'),
+  },
+  disabledInput: {
+    backgroundColor: colors.lightGrey,
+    opacity: 0.6,
+  },
+  editModeNoticeText: {
+    fontSize: scale(12),
+    color: colors.error,
+    ...primaryFont('500'),
+    textAlign: 'center',
   },
 });

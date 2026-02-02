@@ -65,8 +65,9 @@ export const DropdownField = <T extends FieldValues>({
                 disable={disabled}
                 style={[
                   styles.dropdown,
-                  isFocused && styles.focused,
+                  isFocused && !disabled && styles.focused,
                   error && styles.error,
+                  disabled && styles.disabled,
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -130,5 +131,9 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     color: colors.black,
     ...primaryFont('400'),
+  },
+  disabled: {
+    backgroundColor: colors.lightGrey,
+    opacity: 0.6,
   },
 });

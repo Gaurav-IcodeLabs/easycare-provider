@@ -114,11 +114,11 @@ export const CreateProduct: FC = () => {
           );
         }
 
-        const images =
-          listing.images?.map((img: any) => ({
-            id: img.id,
-            url: img.attributes?.variants?.default?.url || '',
-          })) || [];
+        // const images =
+        //   listing.images?.map((img: any) => ({
+        //     id: img.id,
+        //     url: img.attributes?.variants?.default?.url || '',
+        //   })) || [];
 
         // Get stock from currentStock relationship
         const currentStock = listing.currentStock?.attributes?.quantity || 0;
@@ -131,7 +131,7 @@ export const CreateProduct: FC = () => {
           description: description || '',
           price: price ? (price.amount / 100).toString() : '',
           stock: currentStock.toString(),
-          images,
+          // images,
           customAttributes,
           linkedServices: publicData?.linkedServices,
         };
@@ -149,18 +149,18 @@ export const CreateProduct: FC = () => {
     try {
       setLoading(true);
 
-      const imageIds =
-        values.images
-          ?.map((img: any) => {
-            if (typeof img.id === 'string') {
-              return img.id;
-            }
-            if (img.id?.uuid) {
-              return img.id.uuid;
-            }
-            return null;
-          })
-          .filter(Boolean) || [];
+      // const imageIds =
+      //   values.images
+      //     ?.map((img: any) => {
+      //       if (typeof img.id === 'string') {
+      //         return img.id;
+      //       }
+      //       if (img.id?.uuid) {
+      //         return img.id.uuid;
+      //       }
+      //       return null;
+      //     })
+      //     .filter(Boolean) || [];
 
       const selectedCategory = categories.find(
         cat => cat.id === values.categoryId,
@@ -177,7 +177,7 @@ export const CreateProduct: FC = () => {
         description: values.description,
         price: parseFloat(values.price),
         stock: parseInt(values.stock, 10),
-        images: imageIds,
+        // images: imageIds,
         customAttributes: values.customAttributes || {},
         categoryConfig: selectedCategory,
         subcategoryConfig: selectedSubcategory,
@@ -222,9 +222,9 @@ export const CreateProduct: FC = () => {
     navigation.goBack();
   };
 
-  const handleAddProductPress = () => {
-    navigation.replace(SCREENS.ADD_PRODUCT);
-  };
+  // const handleAddProductPress = () => {
+  //   navigation.replace(SCREENS.ADD_PRODUCT);
+  // };
 
   return (
     <View style={[styles.container, {paddingTop: top}]}>
@@ -247,11 +247,11 @@ export const CreateProduct: FC = () => {
             categories={categories}
             subcategoriesByKeys={subcategoriesByKeys}
             subsubcategoriesByKeys={subsubcategoriesByKeys}
-            inProgress={false}
+            inProgress={isLoading}
             onSubmit={onSubmit}
             initialValues={isEditMode ? initialValues : undefined}
             isEditMode={isEditMode}
-            onAddProductPress={handleAddProductPress}
+            // onAddProductPress={handleAddProductPress}
             serviceOptions={serviceOptions}
           />
         )}

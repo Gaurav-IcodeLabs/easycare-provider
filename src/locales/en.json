@@ -160,6 +160,8 @@
     "profile": "Profile"
   },
   "Profile": {
+    "addService": "Request to add Service",
+    "addProduct": "Request to add Product",
     "editProfile": "Edit Profile",
     "myWallet": "My Wallet",
     "yourProtection": "Your Protection",
@@ -316,7 +318,8 @@
     "updating": "Updating...",
     "addProductBtn": "Add Product Request",
     "linkServices": "Link to Services (optional)",
-    "linkServicesPlaceholder": "Select the services"
+    "linkServicesPlaceholder": "Select the services",
+    "editModeNotice": "**Some fields are read-only.**"
   },
   "CreateServiceForm": {
     "category": "Category",

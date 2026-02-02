@@ -10,41 +10,53 @@ export interface ProfileOption {
 
 export const getProfileOptions = (): ProfileOption[] => [
   {
-    id: 'protection',
-    title: 'Profile.yourProtection',
+    id: 'addProduct',
+    title: 'Profile.addProduct',
     icon: profileMenuIcons.wallet,
     actionType: 'navigation',
   },
   {
-    id: 'offers',
-    title: 'Profile.latestOffers',
-    icon: profileMenuIcons.discount,
+    id: 'addService',
+    title: 'Profile.addService',
+    icon: profileMenuIcons.wallet,
     actionType: 'navigation',
   },
-  {
-    id: 'rewards',
-    title: 'Profile.rewardsPoints',
-    actionType: 'navigation',
-    icon: profileMenuIcons.rewards,
-  },
-  {
-    id: 'chat',
-    title: 'Profile.chat',
-    icon: profileMenuIcons.chat,
-    actionType: 'navigation',
-  },
-  {
-    id: 'notification',
-    title: 'Profile.notification',
-    icon: profileMenuIcons.notification,
-    actionType: 'navigation',
-  },
-  {
-    id: 'setting',
-    title: 'Profile.setting',
-    icon: profileMenuIcons.settings,
-    actionType: 'navigation',
-  },
+  // {
+  //   id: 'protection',
+  //   title: 'Profile.yourProtection',
+  //   icon: profileMenuIcons.wallet,
+  //   actionType: 'navigation',
+  // },
+  // {
+  //   id: 'offers',
+  //   title: 'Profile.latestOffers',
+  //   icon: profileMenuIcons.discount,
+  //   actionType: 'navigation',
+  // },
+  // {
+  //   id: 'rewards',
+  //   title: 'Profile.rewardsPoints',
+  //   actionType: 'navigation',
+  //   icon: profileMenuIcons.rewards,
+  // },
+  // {
+  //   id: 'chat',
+  //   title: 'Profile.chat',
+  //   icon: profileMenuIcons.chat,
+  //   actionType: 'navigation',
+  // },
+  // {
+  //   id: 'notification',
+  //   title: 'Profile.notification',
+  //   icon: profileMenuIcons.notification,
+  //   actionType: 'navigation',
+  // },
+  // {
+  //   id: 'setting',
+  //   title: 'Profile.setting',
+  //   icon: profileMenuIcons.settings,
+  //   actionType: 'navigation',
+  // },
   {
     id: 'about',
     title: 'Profile.aboutApp',

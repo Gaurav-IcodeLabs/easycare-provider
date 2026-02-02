@@ -160,6 +160,7 @@
     "profile": "الملف الشخصي"
   },
   "Profile": {
+    "addService": "إضافة خدمة",
     "editProfile": "تعديل الملف الشخصي",
     "myWallet": "محفظتي",
     "yourProtection": "حمايتك",
@@ -316,7 +317,8 @@
     "updating": "جاري التحديث...",
     "addProductBtn": "إضافة طلب منتج",
     "linkServices": "الربط بالخدمات (اختياري)",
-    "linkServicesPlaceholder": "اختر الخدمات"
+    "linkServicesPlaceholder": "اختر الخدمات",
+    "editModeNotice": "في وضع التحرير، يمكنك فقط تعديل السعر والكمية المتوفرة. الحقول الأخرى للقراءة فقط."
   },
   "CreateServiceForm": {
     "category": "الفئة",

@@ -33,25 +33,25 @@ export const getProductFormSchema = (t: any) => {
       }),
     customAttributes: z.record(z.any()).optional(),
     linkedServices: z.array(z.any()).optional(),
-    images: z
-      .array(
-        z.object({
-          id: z.union([
-            z.object({
-              _sdkType: z.string().nonempty(),
-              uuid: z.string().nonempty(),
-            }),
-            z.string(),
-          ]),
-          url: z.string(),
-          localUri: z.string().optional(),
-          isUploading: z.boolean().optional(),
-        }),
-      )
-      .min(1, t('CreateProductForm.imagesRequired'))
-      .refine(images => images.some(img => !img.isUploading && img.url), {
-        message: t('CreateProductForm.waitForUpload'),
-      }),
+    // images: z
+    //   .array(
+    //     z.object({
+    //       id: z.union([
+    //         z.object({
+    //           _sdkType: z.string().nonempty(),
+    //           uuid: z.string().nonempty(),
+    //         }),
+    //         z.string(),
+    //       ]),
+    //       url: z.string(),
+    //       localUri: z.string().optional(),
+    //       isUploading: z.boolean().optional(),
+    //     }),
+    //   )
+    //   .min(1, t('CreateProductForm.imagesRequired'))
+    //   .refine(images => images.some(img => !img.isUploading && img.url), {
+    //     message: t('CreateProductForm.waitForUpload'),
+    //   }),
   });
 };
 
