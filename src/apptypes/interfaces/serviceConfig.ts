@@ -20,6 +20,7 @@ export interface SubSubCategory {
   currency: string;
   priceUnit: string;
   attributes: Record<string, any>;
+  listingImages?: string[];
   _id: string;
 }
 export interface Subcategory {

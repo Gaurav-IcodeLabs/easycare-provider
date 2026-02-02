@@ -264,6 +264,122 @@ export const selectSubSubcategoryById = (
 ): SubSubCategory | undefined =>
   state.marketplaceData.subsubcategoriesByKeys[subsubcategoryId];
 
+// Optimized selector for getting subsubcategory by key and listing type
+export const selectSubSubcategoryByKeyAndType = (
+  state: RootState,
+  subSubCategoryKey: string,
+  listingType: string,
+): SubSubCategory | ProductSubSubCategory | undefined => {
+  if (listingType === 'service') {
+    return state.marketplaceData.subsubcategoriesByKeys[subSubCategoryKey];
+  } else if (listingType === 'product') {
+    return state.marketplaceData.productSubsubcategoriesByKeys[
+      subSubCategoryKey
+    ];
+  }
+  return undefined;
+};
+
+// Service SubSubCategory Helper Functions
+/**
+ * Helper function to get service subsubcategory data by key
+ * @param subsubcategoriesByKeys - The service subsubcategories lookup object
+ * @param key - The key to lookup
+ * @returns The service subsubcategory data or undefined if not found
+ */
+export const getServiceSubSubcategoryByKey = (
+  subsubcategoriesByKeys: Record<string, SubSubCategory>,
+  key: string,
+): SubSubCategory | undefined => {
+  return subsubcategoriesByKeys[key];
+};
+
+/**
+ * Helper function to get multiple service subsubcategories by keys
+ * @param subsubcategoriesByKeys - The service subsubcategories lookup object
+ * @param keys - Array of keys to lookup
+ * @returns Array of found service subsubcategories (excludes undefined values)
+ */
+export const getServiceSubSubcategoriesByKeys = (
+  subsubcategoriesByKeys: Record<string, SubSubCategory>,
+  keys: string[],
+): SubSubCategory[] => {
+  return keys
+    .map(key => subsubcategoriesByKeys[key])
+    .filter((item): item is SubSubCategory => item !== undefined);
+};
+
+/**
+ * Helper function to check if a service subsubcategory key exists
+ * @param subsubcategoriesByKeys - The service subsubcategories lookup object
+ * @param key - The key to check
+ * @returns Boolean indicating if the key exists
+ */
+export const hasServiceSubSubcategoryKey = (
+  subsubcategoriesByKeys: Record<string, SubSubCategory>,
+  key: string,
+): boolean => {
+  return key in subsubcategoriesByKeys;
+};
+
+// Product SubSubCategory Helper Functions
+/**
+ * Helper function to get product subsubcategory data by key
+ * @param productSubsubcategoriesByKeys - The product subsubcategories lookup object
+ * @param key - The key to lookup
+ * @returns The product subsubcategory data or undefined if not found
+ */
+export const getProductSubSubcategoryByKey = (
+  productSubsubcategoriesByKeys: Record<string, ProductSubSubCategory>,
+  key: string,
+): ProductSubSubCategory | undefined => {
+  return productSubsubcategoriesByKeys[key];
+};
+
+/**
+ * Helper function to get multiple product subsubcategories by keys
+ * @param productSubsubcategoriesByKeys - The product subsubcategories lookup object
+ * @param keys - Array of keys to lookup
+ * @returns Array of found product subsubcategories (excludes undefined values)
+ */
+export const getProductSubSubcategoriesByKeys = (
+  productSubsubcategoriesByKeys: Record<string, ProductSubSubCategory>,
+  keys: string[],
+): ProductSubSubCategory[] => {
+  return keys
+    .map(key => productSubsubcategoriesByKeys[key])
+    .filter((item): item is ProductSubSubCategory => item !== undefined);
+};
+
+/**
+ * Helper function to check if a product subsubcategory key exists
+ * @param productSubsubcategoriesByKeys - The product subsubcategories lookup object
+ * @param key - The key to check
+ * @returns Boolean indicating if the key exists
+ */
+export const hasProductSubSubcategoryKey = (
+  productSubsubcategoriesByKeys: Record<string, ProductSubSubCategory>,
+  key: string,
+): boolean => {
+  return key in productSubsubcategoriesByKeys;
+};
+
+// Legacy helper functions (kept for backward compatibility)
+/**
+ * @deprecated Use getServiceSubSubcategoryByKey instead
+ */
+export const getSubSubcategoryByKey = getServiceSubSubcategoryByKey;
+
+/**
+ * @deprecated Use getServiceSubSubcategoriesByKeys instead
+ */
+export const getSubSubcategoriesByKeys = getServiceSubSubcategoriesByKeys;
+
+/**
+ * @deprecated Use hasServiceSubSubcategoryKey instead
+ */
+export const hasSubSubcategoryKey = hasServiceSubSubcategoryKey;
+
 export const {addMarketplaceEntities} = marketplaceDataSlice.actions;
 
 export default marketplaceDataSlice.reducer;

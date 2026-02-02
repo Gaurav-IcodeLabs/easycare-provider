@@ -4,6 +4,8 @@ import {fontScale, scale, width} from '../../utils';
 import {car, locationInactive, share, star} from '../../assets';
 import {colors, primaryFont, secondaryFont} from '../../constants';
 import {AppText} from '../AppText/AppText';
+import {useSelector} from 'react-redux';
+import {selectSubSubcategoryByKeyAndType} from '../../slices/marketplaceData.slice';
 
 interface ListingCardProps {
   listing: any;
@@ -16,15 +18,28 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   onPress,
   containerStyle,
 }) => {
-  const imageUrl = listing?.images?.[0]?.attributes?.variants?.default?.url;
+  const listingType = listing?.attributes?.publicData?.listingType;
+  const subSubCategory = listing?.attributes?.publicData?.subsubcategory ?? '';
+
+  // Get the subsubcategory data directly using optimized selector
+  const subSubCategoryData = useSelector((state: any) =>
+    selectSubSubcategoryByKeyAndType(state, subSubCategory, listingType),
+  );
+
   const title = listing?.attributes?.title || 'Untitled';
   const location = listing?.attributes?.publicData?.location?.address || '';
   const state = listing?.attributes?.state || '';
 
+  // Get the first image from subsubcategory if available (only for services)
+  const firstImage =
+    subSubCategoryData && 'listingImages' in subSubCategoryData
+      ? subSubCategoryData.listingImages?.[0]
+      : null;
+
   return (
     <Pressable style={[styles.container, containerStyle]} onPress={onPress}>
-      {imageUrl ? (
-        <Image source={{uri: imageUrl}} style={styles.image} />
+      {firstImage ? (
+        <Image source={{uri: firstImage}} style={styles.image} />
       ) : (
         <Image source={car} resizeMode="contain" style={styles.image} />
       )}
