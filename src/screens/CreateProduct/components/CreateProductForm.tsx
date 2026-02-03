@@ -195,10 +195,6 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
           // Only auto-fill price and duration if not in edit mode
           if (!initialValues) {
             setValue('price', subSubcategory.basePrice.toString());
-            setValue(
-              'duration',
-              subSubcategory.estimatedDuration.value.toString(),
-            );
             setValue('customAttributes', {});
           }
         }

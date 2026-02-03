@@ -77,6 +77,7 @@ export const fetchServices = createAsyncThunk<any, void, Thunk>(
         states: [
           ListingState.LISTING_STATE_PENDING_APPROVAL,
           ListingState.LISTING_STATE_PUBLISHED,
+          ListingState.LISTING_STATE_CLOSED,
         ],
         pub_listingType: 'service',
       } as any);
@@ -100,6 +101,7 @@ export const fetchProducts = createAsyncThunk<any, void, Thunk>(
         states: [
           ListingState.LISTING_STATE_PENDING_APPROVAL,
           ListingState.LISTING_STATE_PUBLISHED,
+          ListingState.LISTING_STATE_CLOSED,
         ],
         pub_listingType: 'product',
       } as any);

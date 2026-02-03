@@ -629,5 +629,14 @@
     "optionLabelPlaceholder": "Option name",
     "optionPrice": "Price",
     "optionPricePlaceholder": "0 SAR"
+  },
+  "ListingCard": {
+    "pendingApproval": "Pending Approval",
+    "published": "Published",
+    "draft": "Draft",
+    "closed": "Closed",
+    "open": "Open",
+    "closedToggle": "Close Listing",
+    "openToggle": "Open Listing"
   }
 }

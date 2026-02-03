@@ -627,5 +627,14 @@
     "optionLabelPlaceholder": "أدخل اسم الخيار",
     "optionPrice": "السعر",
     "optionPricePlaceholder": "0"
+  },
+  "ListingCard": {
+    "pendingApproval": "في انتظار الموافقة",
+    "published": "منشور",
+    "draft": "مسودة",
+    "closed": "مغلق",
+    "open": "مفتوح",
+    "closedToggle": "إغلاق القائمة",
+    "openToggle": "فتح القائمة"
   }
 }

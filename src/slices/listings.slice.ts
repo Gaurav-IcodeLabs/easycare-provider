@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {Thunk} from '../apptypes';
+import {Thunk, UUID} from '../apptypes';
 import {RootState} from '../sharetribeSetup';
 import {storableError} from '../utils';
 import {addMarketplaceEntities} from './marketplaceData.slice';
@@ -19,6 +19,8 @@ interface ListingsState {
   fetchListingsError: any;
   hasMore: boolean;
   currentListingType: string | null;
+  closeListingInProgress: boolean;
+  closeListingError: any;
 }
 
 const initialPagination: PaginationMeta = {
@@ -35,6 +37,8 @@ const initialState: ListingsState = {
   fetchListingsError: null,
   hasMore: true,
   currentListingType: null,
+  closeListingInProgress: false,
+  closeListingError: null,
 };
 
 const listingsSlice = createSlice({
@@ -73,6 +77,28 @@ const listingsSlice = createSlice({
     builder.addCase(fetchListings.rejected, (state, {payload}) => {
       state.fetchListingsInProgress = false;
       state.fetchListingsError = payload;
+    });
+    builder.addCase(closeOwnListing.pending, state => {
+      state.closeListingInProgress = true;
+      state.closeListingError = null;
+    });
+    builder.addCase(closeOwnListing.fulfilled, state => {
+      state.closeListingInProgress = false;
+    });
+    builder.addCase(closeOwnListing.rejected, (state, {payload}) => {
+      state.closeListingInProgress = false;
+      state.closeListingError = payload;
+    });
+    builder.addCase(openOwnListing.pending, state => {
+      state.closeListingInProgress = true;
+      state.closeListingError = null;
+    });
+    builder.addCase(openOwnListing.fulfilled, state => {
+      state.closeListingInProgress = false;
+    });
+    builder.addCase(openOwnListing.rejected, (state, {payload}) => {
+      state.closeListingInProgress = false;
+      state.closeListingError = payload;
     });
   },
 });
@@ -116,6 +142,38 @@ export const fetchListings = createAsyncThunk<any, FetchListingsParams, Thunk>(
   },
 );
 
+interface CloseListingParams {
+  id: UUID;
+}
+
+export const closeOwnListing = createAsyncThunk<any, CloseListingParams, Thunk>(
+  'listings/closeOwnListing',
+  async ({id}, {dispatch, extra: sdk}) => {
+    try {
+      const response = await sdk.ownListings.close({id}, {expand: true});
+      dispatch(addMarketplaceEntities({sdkResponse: response}));
+      return response;
+    } catch (error) {
+      console.error('Error in closeOwnListing', error);
+      throw storableError(error);
+    }
+  },
+);
+
+export const openOwnListing = createAsyncThunk<any, CloseListingParams, Thunk>(
+  'listings/openOwnListing',
+  async ({id}, {dispatch, extra: sdk}) => {
+    try {
+      const response = await sdk.ownListings.open({id}, {expand: true});
+      dispatch(addMarketplaceEntities({sdkResponse: response}));
+      return response;
+    } catch (error) {
+      console.error('Error in openOwnListing', error);
+      throw storableError(error);
+    }
+  },
+);
+
 // Selectors
 export const listingIdsSelector = (state: RootState) =>
   state.listings.listingIds;
@@ -133,6 +191,12 @@ export const fetchListingsInProgressSelector = (state: RootState) =>
 
 export const fetchListingsErrorSelector = (state: RootState) =>
   state.listings.fetchListingsError;
+
+export const closeListingInProgressSelector = (state: RootState) =>
+  state.listings.closeListingInProgress;
+
+export const closeListingErrorSelector = (state: RootState) =>
+  state.listings.closeListingError;
 
 export const {resetListings} = listingsSlice.actions;
 

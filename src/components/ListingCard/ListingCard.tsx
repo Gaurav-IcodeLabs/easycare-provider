@@ -1,11 +1,15 @@
+import React, {useRef, useState} from 'react';
 import {Image, Pressable, StyleSheet, View} from 'react-native';
-import React from 'react';
 import {fontScale, scale, width} from '../../utils';
-import {car, locationInactive, share, star} from '../../assets';
+import {car, list, star} from '../../assets';
 import {colors, primaryFont, secondaryFont} from '../../constants';
 import {AppText} from '../AppText/AppText';
 import {useSelector} from 'react-redux';
 import {selectSubSubcategoryByKeyAndType} from '../../slices/marketplaceData.slice';
+import {useTranslation} from 'react-i18next';
+import {ListingMenuPopover} from '../ListingMenuPopover/ListingMenuPopover';
+import {useAppDispatch} from '../../sharetribeSetup';
+import {closeOwnListing, openOwnListing} from '../../slices/listings.slice';
 
 interface ListingCardProps {
   listing: any;
@@ -20,6 +24,10 @@ export const ListingCard: React.FC<ListingCardProps> = ({
 }) => {
   const listingType = listing?.attributes?.publicData?.listingType;
   const subSubCategory = listing?.attributes?.publicData?.subsubcategory ?? '';
+  const {t} = useTranslation();
+  const menuButtonRef = useRef(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const dispatch = useAppDispatch();
 
   // Get the subsubcategory data directly using optimized selector
   const subSubCategoryData = useSelector((state: any) =>
@@ -27,14 +35,60 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   );
 
   const title = listing?.attributes?.title || 'Untitled';
-  const location = listing?.attributes?.publicData?.location?.address || '';
+  const description = listing?.attributes?.description || '';
   const state = listing?.attributes?.state || '';
+  const isPublished = state === 'published';
+  const isClosed = state === 'closed';
 
   // Get the first image from subsubcategory if available (only for services)
   const firstImage =
     subSubCategoryData && 'listingImages' in subSubCategoryData
       ? subSubCategoryData.listingImages?.[0]
       : null;
+
+  // Helper function to get badge background style based on state
+  const getBadgeStyle = (stateValue: string) => {
+    switch (stateValue) {
+      case 'published':
+        return {backgroundColor: colors.positiveGreen};
+      case 'pendingApproval':
+        return {backgroundColor: colors.lightYellow};
+      case 'draft':
+        return {backgroundColor: colors.lightGrey};
+      case 'closed':
+        return {backgroundColor: colors.red};
+      default:
+        return {backgroundColor: colors.lightGrey};
+    }
+  };
+
+  // Helper function to get badge text color based on state
+  const getBadgeTextStyle = (stateValue: string) => {
+    switch (stateValue) {
+      case 'published':
+        return {color: colors.white};
+      case 'pendingApproval':
+        return {color: colors.textBlack};
+      case 'draft':
+        return {color: colors.neutralDark};
+      case 'closed':
+        return {color: colors.white};
+      default:
+        return {color: colors.neutralDark};
+    }
+  };
+
+  const handleToggle = async () => {
+    try {
+      await dispatch(
+        state === 'published'
+          ? closeOwnListing({id: listing.id})
+          : openOwnListing({id: listing.id}),
+      );
+    } catch (error) {
+      console.error('Error toggling listing status:', error);
+    }
+  };
 
   return (
     <Pressable style={[styles.container, containerStyle]} onPress={onPress}>
@@ -47,12 +101,42 @@ export const ListingCard: React.FC<ListingCardProps> = ({
         <Image style={styles.icon} source={star} />
         <AppText style={styles.distance}>5.0</AppText>
       </View>
-      <Pressable style={styles.shareSection}>
-        <Image style={styles.shareIcon} source={share} />
-      </Pressable>
+      {(isPublished || isClosed) && (
+        <Pressable
+          ref={menuButtonRef}
+          style={styles.shareSection}
+          onPress={() => setShowMenu(true)}>
+          <Image style={styles.shareIcon} source={list} />
+        </Pressable>
+      )}
       <View style={styles.bottomSection}>
-        <AppText style={styles.title}>{title}</AppText>
-        {location ? (
+        <View style={styles.rowStyle}>
+          <AppText style={styles.title}>{title}</AppText>
+          {state ? (
+            <View style={[styles.badge, getBadgeStyle(state)]}>
+              <AppText style={[styles.badgeText, getBadgeTextStyle(state)]}>
+                {state === 'pendingApproval'
+                  ? t('ListingCard.pendingApproval')
+                  : state === 'published'
+                  ? t('ListingCard.published')
+                  : state === 'draft'
+                  ? t('ListingCard.draft')
+                  : state === 'closed'
+                  ? t('ListingCard.closed')
+                  : state}
+              </AppText>
+            </View>
+          ) : null}
+        </View>
+
+        {description ? (
+          <View style={styles.rowStyle}>
+            <AppText style={styles.location} numberOfLines={1}>
+              {description}
+            </AppText>
+          </View>
+        ) : null}
+        {/* {location ? (
           <View style={styles.rowStyle}>
             <Image
               tintColor={colors.neutralDark}
@@ -63,13 +147,17 @@ export const ListingCard: React.FC<ListingCardProps> = ({
               {location}
             </AppText>
           </View>
-        ) : null}
-        {state ? (
-          <View style={styles.rowStyle}>
-            <AppText style={styles.stateText}>{state}</AppText>
-          </View>
-        ) : null}
+        ) : null} */}
       </View>
+
+      <ListingMenuPopover
+        visible={showMenu}
+        onClose={() => setShowMenu(false)}
+        onToggleStatus={handleToggle}
+        isPublished={isPublished}
+        isClosed={isClosed}
+        fromView={menuButtonRef}
+      />
     </Pressable>
   );
 };
@@ -115,13 +203,14 @@ const styles = StyleSheet.create({
     borderColor: colors.lightGrey,
     borderBottomEndRadius: scale(20),
     borderBottomStartRadius: scale(20),
-    padding: scale(16),
+    paddingVertical: scale(8),
+    paddingHorizontal: scale(16),
     gap: scale(6),
   },
   rowStyle: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     gap: scale(5),
   },
   icon: {
@@ -153,5 +242,17 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textTransform: 'capitalize',
     ...primaryFont('400'),
+  },
+  badge: {
+    paddingHorizontal: scale(8),
+    paddingVertical: scale(4),
+    borderRadius: scale(12),
+    alignSelf: 'flex-start',
+  },
+  badgeText: {
+    fontSize: fontScale(10),
+    fontWeight: '500',
+    textTransform: 'capitalize',
+    ...primaryFont('500'),
   },
 });
