@@ -340,7 +340,7 @@
     "price": "السعر",
     "pricePlaceholder": "أدخل السعر",
     "priceRequired": "السعر مطلوب",
-    "duration": "المدة (بالدقائق)",
+    "duration": "المدة (بالساعات)",
     "durationPlaceholder": "أدخل المدة",
     "durationRequired": "المدة مطلوبة",
     "locationType": "نوع الموقع",

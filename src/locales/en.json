@@ -341,7 +341,7 @@
     "price": "Price",
     "pricePlaceholder": "Enter price",
     "priceRequired": "Price is required",
-    "duration": "Duration (minutes)",
+    "duration": "Duration (hours)",
     "durationPlaceholder": "Enter duration",
     "durationRequired": "Duration is required",
     "locationType": "Location Type",
