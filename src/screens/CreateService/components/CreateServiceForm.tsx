@@ -324,6 +324,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             labelKey="CreateServiceForm.description"
             placeholder="CreateServiceForm.descriptionPlaceholder"
             multiline
+            textAlignVertical={'top'}
             inputContainerStyles={styles.descriptionInputSection}
           />
 

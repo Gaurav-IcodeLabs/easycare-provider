@@ -318,6 +318,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
             labelKey="CreateProductForm.description"
             placeholder="CreateProductForm.descriptionPlaceholder"
             multiline
+            textAlignVertical={'top'}
             inputContainerStyles={styles.descriptionInputSection}
           />
 

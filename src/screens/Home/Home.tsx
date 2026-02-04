@@ -288,7 +288,9 @@ export const Home: React.FC = () => {
       end={{x: 0, y: 0.5}}
       colors={[colors.deepBlue, colors.blue, colors.white]}>
       <ScreenHeader
-        containerStyle={{paddingHorizontal: scale(20)}}
+        containerStyle={{
+          paddingHorizontal: scale(20),
+        }}
         renderLeft={() => (
           <TouchableOpacity onPress={handleProfilePress}>
             <Image
@@ -300,11 +302,11 @@ export const Home: React.FC = () => {
           </TouchableOpacity>
         )}
         renderCenter={() => <Image source={easycare} resizeMode="contain" />}
-        renderRight={() => (
-          <TouchableOpacity>
-            <Image source={magnify} style={styles.right} />
-          </TouchableOpacity>
-        )}
+        // renderRight={() => (
+        //   <TouchableOpacity>
+        //     <Image source={magnify} style={styles.right} />
+        //   </TouchableOpacity>
+        // )}
       />
 
       {isLoading && !refreshing ? (
