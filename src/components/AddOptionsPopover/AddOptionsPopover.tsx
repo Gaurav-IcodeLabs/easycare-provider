@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
+  Platform,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -63,25 +64,31 @@ export const AddOptionsPopover: React.FC<AddOptionsPopoverProps> = ({
       onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.container}>
-          <BlurView
-            style={styles.blurOverlay}
-            blurType="dark"
-            blurAmount={2}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.3)">
+          {Platform.OS === 'ios' ? (
+            <BlurView
+              style={styles.blurOverlay}
+              blurType="dark"
+              blurAmount={2}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.3)">
+              <View style={styles.overlay} />
+            </BlurView>
+          ) : (
             <View style={styles.overlay} />
-          </BlurView>
+          )}
 
           <Animated.View style={[styles.popoverPositioner, animatedStyle]}>
             <TouchableWithoutFeedback>
               <View style={styles.popoverWrapper}>
                 {/* Main popover content */}
                 <View style={styles.popoverContainer}>
-                  <BlurView
-                    style={styles.blurBackground}
-                    blurType="light"
-                    blurAmount={20}
-                    reducedTransparencyFallbackColor={'red'}
-                  />
+                  {Platform.OS === 'ios' && (
+                    <BlurView
+                      style={styles.blurBackground}
+                      blurType="light"
+                      blurAmount={20}
+                      reducedTransparencyFallbackColor="white"
+                    />
+                  )}
                   <View style={styles.tintOverlay} />
 
                   <View style={styles.optionsRow}>

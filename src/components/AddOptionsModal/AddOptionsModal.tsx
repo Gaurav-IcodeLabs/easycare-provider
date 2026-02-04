@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   I18nManager,
+  Platform,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -63,12 +64,16 @@ export const AddOptionsModal: React.FC<AddOptionsModalProps> = ({
       <View style={styles.container}>
         <TouchableWithoutFeedback onPress={onClose}>
           <Animated.View style={[styles.blurContainer, overlayStyle]}>
-            <BlurView
-              style={styles.blurView}
-              blurType="dark"
-              blurAmount={10}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.6)"
-            />
+            {Platform.OS === 'ios' ? (
+              <BlurView
+                style={styles.blurView}
+                blurType="dark"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.6)"
+              />
+            ) : (
+              <View style={[styles.blurView, styles.androidOverlay]} />
+            )}
           </Animated.View>
         </TouchableWithoutFeedback>
 
@@ -123,6 +128,9 @@ const styles = StyleSheet.create({
   },
   blurView: {
     flex: 1,
+  },
+  androidOverlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   modalContent: {
     width: '85%',

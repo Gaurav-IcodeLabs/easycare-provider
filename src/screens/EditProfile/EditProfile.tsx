@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   I18nManager,
+  Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
@@ -24,7 +25,7 @@ import {
 } from '../../components';
 import {colors, primaryFont, SCREENS} from '../../constants';
 import {scale} from '../../utils';
-import {placeholder, backIcon, editIcon, avatarPlaceholder} from '../../assets';
+import {backIcon, editIcon, avatarPlaceholder} from '../../assets';
 import {
   useAppDispatch,
   useTypedSelector,
@@ -360,12 +361,14 @@ export const EditProfile: React.FC = () => {
           </View>
         </KeyboardAwareScrollView>
         <View style={[styles.submitButtonContainer]}>
-          <BlurView
-            style={styles.blurBackground}
-            blurType={'light'}
-            blurAmount={10}
-            reducedTransparencyFallbackColor={colors.white}
-          />
+          {Platform.OS === 'ios' && (
+            <BlurView
+              style={styles.blurBackground}
+              blurType={'light'}
+              blurAmount={10}
+              reducedTransparencyFallbackColor={colors.white}
+            />
+          )}
           <View style={[styles.buttonWrapper, {paddingBottom: bottom}]}>
             <Button
               title="EditProfile.saveChanges"

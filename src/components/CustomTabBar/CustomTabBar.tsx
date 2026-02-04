@@ -1,4 +1,10 @@
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Platform,
+} from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {useTranslation} from 'react-i18next';
@@ -264,12 +270,14 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
                 onPress={handlePlusPress}
                 style={styles.plusButton}>
                 <View style={styles.plusIconContainer}>
-                  <BlurView
-                    style={styles.plusBlurBackground}
-                    blurType="light"
-                    blurAmount={10}
-                    reducedTransparencyFallbackColor="white"
-                  />
+                  {Platform.OS === 'ios' && (
+                    <BlurView
+                      style={styles.plusBlurBackground}
+                      blurType="light"
+                      blurAmount={10}
+                      reducedTransparencyFallbackColor="white"
+                    />
+                  )}
                   <View style={styles.plusTintOverlay} />
                   <AppText style={styles.plusIcon}>+</AppText>
                 </View>
@@ -280,12 +288,14 @@ export const CustomTabBar: React.FC<BottomTabBarProps> = ({
           {/* Tab Bar Pill */}
           <GestureDetector gesture={panGesture}>
             <View style={styles.container}>
-              <BlurView
-                style={styles.blurBackground}
-                blurType="light"
-                blurAmount={10}
-                reducedTransparencyFallbackColor="white"
-              />
+              {Platform.OS === 'ios' && (
+                <BlurView
+                  style={styles.blurBackground}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="white"
+                />
+              )}
               <View style={styles.tintOverlay} />
 
               {state.routes.map((route, index) => {

@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   I18nManager,
+  Platform,
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import React, {FC, useState, useEffect, useRef} from 'react';
@@ -635,12 +636,15 @@ export const CreateService: FC = () => {
 
       {/* Sticky button inside each step */}
       <View style={styles.stickyButtonContainer}>
-        <BlurView
-          style={styles.blurBackground}
-          blurType={'light'}
-          blurAmount={10}
-          reducedTransparencyFallbackColor={colors.white}
-        />
+        {Platform.OS === 'ios' && (
+          <BlurView
+            style={styles.blurBackground}
+            blurType={'light'}
+            blurAmount={10}
+            reducedTransparencyFallbackColor={colors.white}
+            enabled={false}
+          />
+        )}
         <View
           style={[styles.buttonWrapper, {paddingBottom: bottom || scale(20)}]}>
           {index > 0 && (
