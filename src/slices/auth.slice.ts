@@ -191,6 +191,7 @@ export const signup = createAsyncThunk<{}, SignupParams, Thunk>(
         publicData: {
           ...params?.publicData,
           userType: 'provider',
+          serviceRadius: 1,
         },
       };
 
