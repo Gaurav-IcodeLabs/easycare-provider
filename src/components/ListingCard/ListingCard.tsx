@@ -8,8 +8,9 @@ import {useSelector} from 'react-redux';
 import {selectSubSubcategoryByKeyAndType} from '../../slices/marketplaceData.slice';
 import {useTranslation} from 'react-i18next';
 import {ListingMenuPopover} from '../ListingMenuPopover/ListingMenuPopover';
-import {useAppDispatch} from '../../sharetribeSetup';
+import {useAppDispatch, RootState} from '../../sharetribeSetup';
 import {closeOwnListing, openOwnListing} from '../../slices/listings.slice';
+import {isListingNotDeleted} from '../../utils/listingValidation';
 
 interface ListingCardProps {
   listing: any;
@@ -23,6 +24,8 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   containerStyle,
 }) => {
   const listingType = listing?.attributes?.publicData?.listingType;
+  const category = listing?.attributes?.publicData?.category ?? '';
+  const subCategory = listing?.attributes?.publicData?.subcategory ?? '';
   const subSubCategory = listing?.attributes?.publicData?.subsubcategory ?? '';
   const {t} = useTranslation();
   const menuButtonRef = useRef(null);
@@ -33,6 +36,23 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   const subSubCategoryData = useSelector((state: any) =>
     selectSubSubcategoryByKeyAndType(state, subSubCategory, listingType),
   );
+
+  // Check if listing is not deleted at any category level
+  const isNotDeleted = useSelector((state: RootState) =>
+    isListingNotDeleted(
+      state,
+      category,
+      subCategory,
+      subSubCategory,
+      listingType,
+    ),
+  );
+
+  // console.log(
+  //   'listing?.attributes?.publicData',
+  //   JSON.stringify(listing?.attributes?.publicData),
+  // );
+  console.log('isNotDeleted:', listing?.attributes?.title, isNotDeleted);
 
   const title = listing?.attributes?.title || 'Untitled';
   const description = listing?.attributes?.description || '';
@@ -91,7 +111,14 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   };
 
   return (
-    <Pressable style={[styles.container, containerStyle]} onPress={onPress}>
+    <Pressable
+      style={[
+        styles.container,
+        containerStyle,
+        !isNotDeleted && {opacity: 0.5},
+      ]}
+      disabled={!isNotDeleted}
+      onPress={onPress}>
       {firstImage ? (
         <Image source={{uri: firstImage}} style={styles.image} />
       ) : (
@@ -101,7 +128,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
         <Image style={styles.icon} source={star} />
         <AppText style={styles.distance}>5.0</AppText>
       </View>
-      {(isPublished || isClosed) && (
+      {(isPublished || isClosed) && isNotDeleted && (
         <Pressable
           ref={menuButtonRef}
           style={styles.shareSection}

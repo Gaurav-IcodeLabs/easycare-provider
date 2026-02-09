@@ -21,6 +21,7 @@ export interface SubSubCategory {
   priceUnit: string;
   attributes: Record<string, any>;
   listingImages?: string[];
+  deleted?: boolean;
   _id: string;
 }
 export interface Subcategory {
@@ -29,6 +30,7 @@ export interface Subcategory {
   slug: string;
   icon: string;
   subSubcategories: SubSubCategory[];
+  deleted?: boolean;
   _id: string;
 }
 
@@ -40,6 +42,7 @@ export interface Category {
   description: LocalizedText;
   defaultLocation: string;
   subcategories: Subcategory[];
+  deleted?: boolean;
   _id: string;
 }
 

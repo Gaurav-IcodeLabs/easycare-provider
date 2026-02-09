@@ -12,6 +12,7 @@ export interface ProductSubSubCategory {
   currency: string;
   priceUnit: string;
   attributes: Record<string, any>;
+  deleted?: boolean;
   _id: string;
 }
 export interface ProductSubcategory {
@@ -20,6 +21,7 @@ export interface ProductSubcategory {
   slug: string;
   icon: string;
   subSubcategories: ProductSubSubCategory[];
+  deleted?: boolean;
   _id: string;
 }
 
@@ -31,6 +33,7 @@ export interface ProductCategory {
   description: LocalizedText;
   defaultLocation: string;
   subcategories: ProductSubcategory[];
+  deleted?: boolean;
   _id: string;
 }
 

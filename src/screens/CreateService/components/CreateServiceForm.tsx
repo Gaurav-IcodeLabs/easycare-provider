@@ -71,6 +71,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
       categories.map(cat => ({
         label: cat.name[currentLang] || cat.name.en,
         value: cat.id,
+        disabled: cat.deleted, // Mark deleted categories as disabled
       })),
     [categories, currentLang],
   );
@@ -82,6 +83,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
       ? category.subcategories.map(sub => ({
           label: sub.name[currentLang] || sub.name.en,
           value: sub.id,
+          disabled: sub.deleted, // Mark deleted subcategories as disabled
         }))
       : [];
   }, [selectedCategoryId, categories, currentLang]);
@@ -91,6 +93,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
     return selectedSubcategory.subSubcategories.map(subSub => ({
       label: subSub.name[currentLang] || subSub.name.en,
       value: subSub.id,
+      disabled: subSub.deleted, // Mark deleted subsubcategories as disabled
     }));
   }, [selectedSubcategory, currentLang]);
 

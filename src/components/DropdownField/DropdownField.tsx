@@ -11,7 +11,10 @@ import {AppText} from '../AppText/AppText';
 interface DropdownOption {
   label: string;
   value: string;
+  disabled?: boolean; // Add support for disabled individual options
 }
+
+export type {DropdownOption};
 
 interface DropdownFieldProps<T extends FieldValues> {
   control: Control<T>;
@@ -59,7 +62,12 @@ export const DropdownField = <T extends FieldValues>({
                 valueField="value"
                 placeholder={placeholderText}
                 value={value}
-                onChange={item => onChange(item.value)}
+                onChange={item => {
+                  // Prevent selection of disabled items
+                  if (!item?.disabled) {
+                    onChange(item.value);
+                  }
+                }}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 disable={disabled}
@@ -73,6 +81,22 @@ export const DropdownField = <T extends FieldValues>({
                 selectedTextStyle={styles.selectedTextStyle}
                 containerStyle={styles.dropdownContainer}
                 itemTextStyle={styles.itemTextStyle}
+                renderItem={(item: DropdownOption) => (
+                  <View
+                    style={[
+                      styles.itemContainer,
+                      item?.disabled && styles.disabledItem,
+                    ]}>
+                    <AppText
+                      style={[
+                        styles.itemTextStyle,
+                        item?.disabled && styles.disabledItemText,
+                      ]}>
+                      {item.label}
+                      {item?.disabled && ' (Unavailable)'}
+                    </AppText>
+                  </View>
+                )}
               />
             </View>
 
@@ -135,5 +159,16 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: colors.lightGrey,
     opacity: 0.6,
+  },
+  itemContainer: {
+    padding: scale(12),
+  },
+  disabledItem: {
+    opacity: 0.5,
+    backgroundColor: colors.lightGrey,
+  },
+  disabledItemText: {
+    color: colors.grey,
+    textDecorationLine: 'line-through',
   },
 });

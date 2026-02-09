@@ -228,6 +228,11 @@ export const categoriesByKeysSelector = (
   state: RootState,
 ): Record<string, Category> => state.marketplaceData.categoriesByKeys;
 
+export const productCategoriesByKeysSelector = (
+  state: RootState,
+): Record<string, ProductCategory> =>
+  state.marketplaceData.productCategoriesByKeys;
+
 export const subcategoriesByKeysSelector = (
   state: RootState,
 ): Record<string, Subcategory> => state.marketplaceData.subcategoriesByKeys;

@@ -70,6 +70,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
       categories.map(cat => ({
         label: cat.name[currentLang] || cat.name.en,
         value: cat.id,
+        disabled: cat.deleted, // Mark deleted categories as disabled
       })),
     [categories, currentLang],
   );
@@ -81,6 +82,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
       ? category.subcategories.map(sub => ({
           label: sub.name[currentLang] || sub.name.en,
           value: sub.id,
+          disabled: sub.deleted, // Mark deleted subcategories as disabled
         }))
       : [];
   }, [selectedCategoryId, categories, currentLang]);
@@ -90,6 +92,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
     return selectedSubcategory.subSubcategories.map(subSub => ({
       label: subSub.name[currentLang] || subSub.name.en,
       value: subSub.id,
+      disabled: subSub.deleted, // Mark deleted subsubcategories as disabled
     }));
   }, [selectedSubcategory, currentLang]);
 
@@ -261,7 +264,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
     },
     [isValid, onSubmit, trigger],
   );
-
+  console.log('categoryOptions', categoryOptions);
   return (
     <View style={styles.wrapper}>
       <KeyboardAwareScrollView

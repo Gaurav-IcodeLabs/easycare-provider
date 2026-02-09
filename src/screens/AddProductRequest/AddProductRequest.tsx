@@ -93,6 +93,7 @@ export const AddProductRequest: React.FC = () => {
     ...categories.map(cat => ({
       label: cat.name[currentLang] || cat.name.en,
       value: cat.id,
+      disabled: cat.deleted, // Mark deleted categories as disabled
     })),
     {
       label: t('AddProduct.otherCategory') || 'Other',
@@ -108,6 +109,7 @@ export const AddProductRequest: React.FC = () => {
           ?.subcategories.map(sub => ({
             label: sub.name[currentLang] || sub.name.en,
             value: sub.id,
+            disabled: sub.deleted, // Mark deleted subcategories as disabled
           })) || []
       : [];
 
