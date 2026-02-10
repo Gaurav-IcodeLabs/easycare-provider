@@ -124,9 +124,22 @@ export const ListingCard: React.FC<ListingCardProps> = ({
       ) : (
         <Image source={car} resizeMode="contain" style={styles.image} />
       )}
-      <View style={styles.reviewSection}>
-        <Image style={styles.icon} source={star} />
-        <AppText style={styles.distance}>5.0</AppText>
+      <View style={styles.badgeContainer}>
+        {state ? (
+          <View style={[styles.badge, getBadgeStyle(state)]}>
+            <AppText style={[styles.badgeText, getBadgeTextStyle(state)]}>
+              {state === 'pendingApproval'
+                ? t('ListingCard.pendingApproval')
+                : state === 'published'
+                ? t('ListingCard.published')
+                : state === 'draft'
+                ? t('ListingCard.draft')
+                : state === 'closed'
+                ? t('ListingCard.closed')
+                : state}
+            </AppText>
+          </View>
+        ) : null}
       </View>
       {(isPublished || isClosed) && isNotDeleted && (
         <Pressable
@@ -139,21 +152,10 @@ export const ListingCard: React.FC<ListingCardProps> = ({
       <View style={styles.bottomSection}>
         <View style={styles.rowStyle}>
           <AppText style={styles.title}>{title}</AppText>
-          {state ? (
-            <View style={[styles.badge, getBadgeStyle(state)]}>
-              <AppText style={[styles.badgeText, getBadgeTextStyle(state)]}>
-                {state === 'pendingApproval'
-                  ? t('ListingCard.pendingApproval')
-                  : state === 'published'
-                  ? t('ListingCard.published')
-                  : state === 'draft'
-                  ? t('ListingCard.draft')
-                  : state === 'closed'
-                  ? t('ListingCard.closed')
-                  : state}
-              </AppText>
-            </View>
-          ) : null}
+          <View style={styles.reviewSection}>
+            <Image style={styles.icon} source={star} />
+            <AppText style={styles.distance}>5.0</AppText>
+          </View>
         </View>
 
         {description ? (
@@ -163,18 +165,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({
             </AppText>
           </View>
         ) : null}
-        {/* {location ? (
-          <View style={styles.rowStyle}>
-            <Image
-              tintColor={colors.neutralDark}
-              source={locationInactive}
-              style={styles.icon}
-            />
-            <AppText style={styles.location} numberOfLines={1}>
-              {location}
-            </AppText>
-          </View>
-        ) : null} */}
       </View>
 
       <ListingMenuPopover
@@ -203,15 +193,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGrey,
   },
   reviewSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: '#00000020',
+    paddingVertical: scale(4),
+    paddingHorizontal: scale(6),
+    gap: scale(2),
+    borderRadius: scale(10),
+  },
+  badgeContainer: {
     position: 'absolute',
     top: scale(12),
     left: scale(12),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white,
-    paddingVertical: scale(4),
-    paddingHorizontal: scale(6),
     gap: scale(2),
     borderRadius: scale(10),
   },
