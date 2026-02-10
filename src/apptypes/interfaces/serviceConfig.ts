@@ -12,6 +12,7 @@ export interface SubSubCategory {
   estimatedDuration: EstimatedDuration;
   id: string;
   name: LocalizedText;
+  description: LocalizedText;
   slug: string;
   icon: string;
   locationTypes: string[];

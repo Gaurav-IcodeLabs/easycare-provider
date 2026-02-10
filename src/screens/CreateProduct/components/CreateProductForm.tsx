@@ -193,7 +193,11 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
           // Auto-set title from sub-subcategory name
           const title =
             subSubcategory.name[currentLang] || subSubcategory.name.en;
+          const description =
+            subSubcategory.description?.[currentLang] ||
+            subSubcategory.description.en;
           setValue('title', title);
+          setValue('description', description || '');
 
           // Only auto-fill price and duration if not in edit mode
           if (!initialValues) {
@@ -322,6 +326,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
             placeholder="CreateProductForm.descriptionPlaceholder"
             multiline
             textAlignVertical={'top'}
+            editable={false}
             inputContainerStyles={styles.descriptionInputSection}
           />
 
