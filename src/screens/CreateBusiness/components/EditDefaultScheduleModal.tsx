@@ -52,12 +52,9 @@ const daysOfWeek = [
 ];
 
 const timezones = [
-  {label: 'America/New_York', value: 'America/New_York'},
-  {label: 'America/Los_Angeles', value: 'America/Los_Angeles'},
   {label: 'Asia/Kolkata', value: 'Asia/Kolkata'},
   {label: 'Asia/Dubai', value: 'Asia/Dubai'},
   {label: 'Asia/Riyadh', value: 'Asia/Riyadh'},
-  {label: 'Asia/Tokyo', value: 'Asia/Tokyo'},
 ];
 
 export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({

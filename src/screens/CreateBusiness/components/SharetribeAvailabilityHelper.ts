@@ -165,7 +165,7 @@ export const convertFromSharetribeAvailabilityPlan = (
 
   return {
     weeklySchedule,
-    timezone: availabilityPlan?.timezone || 'Asia/Kolkata',
+    timezone: availabilityPlan?.timezone || 'Asia/Riyadh',
   };
 };
 

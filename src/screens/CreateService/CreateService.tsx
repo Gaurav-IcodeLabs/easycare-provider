@@ -202,7 +202,7 @@ export const CreateService: FC = () => {
           combinedInitialValues = {
             ...combinedInitialValues,
             weeklySchedule: null,
-            timezone: 'Asia/Kolkata',
+            timezone: 'Asia/Riyadh',
             exceptions: [],
           };
         }
@@ -567,7 +567,7 @@ export const CreateService: FC = () => {
                       null,
                     timezone:
                       (initialValues || availabilityData)?.timezone ||
-                      'Asia/Kolkata',
+                      'Asia/Riyadh',
                     exceptions:
                       (initialValues || availabilityData)?.exceptions || [],
                   }

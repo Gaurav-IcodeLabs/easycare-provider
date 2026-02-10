@@ -70,7 +70,7 @@ export const CreateServiceAvailability: FC<CreateServiceAvailabilityProps> = ({
   const [weeklySchedule, setWeeklySchedule] =
     useState<WeeklySchedule>(defaultSchedule);
   const [exceptions, setExceptions] = useState<AvailabilityException[]>([]);
-  const [timezone, setTimezone] = useState('Asia/Kolkata');
+  const [timezone, setTimezone] = useState('Asia/Riyadh');
 
   // Track if we've initialized from props
   const [initialized, setInitialized] = React.useState(false);

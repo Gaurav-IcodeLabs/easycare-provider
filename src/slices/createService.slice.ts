@@ -373,7 +373,7 @@ export const fetchServiceListing = createAsyncThunk<any, any, Thunk>(
 
         // Extract availability data - will be handled separately in step 2
         let weeklySchedule = null;
-        let timezone = 'Asia/Kolkata';
+        let timezone = 'Asia/Riyadh';
         let exceptions: any[] = [];
 
         // Note: Availability and exceptions will be fetched separately in step 2
@@ -698,7 +698,7 @@ const createServiceSlice = createSlice({
       if (payload.availabilityPlan || payload.exceptions) {
         // Convert to UI format and store in state
         let weeklySchedule = null;
-        let timezone = 'Asia/Kolkata';
+        let timezone = 'Asia/Riyadh';
         let exceptions: any[] = [];
 
         if (payload.availabilityPlan) {
