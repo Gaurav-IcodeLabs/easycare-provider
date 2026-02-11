@@ -11,6 +11,18 @@ export const getAddServiceRequestSchema = (t: TFunction) => {
       description: z
         .string()
         .min(10, t('CreateServiceForm.descriptionRequired')),
+      suggestedServiceDuration: z
+        .string()
+        .min(1, t('AddService.durationRequired'))
+        .refine(
+          val => {
+            const num = Number(val);
+            return !isNaN(num) && num > 0;
+          },
+          {
+            message: t('AddService.durationMustBeGreaterThanZero'),
+          },
+        ),
       suggestedPrice: z.string().min(1, t('CreateServiceForm.priceRequired')),
       isOtherCategory: z.boolean().optional(),
       customCategoryName: z.string().optional(),
@@ -69,6 +81,7 @@ export interface AddServiceFormValues {
   subSubcategory: string;
   title: string;
   description: string;
+  suggestedServiceDuration: string;
   suggestedPrice: string;
   isOtherCategory?: boolean;
   customCategoryName?: string;
@@ -83,6 +96,7 @@ export const getDefaultAddServiceValues = (): AddServiceFormValues => {
     subSubcategory: '',
     title: '',
     description: '',
+    suggestedServiceDuration: '',
     suggestedPrice: '',
     isOtherCategory: false,
     customCategoryName: '',

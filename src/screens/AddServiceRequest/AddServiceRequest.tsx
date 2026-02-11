@@ -39,6 +39,7 @@ type AddServiceRequestPayload = {
   title: string;
   description: string;
   suggestedPrice: number;
+  suggestedServiceDuration: number;
   userId: string;
   isOtherCategory?: boolean;
   attributes?: ServiceAttribute[];
@@ -243,13 +244,13 @@ export const AddServiceRequest: React.FC = () => {
         selectedSubcategory?.name.en ||
         '';
     }
-
     const payload: AddServiceRequestPayload = {
       categoryName,
       subcategoryName,
       subSubcategory: values.subSubcategory,
       title: values.title,
       description: values.description,
+      suggestedServiceDuration: parseFloat(values.suggestedServiceDuration),
       suggestedPrice:
         typeof values.suggestedPrice === 'string'
           ? parseFloat(values.suggestedPrice)
@@ -367,6 +368,13 @@ export const AddServiceRequest: React.FC = () => {
 
               <TextInputField
                 control={control}
+                name="suggestedServiceDuration"
+                labelKey="AddService.suggestedServiceDuration"
+                placeholder="AddService.suggestedServiceDurationPlaceholder"
+                keyboardType="numeric"
+              />
+              <TextInputField
+                control={control}
                 name="suggestedPrice"
                 labelKey="AddService.suggestedPrice"
                 placeholder="AddService.suggestedPricePlaceholder"
@@ -444,6 +452,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: scale(20),
+    backgroundColor: colors.white,
     paddingTop: scale(16),
   },
   loadingContainer: {

@@ -595,7 +595,9 @@
     "optionLabel": "تسمية الخيار",
     "optionLabelPlaceholder": "أدخل اسم الخيار",
     "optionPrice": "السعر",
-    "optionPricePlaceholder": "0"
+    "optionPricePlaceholder": "0",
+    "suggestedServiceDuration": "مدة الخدمة المقترحة (بالساعات)",
+    "suggestedServiceDurationPlaceholder": "1-2"
   },
   "AddProduct": {
     "heading": "طلب منتج جديد",

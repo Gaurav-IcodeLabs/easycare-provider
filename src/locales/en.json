@@ -597,7 +597,9 @@
     "optionLabel": "Option Label",
     "optionLabelPlaceholder": "Option name",
     "optionPrice": "Price",
-    "optionPricePlaceholder": "0 SAR"
+    "optionPricePlaceholder": "0 SAR",
+    "suggestedServiceDuration": "Suggested Service Duration (Hours)",
+    "suggestedServiceDurationPlaceholder": "1-2"
   },
   "AddProduct": {
     "heading": "Request Product",
