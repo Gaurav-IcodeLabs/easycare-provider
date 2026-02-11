@@ -12,19 +12,19 @@ export const getProfileOptions = (): ProfileOption[] => [
   {
     id: 'addProduct',
     title: 'Profile.addProduct',
-    icon: profileMenuIcons.wallet,
+    icon: profileMenuIcons.request_product,
     actionType: 'navigation',
   },
   {
     id: 'addService',
     title: 'Profile.addService',
-    icon: profileMenuIcons.wallet,
+    icon: profileMenuIcons.request_service,
     actionType: 'navigation',
   },
   {
     id: 'myRequests',
     title: 'Profile.myRequests',
-    icon: profileMenuIcons.wallet,
+    icon: profileMenuIcons.my_requests,
     actionType: 'navigation',
   },
   // {

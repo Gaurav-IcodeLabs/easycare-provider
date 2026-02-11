@@ -76,6 +76,9 @@ export const profileMenuIcons = {
   settings: require('./settingsIcon.png'),
   wallet: require('./walletIcon.png'),
   report: require('./reportIcon.png'),
+  request_product: require('./requestProductProfileIcon.png'),
+  request_service: require('./requestServiceProfileIcon.png'),
+  my_requests: require('./requestsProfileIcon.png'),
 };
 
 export const inputIcons = {
