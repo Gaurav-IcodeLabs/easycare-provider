@@ -173,7 +173,8 @@
     "aboutApp": "About the App",
     "reportProblem": "Report a Problem",
     "contactUs": "Contact Us",
-    "logout": "Logout"
+    "logout": "Logout",
+    "myRequests": "My Requests"
   },
   "BiometricSettings": {
     "title": "Biometric Login",
@@ -640,5 +641,20 @@
     "open": "Open",
     "closedToggle": "Close Listing",
     "openToggle": "Open Listing"
+  },
+  "MyRequests": {
+    "heading": "My Requests",
+    "serviceTab": "Services",
+    "productTab": "Products",
+    "noRequests": "No requests found",
+    "pending": "Pending",
+    "completed": "Completed",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "titleLabel": "Title",
+    "createdAtLabel": "Created at",
+    "descriptionLabel": "Description"
   }
 }

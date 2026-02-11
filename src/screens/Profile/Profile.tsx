@@ -88,10 +88,11 @@ export const Profile: React.FC = () => {
           break;
         case 'navigation':
           if (id === 'addProduct') {
-           (navigation as any).navigate(SCREENS.ADD_PRODUCT);
-          }
-          else if (id === 'addService') {
+            (navigation as any).navigate(SCREENS.ADD_PRODUCT);
+          } else if (id === 'addService') {
             (navigation as any).navigate(SCREENS.ADD_SERVICE);
+          } else if (id === 'myRequests') {
+            (navigation as any).navigate(SCREENS.MY_REQUESTS);
           }
           break;
         default:

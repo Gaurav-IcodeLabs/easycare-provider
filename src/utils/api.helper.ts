@@ -1,6 +1,6 @@
 import axios from 'axios';
 import sharetribeTokenStore from '../sharetribeTokenStore';
-import {BASE_URL, SHARETRIBE_SDK_CLIENT_ID} from '@env';
+import {BASE_URL, SHARETRIBE_SDK_CLIENT_ID, ADMIN_PANEL_URL} from '@env';
 import Decimal from 'decimal.js';
 import appSettings from '../config/settings';
 import {types as sdkTypes, transit} from './sdkLoader';
@@ -80,6 +80,54 @@ apiClient.interceptors.response.use(
       apiError.code = data?.code;
       apiError.errors = data?.errors;
       apiError.response = {data, status, headers};
+
+      return Promise.reject(apiError);
+    }
+    return Promise.reject(error);
+  },
+);
+
+// Admin Panel API Client
+export const adminApiClient = axios.create({
+  // baseURL: 'http://192.168.68.130:5378',
+  baseURL: ADMIN_PANEL_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+adminApiClient.interceptors.request.use(
+  async config => {
+    // Get the access token from Sharetribe token store
+    try {
+      const tokenData = await sharetribeTokenStore({
+        clientId: SHARETRIBE_SDK_CLIENT_ID ?? '',
+      }).getToken();
+
+      if (tokenData?.access_token) {
+        config.headers.Cookie = tokenData?.access_token;
+        config.headers.Authorization = `Bearer ${tokenData.access_token}`;
+      }
+    } catch (error) {
+      console.error('Error getting token for admin API:', error);
+    }
+
+    return config;
+  },
+  error => Promise.reject(error),
+);
+
+adminApiClient.interceptors.response.use(
+  response => {
+    return response.data;
+  },
+  error => {
+    if (error.response) {
+      const {data, status, headers} = error.response;
+
+      // Build a richer error object while preserving stack
+      const apiError = new Error(data?.message ?? 'API request failed') as any;
+      apiError.stsponse = {data, status, headers};
 
       return Promise.reject(apiError);
     }

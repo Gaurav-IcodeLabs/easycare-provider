@@ -28,4 +28,5 @@ export const SCREENS = {
   SETUP_PAYOUT: 'SetupPayout',
   ADD_SERVICE: 'AddService',
   ADD_PRODUCT: 'AddProduct',
+  MY_REQUESTS: 'MyRequests',
 } as const;

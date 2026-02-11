@@ -50,6 +50,7 @@ export type MainStackParamList = {
   [SCREENS.SETUP_PAYOUT]: undefined;
   [SCREENS.ADD_SERVICE]: undefined;
   [SCREENS.ADD_PRODUCT]: undefined;
+  [SCREENS.MY_REQUESTS]: undefined;
 };
 
 export type BottomTabParamList = {

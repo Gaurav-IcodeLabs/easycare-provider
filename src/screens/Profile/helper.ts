@@ -21,6 +21,12 @@ export const getProfileOptions = (): ProfileOption[] => [
     icon: profileMenuIcons.wallet,
     actionType: 'navigation',
   },
+  {
+    id: 'myRequests',
+    title: 'Profile.myRequests',
+    icon: profileMenuIcons.wallet,
+    actionType: 'navigation',
+  },
   // {
   //   id: 'protection',
   //   title: 'Profile.yourProtection',

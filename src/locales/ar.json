@@ -172,7 +172,8 @@
     "aboutApp": "حول التطبيق",
     "reportProblem": "الإبلاغ عن مشكلة",
     "contactUs": "اتصل بنا",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "myRequests": "طلباتي"
   },
   "BiometricSettings": {
     "title": "تسجيل الدخول بالبصمة",
@@ -638,5 +639,20 @@
     "open": "مفتوح",
     "closedToggle": "إغلاق القائمة",
     "openToggle": "فتح القائمة"
+  },
+  "MyRequests": {
+    "heading": "طلباتي",
+    "serviceTab": "الخدمات",
+    "productTab": "المنتجات",
+    "noRequests": "لا توجد طلبات",
+    "pending": "قيد الانتظار",
+    "completed": "مكتمل",
+    "approved": "موافق عليه",
+    "rejected": "مرفوض",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "titleLabel": "العنوان",
+    "createdAtLabel": "تاريخ الإنشاء",
+    "descriptionLabel": "الوصف"
   }
 }

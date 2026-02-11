@@ -24,6 +24,7 @@ import {
   phoneNumberVerifiedSelector,
 } from '../slices/user.slice';
 import {useTypedSelector} from '../sharetribeSetup';
+import MyRequests from '../screens/MyRequests/MyRequests';
 
 const {Navigator, Screen} = createNativeStackNavigator<MainStackParamList>();
 
@@ -65,6 +66,7 @@ const MainStackNavigator: React.FC = () => {
       <Screen name={SCREENS.SETUP_PAYOUT} component={SetupPayout} />
       <Screen name={SCREENS.ADD_SERVICE} component={AddServiceRequest} />
       <Screen name={SCREENS.ADD_PRODUCT} component={AddProductRequest} />
+      <Screen name={SCREENS.MY_REQUESTS} component={MyRequests} />
     </Navigator>
   );
 };
