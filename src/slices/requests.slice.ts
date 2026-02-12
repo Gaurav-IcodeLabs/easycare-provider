@@ -76,7 +76,7 @@ const requestsSlice = createSlice({
       state.fetchServiceRequestsError = null;
     });
     builder.addCase(fetchServiceRequests.fulfilled, (state, {payload}) => {
-      const {data, page, totalPages, totalCount, isLoadMore} = payload;
+      const {data, page, totalPages, totalCount, isLoadMore, limit} = payload;
 
       if (isLoadMore) {
         state.serviceRequests = [...state.serviceRequests, ...data];
@@ -86,7 +86,7 @@ const requestsSlice = createSlice({
 
       state.servicePagination = {
         page,
-        perPage: state.servicePagination.perPage,
+        perPage: limit || state.servicePagination.perPage,
         totalPages,
         totalItems: totalCount,
       };
@@ -104,7 +104,7 @@ const requestsSlice = createSlice({
       state.fetchProductRequestsError = null;
     });
     builder.addCase(fetchProductRequests.fulfilled, (state, {payload}) => {
-      const {data, page, totalPages, totalCount, isLoadMore} = payload;
+      const {data, page, totalPages, totalCount, isLoadMore, limit} = payload;
 
       if (isLoadMore) {
         state.productRequests = [...state.productRequests, ...data];
@@ -114,7 +114,7 @@ const requestsSlice = createSlice({
 
       state.productPagination = {
         page,
-        perPage: state.productPagination.perPage,
+        perPage: limit || state.productPagination.perPage,
         totalPages,
         totalItems: totalCount,
       };
@@ -148,7 +148,7 @@ export const fetchServiceRequests = createAsyncThunk<any, FetchRequestsParams>(
       );
 
       if (response?.success) {
-        return {...response, isLoadMore};
+        return {...response, isLoadMore, limit};
       } else {
         return rejectWithValue(
           response?.message || 'Failed to fetch service requests',
@@ -178,7 +178,7 @@ export const fetchProductRequests = createAsyncThunk<any, FetchRequestsParams>(
       );
 
       if (response?.success) {
-        return {...response, isLoadMore};
+        return {...response, isLoadMore, limit};
       } else {
         return rejectWithValue(
           response?.message || 'Failed to fetch product requests',

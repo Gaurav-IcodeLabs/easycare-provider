@@ -100,7 +100,7 @@ const MyRequests = () => {
     setRefreshing(false);
   }, [dispatch, currentUserId, activeTab]);
 
-  const loadMore = useCallback(() => {
+  const loadMore = () => {
     if (!currentUserId) {
       return;
     }
@@ -130,19 +130,7 @@ const MyRequests = () => {
         }),
       );
     }
-  }, [
-    dispatch,
-    currentUserId,
-    activeTab,
-    serviceLoading,
-    productLoading,
-    serviceHasMore,
-    productHasMore,
-    servicePagination.page,
-    productPagination.page,
-    serviceRequests.length,
-    productRequests.length,
-  ]);
+  };
 
   const renderRequestCard = ({item}) => {
     const isExpanded = expandedCards[item._id] || false;
@@ -345,7 +333,6 @@ const MyRequests = () => {
             />
           }
           onEndReached={currentRequests.length > 0 ? loadMore : null}
-          onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty}
         />
@@ -393,7 +380,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingHorizontal: scale(20),
-    paddingBottom: scale(20),
     gap: scale(15),
   },
   loadingContainer: {
