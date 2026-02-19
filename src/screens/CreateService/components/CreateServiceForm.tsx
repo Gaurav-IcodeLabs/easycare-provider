@@ -208,7 +208,11 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
           // Auto-set title from sub-subcategory name
           const title =
             subSubcategory.name[currentLang] || subSubcategory.name.en;
+          const description =
+            subSubcategory.description[currentLang] ||
+            subSubcategory.description.en;
           setValue('title', title);
+          setValue('description', description);
 
           // Only auto-fill price and duration if not in edit mode
           if (!initialValues) {
@@ -329,6 +333,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             multiline
             textAlignVertical={'top'}
             inputContainerStyles={styles.descriptionInputSection}
+            editable={false}
           />
 
           <TextInputField
@@ -347,7 +352,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             labelKey="CreateServiceForm.duration"
             placeholder="CreateServiceForm.durationPlaceholder"
             keyboardType="numeric"
-            editable={!isEditMode}
+            editable={false}
             inputContainerStyles={isEditMode ? styles.disabledInput : undefined}
           />
 

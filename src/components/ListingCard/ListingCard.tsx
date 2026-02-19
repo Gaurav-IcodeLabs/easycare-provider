@@ -48,12 +48,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({
     ),
   );
 
-  // console.log(
-  //   'listing?.attributes?.publicData',
-  //   JSON.stringify(listing?.attributes?.publicData),
-  // );
-  console.log('isNotDeleted:', listing?.attributes?.title, isNotDeleted);
-
   const title = listing?.attributes?.title || 'Untitled';
   const description = listing?.attributes?.description || '';
   const state = listing?.attributes?.state || '';

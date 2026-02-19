@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {StyleProp, StyleSheet, View, ViewStyle, TextStyle} from 'react-native';
 import {Control, Controller, FieldValues, Path} from 'react-hook-form';
 import {MultiSelect} from 'react-native-element-dropdown';
@@ -39,6 +39,22 @@ export const DropdownMultiSelectField = <T extends FieldValues>({
 }: DropdownMultiSelectFieldProps<T>) => {
   const {t} = useTranslation();
 
+  //becasue the library uses the label as key internally
+  const deduplicatedOptions = useMemo(
+    () =>
+      options.map((item, index, arr) => {
+        const firstIndex = arr.findIndex(o => o.label === item.label);
+        return {
+          ...item,
+          label:
+            firstIndex !== index
+              ? item.label + '\u200B'.repeat(index)
+              : item.label,
+        };
+      }),
+    [options],
+  );
+
   const label = labelKey ? t(labelKey) : undefined;
   const placeholder = placeholderKey ? t(placeholderKey) : t('Select options');
 
@@ -56,7 +72,7 @@ export const DropdownMultiSelectField = <T extends FieldValues>({
             )}
 
             <MultiSelect
-              data={options}
+              data={deduplicatedOptions}
               labelField="label"
               valueField="value"
               value={value}

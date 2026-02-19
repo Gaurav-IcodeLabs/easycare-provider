@@ -268,7 +268,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = props => {
     },
     [isValid, onSubmit, trigger],
   );
-  console.log('categoryOptions', categoryOptions);
+
   return (
     <View style={styles.wrapper}>
       <KeyboardAwareScrollView

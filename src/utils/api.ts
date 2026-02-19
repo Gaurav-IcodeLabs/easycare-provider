@@ -1,4 +1,4 @@
-import apiClient from './api.helper';
+import apiClient, {adminApiClient} from './api.helper';
 
 // Dummy GET API call
 export const getDummyData = () => apiClient.get('/dummy-endpoint');
@@ -47,3 +47,12 @@ export const linkProductToService = (data: any) =>
 
 export const updatelinkedProductToService = (data: any) =>
   apiClient.post('/api/listing/update-linked-service', data);
+
+// admin api's
+export const createSearchCoordsInDBPerListing = (data: any) =>
+  adminApiClient.post('/api/searchCollection', data);
+
+export const updateSearchCoordsInDBPerListing = (
+  data: any,
+  listingId: string,
+) => adminApiClient.patch(`/api/searchCollection/${listingId}`, data);

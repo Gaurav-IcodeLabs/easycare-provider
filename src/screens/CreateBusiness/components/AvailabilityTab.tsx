@@ -152,7 +152,12 @@ export const AvailabilityTab: FC<AvailabilityTabProps> = ({
                   ))}
                 </View>
               ) : (
-                <View style={styles.unavailableCard} />
+                <View style={styles.availableBadge}>
+                  <View style={[styles.exceptionDot, styles.unavailableDot]} />
+                  <AppText style={styles.exceptionStatus}>
+                    {t('CreateBusiness.notAvailable')}
+                  </AppText>
+                </View>
               )}
             </View>
           );
@@ -272,9 +277,6 @@ const styles = StyleSheet.create({
     fontSize: fontScale(14),
     color: colors.positiveGreen,
     ...primaryFont('400'),
-  },
-  unavailableCard: {
-    height: scale(24),
   },
   slotInfo: {
     marginTop: scale(8),

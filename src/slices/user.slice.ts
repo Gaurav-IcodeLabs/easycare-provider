@@ -300,6 +300,7 @@ export const updateOwnListing = createAsyncThunk<
 
 export const {setCurrentUser} = userSlice.actions;
 
+export const currentUserSelector = (state: RootState) => state.user.currentUser;
 export const currentUserIdSelector = (state: RootState) =>
   state.user.currentUser?.id.uuid;
 export const currentUserDisplayNameSelector = (state: RootState) =>

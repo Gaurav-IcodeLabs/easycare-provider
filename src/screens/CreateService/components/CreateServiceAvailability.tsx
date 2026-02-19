@@ -42,16 +42,6 @@ interface CreateServiceAvailabilityProps {
   };
 }
 
-const daysOfWeek = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-];
-
 export const CreateServiceAvailability: FC<CreateServiceAvailabilityProps> = ({
   onChange,
   onValidationChange,
@@ -59,48 +49,15 @@ export const CreateServiceAvailability: FC<CreateServiceAvailabilityProps> = ({
 }) => {
   const {t} = useTranslation();
 
-  const defaultSchedule = daysOfWeek.reduce((acc, day) => {
-    acc[day] = {
-      enabled: true,
-      slots: [{startTime: '09:00', endTime: '17:00', seats: 1}],
-    };
-    return acc;
-  }, {} as WeeklySchedule);
-
-  const [weeklySchedule, setWeeklySchedule] =
-    useState<WeeklySchedule>(defaultSchedule);
-  const [exceptions, setExceptions] = useState<AvailabilityException[]>([]);
-  const [timezone, setTimezone] = useState('Asia/Riyadh');
-
-  // Track if we've initialized from props
-  const [initialized, setInitialized] = React.useState(false);
-
-  React.useEffect(() => {
-    console.log('📅 Service Availability initialValues:', initialValues);
-
-    if (initialValues && !initialized) {
-      console.log(
-        '🔄 Setting service availability from initial values (first time)',
-      );
-      if (initialValues.weeklySchedule) {
-        console.log(
-          '  - Setting weeklySchedule:',
-          initialValues.weeklySchedule,
-        );
-        setWeeklySchedule(initialValues.weeklySchedule);
-      }
-      if (initialValues.exceptions) {
-        console.log('  - Setting exceptions:', initialValues.exceptions);
-        console.log('  - Exceptions count:', initialValues.exceptions.length);
-        setExceptions(initialValues.exceptions);
-      }
-      if (initialValues.timezone) {
-        console.log('  - Setting timezone:', initialValues.timezone);
-        setTimezone(initialValues.timezone);
-      }
-      setInitialized(true);
-    }
-  }, [initialValues, initialized]);
+  const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule>(
+    initialValues?.weeklySchedule || {},
+  );
+  const [exceptions, setExceptions] = useState<AvailabilityException[]>(
+    initialValues?.exceptions || [],
+  );
+  const [timezone, setTimezone] = useState<string>(
+    initialValues?.timezone || 'Asia/Riyadh',
+  );
 
   const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const [showAddExceptionModal, setShowAddExceptionModal] = useState(false);
@@ -115,7 +72,6 @@ export const CreateServiceAvailability: FC<CreateServiceAvailabilityProps> = ({
     }
   }, [weeklySchedule, exceptions, timezone, onChange]);
 
-  // Validate step two - at least one day should be enabled with valid slots
   React.useEffect(() => {
     if (onValidationChange) {
       const hasEnabledDay = Object.values(weeklySchedule).some(
@@ -138,34 +94,18 @@ export const CreateServiceAvailability: FC<CreateServiceAvailabilityProps> = ({
     endDate: string;
     available: boolean;
   }) => {
-    try {
-      console.log('➕ Adding service exception:', exception);
-
-      if (!exception.startDate || !exception.endDate) {
-        console.error('❌ Invalid exception: missing dates');
-        return;
-      }
-
-      const newException: AvailabilityException = {
-        id: Date.now().toString(),
-        startDate: exception.startDate,
-        endDate: exception.endDate,
-        available: exception.available,
-      };
-      console.log('➕ New service exception with ID:', newException);
-
-      const updatedExceptions = [...exceptions, newException];
-      console.log('➕ Updated service exceptions list:', updatedExceptions);
-      console.log(
-        '➕ Updated service exceptions count:',
-        updatedExceptions.length,
-      );
-
-      setExceptions(updatedExceptions);
-      console.log('✅ Service exception added successfully');
-    } catch (error) {
-      console.error('❌ Error adding service exception:', error);
+    if (!exception.startDate || !exception.endDate) {
+      return;
     }
+
+    const newException: AvailabilityException = {
+      id: Date.now().toString(),
+      startDate: exception.startDate,
+      endDate: exception.endDate,
+      available: exception.available,
+    };
+
+    setExceptions([...exceptions, newException]);
   };
 
   return (

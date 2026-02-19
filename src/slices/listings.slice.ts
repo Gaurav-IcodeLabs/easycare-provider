@@ -4,6 +4,7 @@ import {RootState} from '../sharetribeSetup';
 import {storableError} from '../utils';
 import {addMarketplaceEntities} from './marketplaceData.slice';
 import {ListingState} from '../apptypes/interfaces/listing';
+import {updateSearchCoordsInDBPerListing} from '../utils/api';
 
 interface PaginationMeta {
   page: number;
@@ -152,6 +153,7 @@ export const closeOwnListing = createAsyncThunk<any, CloseListingParams, Thunk>(
     try {
       const response = await sdk.ownListings.close({id}, {expand: true});
       dispatch(addMarketplaceEntities({sdkResponse: response}));
+      await updateSearchCoordsInDBPerListing({active: false}, id.uuid);
       return response;
     } catch (error) {
       console.error('Error in closeOwnListing', error);
@@ -166,6 +168,7 @@ export const openOwnListing = createAsyncThunk<any, CloseListingParams, Thunk>(
     try {
       const response = await sdk.ownListings.open({id}, {expand: true});
       dispatch(addMarketplaceEntities({sdkResponse: response}));
+      await updateSearchCoordsInDBPerListing({active: true}, id.uuid);
       return response;
     } catch (error) {
       console.error('Error in openOwnListing', error);

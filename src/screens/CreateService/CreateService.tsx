@@ -121,7 +121,6 @@ export const CreateService: FC = () => {
   // Cleanup effect to reset slice on unmount
   useEffect(() => {
     return () => {
-      console.log('🧹 Cleaning up CreateService slice on unmount');
       dispatch(resetCreateService());
     };
   }, [dispatch]);
@@ -139,18 +138,12 @@ export const CreateService: FC = () => {
 
       // Also fetch availability data if we have a listing ID
       if (listingId) {
-        console.log('📅 Loading availability data alongside listing data');
         try {
           const fetchedAvailabilityData = await dispatch(
             fetchServiceAvailability({
               listingId: new sdkTypes.UUID(listingId),
             }),
           ).unwrap();
-
-          console.log(
-            '📅 Received availability data:',
-            fetchedAvailabilityData,
-          );
 
           // Convert to UI format
           let weeklySchedule = null;
@@ -188,15 +181,7 @@ export const CreateService: FC = () => {
             timezone,
             exceptions,
           };
-
-          console.log(
-            '✅ Availability data loaded and merged with initial values',
-          );
         } catch (availabilityError) {
-          console.error(
-            '❌ Error loading availability data:',
-            availabilityError,
-          );
           // Don't fail the entire operation if availability loading fails
           // Set default availability values
           combinedInitialValues = {
@@ -211,32 +196,27 @@ export const CreateService: FC = () => {
       // Set the combined initial values
       setInitialValues(combinedInitialValues);
     } catch (error) {
-      console.error('Error fetching listing:', error);
     } finally {
       setIsInitialLoading(false);
     }
   };
 
   const handleStepOneChange = React.useCallback((values: FormValues) => {
-    console.log('📝 StepOne changed:', values);
     stepOneDataRef.current = values;
     // Note: Redux state will be updated on submit, not on every change
   }, []);
 
   const handleStepTwoChange = React.useCallback((values: FormValues) => {
-    console.log('📝 StepTwo changed:', values);
     stepTwoDataRef.current = values;
     // Note: Redux state will be updated on submit, not on every change
   }, []);
 
   const handleStepOneValidation = React.useCallback((isValid: boolean) => {
-    console.log('✅ StepOne validation:', isValid);
     stepOneValidRef.current = isValid;
     setIsStepOneValid(isValid);
   }, []);
 
   const handleStepTwoValidation = React.useCallback((isValid: boolean) => {
-    console.log('✅ StepTwo validation:', isValid);
     stepTwoValidRef.current = isValid;
     setIsStepTwoValid(isValid);
   }, []);
@@ -244,8 +224,6 @@ export const CreateService: FC = () => {
   // Initialize refs with existing data when it loads
   useEffect(() => {
     if (initialValues && isEditMode) {
-      console.log('🔄 Initializing refs with existing data');
-
       // Initialize stepOne ref
       if (!stepOneDataRef.current) {
         stepOneDataRef.current = {
@@ -260,17 +238,15 @@ export const CreateService: FC = () => {
           customAttributes: initialValues.customAttributes,
           // images: initialValues.images,
         };
-        console.log('✅ StepOne ref initialized');
       }
-
-      // Initialize stepTwo ref
+      // && initialValues.weeklySchedule
+      // Initialize stepTwo ref - only in edit mode with actual data
       if (!stepTwoDataRef.current) {
         stepTwoDataRef.current = {
           weeklySchedule: initialValues.weeklySchedule,
           timezone: initialValues.timezone,
           exceptions: initialValues.exceptions || [],
         };
-        console.log('✅ StepTwo ref initialized');
       }
     }
   }, [initialValues, isEditMode]);
@@ -282,11 +258,7 @@ export const CreateService: FC = () => {
     try {
       setLoading(true);
 
-      console.log('📝 Step 2 Submit - Availability:', stepTwoDataRef.current);
-
-      // Validate step two form has data
       if (!stepTwoDataRef.current) {
-        console.error('❌ Missing step two data');
         showToast({
           type: 'error',
           title: t('CreateService.error'),
@@ -296,9 +268,7 @@ export const CreateService: FC = () => {
         return;
       }
 
-      // Validate we have a listing ID
       if (!listingId) {
-        console.error('❌ Missing listing ID for availability update');
         showToast({
           type: 'error',
           title: t('CreateService.error'),
@@ -320,29 +290,22 @@ export const CreateService: FC = () => {
       const validExceptions = (stepTwoFormData.exceptions || []).filter(
         (ex: any) => {
           if (!ex.startDate || !ex.endDate) {
-            console.warn('⚠️ Skipping invalid exception (missing dates):', ex);
             return false;
           }
           const startDate = new Date(ex.startDate);
           const endDate = new Date(ex.endDate);
           if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            console.warn('⚠️ Skipping invalid exception (invalid dates):', ex);
             return false;
           }
           if (startDate > endDate) {
-            console.warn('⚠️ Skipping invalid exception (start > end):', ex);
             return false;
           }
           return true;
         },
       );
 
-      // Convert exceptions to Sharetribe format
       const convertedExceptions = validExceptions.map((ex: any) => {
-        console.log('🔄 Converting exception:', ex);
-        const converted = convertToSharetribeException(ex, listingId);
-        console.log('✅ Converted to:', converted);
-        return converted;
+        return convertToSharetribeException(ex, listingId);
       });
 
       // Update service availability
@@ -368,7 +331,6 @@ export const CreateService: FC = () => {
         setShowModal(true);
       }
     } catch (error: any) {
-      console.error('❌ Error in step 2 submit:', error);
       showToast({
         type: 'error',
         title: t('CreateService.error'),
@@ -383,14 +345,7 @@ export const CreateService: FC = () => {
     try {
       setLoading(true);
 
-      console.log(
-        '📝 Step 1 Submit - Service details:',
-        stepOneDataRef.current,
-      );
-
-      // Validate step one form has data
       if (!stepOneDataRef.current) {
-        console.error('❌ Missing step one data');
         showToast({
           type: 'error',
           title: t('CreateService.error'),
@@ -445,11 +400,7 @@ export const CreateService: FC = () => {
           requestCreateService(serviceRequestData),
         ).unwrap();
 
-        // Store the new listing ID for step 2
         const newListingId = result.data.id.uuid;
-        console.log('✅ Service created with ID:', newListingId);
-
-        // Update the listingId for step 2
         setCreatedListingId(newListingId);
 
         showToast({
@@ -466,7 +417,6 @@ export const CreateService: FC = () => {
         animated: true,
       });
     } catch (error: any) {
-      console.error('❌ Error in step 1 submit:', error);
       showToast({
         type: 'error',
         title: t('CreateService.error'),

@@ -10,6 +10,66 @@ import {
 } from '../apptypes/interfaces/listing';
 import {addMarketplaceEntities} from './marketplaceData.slice';
 import {denormalisedResponseEntities} from '../utils/data';
+import {createSearchCoordsInDBPerListing} from '../utils/api';
+import {currentUserSelector} from './user.slice';
+
+// Helper function to build search indexing payload
+const buildSearchIndexingPayload = (
+  listingId: string,
+  categoryId: string,
+  subcategoryId: string,
+  subsubcategoryId: string,
+  currentUser: any,
+) => ({
+  listingId,
+  businessProfileId:
+    currentUser?.attributes.profile.publicData.businessListingId,
+  providerId: currentUser?.id.uuid,
+  categoryId,
+  subcategoryId,
+  subSubcategoryId: subsubcategoryId,
+  radius: currentUser?.attributes.profile.publicData.serviceRadius,
+  active: true,
+});
+
+// Helper function to update search indexing (with retry logic)
+const updateSearchIndexing = async (
+  listingId: string,
+  categoryId: string,
+  subcategoryId: string,
+  subsubcategoryId: string,
+  currentUser: any,
+  retries = 2,
+): Promise<void> => {
+  const payload = buildSearchIndexingPayload(
+    listingId,
+    categoryId,
+    subcategoryId,
+    subsubcategoryId,
+    currentUser,
+  );
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      await createSearchCoordsInDBPerListing(payload);
+      return; // Success
+    } catch (error: any) {
+      const isLastAttempt = attempt === retries;
+
+      if (isLastAttempt) {
+        // On final failure, throw error with context
+        throw new Error(
+          `Failed to index listing for search after ${retries + 1} attempts: ${
+            error?.message || 'Unknown error'
+          }`,
+        );
+      }
+
+      // Wait before retry (exponential backoff: 500ms, 1000ms)
+      await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+    }
+  }
+};
 
 interface ServiceImage {
   id: string;
@@ -81,7 +141,7 @@ const initialState: CreateServiceState = {
 // Create service thunk
 export const requestCreateService = createAsyncThunk<any, any, Thunk>(
   'createService/requestCreateServiceStatus',
-  async (serviceData, {rejectWithValue, dispatch, extra: sdk}) => {
+  async (serviceData, {rejectWithValue, dispatch, extra: sdk, getState}) => {
     try {
       const {
         categoryId,
@@ -175,6 +235,19 @@ export const requestCreateService = createAsyncThunk<any, any, Thunk>(
       };
 
       const response = await sdk.ownListings.create(createParams);
+
+      const currentUser = currentUserSelector(getState());
+      const listingId = response.data.data.id.uuid;
+
+      // Update search indexing - CRITICAL for listing discoverability
+      // Wait for this to complete before proceeding
+      await updateSearchIndexing(
+        listingId,
+        categoryId,
+        subcategoryId,
+        subsubcategoryId,
+        currentUser,
+      );
 
       // Add the newly created listing to Redux store
       dispatch(addMarketplaceEntities({sdkResponse: response}));

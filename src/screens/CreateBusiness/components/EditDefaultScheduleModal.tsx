@@ -90,7 +90,8 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
       ...prev,
       [day]: {
         ...prev[day],
-        enabled: !prev[day].enabled,
+        enabled: !prev[day]?.enabled,
+        slots: [{startTime: '09:00', endTime: '17:00', seats: 1}],
       },
     }));
   };
@@ -101,7 +102,7 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
     let defaultStart = '09:00';
     let defaultEnd = '10:00';
 
-    if (existingSlots.length > 0) {
+    if (existingSlots?.length > 0) {
       const lastSlot = existingSlots[existingSlots.length - 1];
       defaultStart = lastSlot.endTime;
       // Add 1 hour to end time
@@ -203,7 +204,7 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
       }
 
       const slots = localSchedule[day].slots;
-      for (let i = 0; i < slots.length; i++) {
+      for (let i = 0; i < slots?.length; i++) {
         for (let j = i + 1; j < slots.length; j++) {
           const slot1 = slots[i];
           const slot2 = slots[j];
@@ -310,7 +311,7 @@ export const EditDefaultScheduleModal: FC<EditDefaultScheduleModalProps> = ({
 
                   {localSchedule[day]?.enabled && (
                     <View style={styles.slotsContainer}>
-                      {localSchedule[day].slots.map((slot, index) => (
+                      {localSchedule[day].slots?.map?.((slot, index) => (
                         <View key={index} style={styles.slotRow}>
                           <View style={styles.timeInputs}>
                             <View style={styles.timeField}>
