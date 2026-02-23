@@ -25,6 +25,8 @@ import PhoneInput from 'react-native-phone-number-input';
 import {useForm, Controller} from 'react-hook-form';
 import {checkPhoneNumberExists, sendOTP, verifyOTP} from '../../utils/api';
 import {useNavigation} from '@react-navigation/native';
+import {logout, logoutInProgressSelector} from '../../slices/auth.slice';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type PhoneFormValues = {
   phoneNumber: string;
@@ -33,10 +35,12 @@ type PhoneFormValues = {
 export const VerifyOtp: React.FC = () => {
   const {t} = useTranslation();
   const {showToast} = useToast();
+  const {bottom} = useSafeAreaInsets();
   const {isArabic} = useLanguage();
   const currentUserPhoneNumber = useTypedSelector(
     currentUserPhoneNumberSelector,
   );
+  const logoutInProcess = useTypedSelector(logoutInProgressSelector);
 
   // OTP State
   const [otp, setOtp] = useState('');
@@ -158,6 +162,7 @@ export const VerifyOtp: React.FC = () => {
     const fullNumber =
       phoneInputRef.current.getNumberAfterPossiblyEliminatingZero();
     console.log('fullNumber', fullNumber);
+
     setIsSendingOtp(true);
     try {
       const {phoneNumberExists} = await checkPhoneNumberExists({
@@ -194,6 +199,10 @@ export const VerifyOtp: React.FC = () => {
     } finally {
       setIsSendingOtp(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await dispatch(logout());
   };
 
   const renderOtpVerification = () => (
@@ -275,105 +284,118 @@ export const VerifyOtp: React.FC = () => {
   );
 
   const renderPhoneNumberCapture = () => (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.screenContainer}>
-          <View style={styles.contentWrapper}>
-            <View style={styles.cardContent}>
-              <Image style={styles.illustration} source={phoneVerification} />
-              <AppText style={styles.heading}>
-                {t('Signin.noPhoneHeading')}
-              </AppText>
-              <AppText style={styles.description}>
-                {t('Signin.noPhoneMessage')}
-              </AppText>
+    <>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.screenContainer}>
+            <View style={styles.contentWrapper}>
+              <View style={styles.cardContent}>
+                <Image style={styles.illustration} source={phoneVerification} />
+                <AppText style={styles.heading}>
+                  {t('Signin.noPhoneHeading')}
+                </AppText>
+                <AppText style={styles.description}>
+                  {t('Signin.noPhoneMessage')}
+                </AppText>
 
-              <View style={styles.phoneInputSpacing}>
-                <Controller
-                  control={control}
-                  name="phoneNumber"
-                  rules={{
-                    required: t('Signup.phoneRequired'),
-                    validate: () => {
-                      if (!phoneInputRef.current) {
-                        return true;
-                      }
-                      const valid =
-                        phoneInputRef.current.isValidNumber(formattedValue);
-                      return valid || t('Signup.invalidPhoneNumber');
-                    },
-                  }}
-                  render={({field: {onChange}}) => (
-                    <>
-                      <PhoneInput
-                        ref={phoneInputRef}
-                        defaultCode="IN"
-                        layout="second"
-                        value={formattedValue}
-                        onChangeFormattedText={text => {
-                          setFormattedValue(text);
-                          onChange(text);
-                          trigger('phoneNumber');
-                        }}
-                        onChangeText={() => {
-                          console.log('change');
-                          trigger('phoneNumber');
-                        }}
-                        onChangeCountry={() => trigger('phoneNumber')}
-                        containerStyle={[
-                          styles.phoneContainer,
-                          styles.inputStyles,
-                          isPhoneFocused && styles.phoneFocused,
-                          errors.phoneNumber && styles.phoneError,
-                        ]}
-                        textContainerStyle={styles.phoneTextContainer}
-                        textInputStyle={getInputStyle(isArabic)}
-                        codeTextStyle={styles.phoneCodeText}
-                        flagButtonStyle={styles.phoneFlagButton}
-                        countryPickerButtonStyle={
-                          styles.phoneCountryPickerButton
+                <View style={styles.phoneInputSpacing}>
+                  <Controller
+                    control={control}
+                    name="phoneNumber"
+                    rules={{
+                      required: t('Signup.phoneNumberIsRequired'),
+                      validate: () => {
+                        if (!phoneInputRef.current) {
+                          return true;
                         }
-                        disableArrowIcon
-                        textInputProps={{
-                          onFocus: () => setIsPhoneFocused(true),
-                          onBlur: () => {
-                            setIsPhoneFocused(false);
+                        const valid =
+                          phoneInputRef.current.isValidNumber(formattedValue);
+                        return valid || t('Signup.invalidPhoneNumber');
+                      },
+                    }}
+                    render={({field: {onChange}}) => (
+                      <>
+                        <PhoneInput
+                          ref={phoneInputRef}
+                          defaultCode="SA"
+                          layout="second"
+                          value={formattedValue}
+                          onChangeFormattedText={text => {
+                            setFormattedValue(text);
+                            onChange(text);
                             trigger('phoneNumber');
-                          },
-                          placeholderTextColor:
-                            colors.placeholder || colors.neutralDark,
-                          allowFontScaling: false,
-                        }}
-                      />
-                      {errors.phoneNumber && (
-                        <ErrorMessage
-                          error={
-                            errors.phoneNumber.message ||
-                            t('Signup.invalidPhoneNumber')
+                          }}
+                          onChangeText={() => {
+                            console.log('change');
+                            trigger('phoneNumber');
+                          }}
+                          onChangeCountry={() => trigger('phoneNumber')}
+                          containerStyle={[
+                            styles.phoneContainer,
+                            styles.inputStyles,
+                            isPhoneFocused && styles.phoneFocused,
+                            errors.phoneNumber && styles.phoneError,
+                          ]}
+                          textContainerStyle={styles.phoneTextContainer}
+                          textInputStyle={getInputStyle(isArabic)}
+                          codeTextStyle={styles.phoneCodeText}
+                          flagButtonStyle={styles.phoneFlagButton}
+                          countryPickerButtonStyle={
+                            styles.phoneCountryPickerButton
                           }
+                          disableArrowIcon
+                          textInputProps={{
+                            onFocus: () => setIsPhoneFocused(true),
+                            onBlur: () => {
+                              setIsPhoneFocused(false);
+                              trigger('phoneNumber');
+                            },
+                            placeholderTextColor:
+                              colors.placeholder || colors.neutralDark,
+                            allowFontScaling: false,
+                          }}
                         />
-                      )}
-                    </>
-                  )}
+                        {errors.phoneNumber && (
+                          <ErrorMessage
+                            error={
+                              errors.phoneNumber.message ||
+                              t('Signup.invalidPhoneNumber')
+                            }
+                          />
+                        )}
+                      </>
+                    )}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.footer}>
+                <Button
+                  title={t('Signin.savePhoneButton')}
+                  style={styles.button}
+                  disabled={!isValid || isSendingOtp}
+                  onPress={handleSubmit(handlePhoneSubmit)}
+                  loader={isSendingOtp}
                 />
               </View>
             </View>
-
-            <View style={styles.footer}>
-              <Button
-                title={t('Signin.savePhoneButton')}
-                style={styles.button}
-                disabled={!isValid || isSendingOtp}
-                onPress={handleSubmit(handlePhoneSubmit)}
-                loader={isSendingOtp}
-              />
-            </View>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+      <View style={[styles.stickyButtonContainer, {paddingBottom: bottom}]}>
+        <Button
+          title={t('Signin.cancelAndLogout')}
+          titleStyle={{color: colors.textBlack}}
+          style={styles.logoutBtn}
+          disabled={isSendingOtp || logoutInProcess}
+          onPress={handleLogout}
+          loader={logoutInProcess}
+          loaderColor={colors.textBlack}
+        />
+      </View>
+    </>
   );
 
   const getInputStyle = (isRTL: boolean): any => [
@@ -495,4 +517,17 @@ const styles = StyleSheet.create({
   },
   phoneFlagButton: {transform: [{scale: 0.8}]},
   phoneCountryPickerButton: {alignItems: 'center', justifyContent: 'center'},
+  stickyButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingTop: scale(16),
+    paddingHorizontal: scale(20),
+  },
+  logoutBtn: {
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    backgroundColor: colors.white,
+  },
 });

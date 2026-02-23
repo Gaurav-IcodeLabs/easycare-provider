@@ -6,7 +6,7 @@ type TranslationTS = TFunction<'translation', undefined>;
 export interface SignupFormValues {
   firstName: string;
   lastName: string;
-  fullName: string;
+  // fullName: string;
   email: string;
   phoneNumber: string;
   password: string;

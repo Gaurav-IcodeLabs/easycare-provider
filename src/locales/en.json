@@ -104,7 +104,8 @@
     "otpResent": "Code Resent",
     "otpResentMessage": "A new verification code has been sent",
     "resendError": "Failed to resend code. Please try again.",
-    "sending": "Sending..."
+    "sending": "Sending...",
+    "cancelAndLogout": "Cancel & Logout"
   },
   "Signup": {
     "heading": "Create New Account",
