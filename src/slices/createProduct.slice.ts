@@ -289,13 +289,13 @@ export const requestCreateProduct = createAsyncThunk<any, any, Thunk>(
 
       // Update search indexing - CRITICAL for listing discoverability
       // Wait for this to complete before proceeding
-      await updateSearchIndexing(
-        listingId.uuid,
-        categoryId,
-        subcategoryId,
-        subsubcategoryId,
-        currentUser,
-      );
+      // await updateSearchIndexing(
+      //   listingId.uuid,
+      //   categoryId,
+      //   subcategoryId,
+      //   subsubcategoryId,
+      //   currentUser,
+      // );
 
       return response.data;
     } catch (error: any) {
