@@ -205,6 +205,18 @@ export const VerifyOtp: React.FC = () => {
     await dispatch(logout());
   };
 
+  const handleUseDifferentNumber = () => {
+    dispatch(
+      updateCurrentUser({
+        protectedData: {
+          phoneNumber: undefined,
+        },
+      }),
+    );
+    setOtp('');
+    setSeconds(30);
+  };
+
   const renderOtpVerification = () => (
     <KeyboardAvoidingView
       style={styles.flex}
@@ -275,6 +287,14 @@ export const VerifyOtp: React.FC = () => {
                     </AppText>
                   )}
                 </View>
+
+                <TouchableOpacity
+                  onPress={handleUseDifferentNumber}
+                  style={styles.differentNumberButton}>
+                  <AppText style={styles.differentNumberText}>
+                    {t('Signin.useDifferentNumber')}
+                  </AppText>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -379,22 +399,22 @@ export const VerifyOtp: React.FC = () => {
                   onPress={handleSubmit(handlePhoneSubmit)}
                   loader={isSendingOtp}
                 />
+
+                <TouchableOpacity
+                  onPress={handleLogout}
+                  disabled={isSendingOtp || logoutInProcess}
+                  style={styles.logoutTextButton}>
+                  <AppText style={styles.logoutText}>
+                    {logoutInProcess
+                      ? t('Signin.loggingOut')
+                      : t('Signin.cancelAndLogout')}
+                  </AppText>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-      <View style={[styles.stickyButtonContainer, {paddingBottom: bottom}]}>
-        <Button
-          title={t('Signin.cancelAndLogout')}
-          titleStyle={{color: colors.textBlack}}
-          style={styles.logoutBtn}
-          disabled={isSendingOtp || logoutInProcess}
-          onPress={handleLogout}
-          loader={logoutInProcess}
-          loaderColor={colors.textBlack}
-        />
-      </View>
     </>
   );
 
@@ -486,6 +506,17 @@ const styles = StyleSheet.create({
   timerContainerRTL: {flexDirection: 'row-reverse'},
   timerText: {color: colors.neutralDark},
   resendDisabled: {opacity: 0.6},
+  differentNumberButton: {
+    marginTop: scale(12),
+    paddingVertical: scale(8),
+  },
+  differentNumberText: {
+    textAlign: 'center',
+    ...primaryFont('500'),
+    fontSize: fontScale(14),
+    color: colors.neutralDark,
+    textDecorationLine: 'underline',
+  },
   phoneInputSpacing: {marginTop: scale(24)},
   footer: {marginTop: scale(16)},
   inputStyles: {borderRadius: scale(12), height: scale(56)},
@@ -517,17 +548,15 @@ const styles = StyleSheet.create({
   },
   phoneFlagButton: {transform: [{scale: 0.8}]},
   phoneCountryPickerButton: {alignItems: 'center', justifyContent: 'center'},
-  stickyButtonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingTop: scale(16),
-    paddingHorizontal: scale(20),
+  logoutTextButton: {
+    marginTop: scale(16),
+    paddingVertical: scale(12),
+    alignItems: 'center',
   },
-  logoutBtn: {
-    borderWidth: 1,
-    borderColor: colors.lightGray,
-    backgroundColor: colors.white,
+  logoutText: {
+    textAlign: 'center',
+    ...primaryFont('500'),
+    fontSize: fontScale(15),
+    color: colors.neutralDark,
   },
 });

@@ -105,7 +105,10 @@
     "otpResentMessage": "A new verification code has been sent",
     "resendError": "Failed to resend code. Please try again.",
     "sending": "Sending...",
-    "cancelAndLogout": "Cancel & Logout"
+    "cancelAndLogout": "Cancel & Logout",
+    "loggingOut": "Logging out...",
+    "useDifferentNumber": "Use a different number",
+    "phoneAlreadyExists": "This phone number is already registered"
   },
   "Signup": {
     "heading": "Create New Account",

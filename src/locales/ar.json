@@ -105,7 +105,10 @@
     "otpResentMessage": "تم إرسال رمز تحقق جديد",
     "resendError": "فشل إعادة إرسال الرمز. يرجى المحاولة مرة أخرى.",
     "sending": "جاري الإرسال...",
-    "cancelAndLogout": "إلغاء وتسجيل الخروج"
+    "cancelAndLogout": "إلغاء وتسجيل الخروج",
+    "loggingOut": "جاري تسجيل الخروج...",
+    "useDifferentNumber": "استخدام رقم مختلف",
+    "phoneAlreadyExists": "رقم الهاتف هذا مسجل بالفعل"
   },
   "Signup": {
     "heading": "إنشاء حساب جديد",
