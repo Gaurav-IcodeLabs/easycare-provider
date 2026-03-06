@@ -27,6 +27,7 @@ import {
 } from './src/slices/marketplaceData.slice';
 import {Settings} from 'react-native-fbsdk-next';
 import {authInfo} from './src/slices/auth.slice';
+import {getLocalizedTextFromAdminPanel} from './src/utils/api';
 
 function App(): React.JSX.Element {
   const [isReady, setIsReady] = useState(false);
@@ -54,6 +55,22 @@ function App(): React.JSX.Element {
         store.dispatch(fetchServicesConfig()).unwrap(),
         store.dispatch(fetchProductsConfig()).unwrap(),
       ]);
+
+      // Fetch and apply translations from admin panel
+      try {
+        const translationsResponse = await getLocalizedTextFromAdminPanel();
+        console.log('translationsResponse', translationsResponse);
+        const {en, ar} = translationsResponse ?? {};
+
+        if (en) {
+          i18n.addResourceBundle('en', 'translation', en, true, true);
+        }
+        if (ar) {
+          i18n.addResourceBundle('ar', 'translation', ar, true, true);
+        }
+      } catch (error) {
+        console.error('Failed to load translations from admin panel:', error);
+      }
       // Add other async initializations here:
       // - Load fonts
       // - Preload critical data

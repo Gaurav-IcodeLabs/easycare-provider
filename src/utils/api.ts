@@ -56,3 +56,6 @@ export const updateSearchCoordsInDBPerListing = (
   data: any,
   listingId: string,
 ) => adminApiClient.patch(`/api/searchCollection/${listingId}`, data);
+
+export const getLocalizedTextFromAdminPanel = () =>
+  adminApiClient.get('/api/localization/provider');
