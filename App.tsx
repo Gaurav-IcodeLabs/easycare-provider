@@ -28,6 +28,10 @@ import {
 import {Settings} from 'react-native-fbsdk-next';
 import {authInfo} from './src/slices/auth.slice';
 import {getLocalizedTextFromAdminPanel} from './src/utils/api';
+import {
+  initializeOneSignal,
+  setupOneSignalListeners,
+} from './src/utils/oneSignal.helpers';
 
 function App(): React.JSX.Element {
   const [isReady, setIsReady] = useState(false);
@@ -90,6 +94,10 @@ function App(): React.JSX.Element {
 
     // Initialize Facebook SDK
     Settings.initializeSDK();
+
+    // Initialize OneSignal
+    initializeOneSignal();
+    setupOneSignalListeners();
   }, [initializeApp]);
 
   // Optional: Show a minimal loading screen instead of empty fragment

@@ -14,6 +14,7 @@ import {EmailVerificationModal} from '../components';
 import {handleDeepLinkUrl} from '../utils/deepLinkHandler';
 import {useStatusBar} from '../hooks/useStatusBar';
 import {types as sdkTypes} from '../utils/sdkLoader';
+import {setOneSignalUserId} from '../utils';
 
 export const navigationRef = createNavigationContainerRef();
 
@@ -29,6 +30,8 @@ const RootNavigator = () => {
       dispatch(fetchCurrentUser({}))
         .unwrap()
         .then(user => {
+          const userId = user?.id.uuid ?? '';
+          setOneSignalUserId(userId);
           const existingBusinessId =
             user?.attributes?.profile?.publicData?.businessListingId;
           if (existingBusinessId) {

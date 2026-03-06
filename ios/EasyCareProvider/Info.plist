@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -49,18 +51,16 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>
 	<string>1014620760866445</string>
 	<key>FacebookClientToken</key>
 	<string>1e0914eb184e0d68b2d4a90e5a86f547</string>
 	<key>FacebookDisplayName</key>
 	<string>EasyCare</string>
-	<key>CFBundleAllowMixedLocalizations</key>
-	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>easycareprovider</string>
@@ -78,6 +78,8 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app does not access your music library.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to camera to click pictures for uploading images</string>
 	<key>NSFaceIDUsageDescription</key>
@@ -90,8 +92,6 @@
 	<string>This app needs access to save images to your photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to photo library to select and upload images</string>
-	<key>NSAppleMusicUsageDescription</key>
-    <string>This app does not access your music library.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Arimo-Bold.ttf</string>
@@ -106,6 +106,10 @@
 		<string>Ubuntu-Light.ttf</string>
 		<string>Ubuntu-Medium.ttf</string>
 		<string>Ubuntu-Regular.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
