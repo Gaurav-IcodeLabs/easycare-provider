@@ -95,9 +95,19 @@ function App(): React.JSX.Element {
     // Initialize Facebook SDK
     Settings.initializeSDK();
 
-    // Initialize OneSignal
+    // Initialize OneSignal after a delay to ensure native initialization is complete
+    // This is especially important on Android where OneSignal is initialized natively
     initializeOneSignal();
-    setupOneSignalListeners();
+    const oneSignalTimer = setTimeout(() => {
+      try {
+        // Set up listeners after initialization
+        setupOneSignalListeners();
+      } catch (error) {
+        console.error('❌ OneSignal initialization failed:', error);
+      }
+    }, 500);
+
+    return () => clearTimeout(oneSignalTimer);
   }, [initializeApp]);
 
   // Optional: Show a minimal loading screen instead of empty fragment

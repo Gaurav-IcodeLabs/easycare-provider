@@ -9,6 +9,8 @@ import {ONESIGNAL_APP_ID} from '@env';
 
 /**
  * Initialize OneSignal with app ID
+ * Note: On Android, OneSignal is initialized natively in MainApplication.kt
+ * This function handles iOS initialization and permission requests
  */
 export const initializeOneSignal = () => {
   if (!ONESIGNAL_APP_ID) {
@@ -16,8 +18,10 @@ export const initializeOneSignal = () => {
     return;
   }
 
-  // Initialize OneSignal
+  // Initialize OneSignal (iOS only, Android is initialized natively)
+  // if (Platform.OS === 'ios') {
   OneSignal.initialize(ONESIGNAL_APP_ID);
+  // }
 
   // Request notification permissions (iOS)
   OneSignal.Notifications.requestPermission(true);
@@ -27,49 +31,54 @@ export const initializeOneSignal = () => {
 
 /**
  * Set up OneSignal notification listeners
+ * Note: This should be called after OneSignal is fully initialized
  */
 export const setupOneSignalListeners = () => {
-  // Notification received listener (foreground)
-  OneSignal.Notifications.addEventListener(
-    'foregroundWillDisplay',
-    (event: NotificationWillDisplayEvent) => {
-      console.log('📩 Notification received in foreground:', event);
+  try {
+    // Notification received listener (foreground)
+    OneSignal.Notifications.addEventListener(
+      'foregroundWillDisplay',
+      (event: NotificationWillDisplayEvent) => {
+        console.log('📩 Notification received in foreground:', event);
 
-      // You can prevent the notification from displaying
-      // event.preventDefault();
+        // You can prevent the notification from displaying
+        // event.preventDefault();
 
-      // Or modify the notification before displaying
-      const notification = event.getNotification();
-      console.log('Notification data:', notification);
-    },
-  );
+        // Or modify the notification before displaying
+        const notification = event.getNotification();
+        console.log('Notification data:', notification);
+      },
+    );
 
-  // Notification clicked listener
-  OneSignal.Notifications.addEventListener(
-    'click',
-    (event: NotificationClickEvent) => {
-      console.log('🔔 Notification clicked:', event);
+    // Notification clicked listener
+    OneSignal.Notifications.addEventListener(
+      'click',
+      (event: NotificationClickEvent) => {
+        console.log('🔔 Notification clicked:', event);
 
-      const notification = event.notification;
-      const actionId = event.result?.actionId;
+        const notification = event.notification;
+        const actionId = event.result?.actionId;
 
-      console.log('Notification data:', notification);
-      console.log('Action ID:', actionId);
+        console.log('Notification data:', notification);
+        console.log('Action ID:', actionId);
 
-      // Handle navigation based on notification data
-      handleNotificationClick(notification);
-    },
-  );
+        // Handle navigation based on notification data
+        handleNotificationClick(notification);
+      },
+    );
 
-  // In-app message clicked listener
-  OneSignal.InAppMessages.addEventListener(
-    'click',
-    (event: InAppMessageClickEvent) => {
-      console.log('💬 In-app message clicked:', event);
-    },
-  );
+    // In-app message clicked listener
+    OneSignal.InAppMessages.addEventListener(
+      'click',
+      (event: InAppMessageClickEvent) => {
+        console.log('💬 In-app message clicked:', event);
+      },
+    );
 
-  console.log('✅ OneSignal listeners set up successfully');
+    console.log('✅ OneSignal listeners set up successfully');
+  } catch (error) {
+    console.error('❌ Failed to set up OneSignal listeners:', error);
+  }
 };
 
 /**
