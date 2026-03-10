@@ -41,16 +41,17 @@ export const setupOneSignalListeners = () => {
       (event: NotificationWillDisplayEvent) => {
         console.log('📩 Notification received in foreground:', event);
 
-        // You can prevent the notification from displaying
-        // event.preventDefault();
-
-        // Or modify the notification before displaying
+        // Get the notification data
         const notification = event.getNotification();
         console.log('Notification data:', notification);
+
+        // IMPORTANT: Call complete() to display the notification
+        // If you don't call this, the notification won't show
+        event.getNotification().display();
       },
     );
 
-    // Notification clicked listener
+    // Notification clicked listener (works for both foreground and background)
     OneSignal.Notifications.addEventListener(
       'click',
       (event: NotificationClickEvent) => {
