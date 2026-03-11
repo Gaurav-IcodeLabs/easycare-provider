@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useMemo, useRef, useEffect} from 'react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,146 +7,215 @@ import {
   ActivityIndicator,
   I18nManager,
 } from 'react-native';
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet';
+import {BottomSheetModal, BottomSheetView} from '@gorhom/bottom-sheet';
 import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
+import {GOOGLE_MAPS_API_KEY} from '@env';
+import {useTranslation} from 'react-i18next';
+import {useLanguage} from '../../hooks';
 import {AppText} from '../AppText/AppText';
+import {BottomSheetBackDropComponent} from '../BottomSheetBackDropComponent/BottomSheetBackDropComponent';
 import {colors, primaryFont} from '../../constants';
 import {height, scale} from '../../utils';
-import {MAPBOX_ACCESS_TOKEN} from '@env';
-import {useTranslation} from 'react-i18next';
+
+const AUTOCOMPLETE_URL =
+  'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+const DETAILS_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
+
+/** Add/remove country codes here for testing */
+const SEARCH_COUNTRIES = ['sa', 'in']; // 'in' for India testing
+
+const COMPONENTS_PARAM = SEARCH_COUNTRIES.map(c => `country:${c}`).join('|');
 
 interface LocationResult {
-  id: string;
-  place_name: string;
-  center: [number, number]; // [lng, lat]
-  text: string;
+  place_id: string;
+  description: string;
+  structured_formatting: {
+    main_text: string;
+    secondary_text?: string;
+  };
+}
+
+interface SelectedLocation {
+  lat: number;
+  lng: number;
+  address: string;
 }
 
 interface LocationPickerBottomSheetProps {
   isVisible: boolean;
   onClose: () => void;
-  onSelectLocation: (location: {
-    lat: number;
-    lng: number;
-    address: string;
-  }) => void;
-  types?: string[]; // Mapbox location types: address, place, poi, locality, neighborhood, etc.
+  onSelectLocation: (location: SelectedLocation) => void;
+  /**
+   * Google Places types filter.
+   * e.g. ['address'], ['establishment'], ['geocode']
+   * Leave undefined to return all types.
+   * Full list: https://developers.google.com/maps/documentation/places/web-service/supported_types
+   */
+  types?: string[];
 }
 
 export const LocationPickerBottomSheet: React.FC<
   LocationPickerBottomSheetProps
-> = ({isVisible, onClose, onSelectLocation, types}) => {
+> = ({isVisible, onClose, onSelectLocation}) => {
   const {t} = useTranslation();
+  const {currentLanguage} = useLanguage();
+
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const lastQueriedRef = useRef<string>('');
+
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<LocationResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
 
   useEffect(() => {
-    console.log('🔄 isVisible changed:', isVisible);
-    console.log('📋 bottomSheetRef.current:', bottomSheetRef.current);
     if (isVisible) {
-      console.log('🚀 Attempting to present bottom sheet');
-      // Add a small delay to ensure ref is ready
-      setTimeout(() => {
-        console.log('📋 bottomSheetRef after timeout:', bottomSheetRef.current);
-        bottomSheetRef.current?.present();
-      }, 100);
+      setTimeout(() => bottomSheetRef.current?.present(), 100);
     } else {
-      console.log('❌ Attempting to dismiss bottom sheet');
       bottomSheetRef.current?.dismiss();
     }
   }, [isVisible]);
 
-  const searchLocations = useCallback(
-    async (query: string) => {
-      if (!query.trim()) {
+  const resetState = useCallback(() => {
+    abortControllerRef.current?.abort();
+    setSearchQuery('');
+    setResults([]);
+    lastQueriedRef.current = '';
+  }, []);
+
+  const searchLocations = useCallback(async (query: string) => {
+    const trimmed = query.trim();
+    if (trimmed.length < 3) {
+      setResults([]);
+      return;
+    }
+
+    // Skip duplicate queries (e.g. re-focus without typing)
+    if (trimmed === lastQueriedRef.current) return;
+    // Cancel previous in-flight request
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    lastQueriedRef.current = trimmed;
+    setIsLoading(true);
+
+    try {
+      let url =
+        `${AUTOCOMPLETE_URL}` +
+        `?input=${encodeURIComponent(trimmed)}` +
+        `&key=${GOOGLE_MAPS_API_KEY}` +
+        `&language=${currentLanguage}` +
+        `&components=${COMPONENTS_PARAM}`;
+
+      const response = await fetch(url, {signal: controller.signal});
+      console.log('response', JSON.stringify(response));
+      const data = await response.json();
+
+      if (data.status === 'OK' || data.status === 'ZERO_RESULTS') {
+        setResults(data.predictions ?? []);
+      } else {
+        console.warn(
+          '[Places] Autocomplete error:',
+          data.status,
+          data.error_message,
+        );
         setResults([]);
-        return;
       }
-
-      setIsLoading(true);
-      try {
-        // Build URL with optional types parameter
-        let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          query,
-        )}.json?access_token=${MAPBOX_ACCESS_TOKEN}&limit=10`;
-
-        // Add types filter if provided
-        // Available types: country, region, postcode, district, place, locality, neighborhood, address, poi
-        if (types && types.length > 0) {
-          url += `&types=${types.join(',')}`;
-        }
-
-        const response = await fetch(url);
-        const data = await response.json();
-        setResults(data.features || []);
-      } catch (error) {
-        console.error('Error searching locations:', error);
+    } catch (error: any) {
+      if (error.name !== 'AbortError') {
+        console.error('[Places] Search failed:', error);
         setResults([]);
-      } finally {
-        setIsLoading(false);
       }
-    },
-    [types],
-  );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  React.useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      searchLocations(searchQuery);
-    }, 500);
+  useEffect(() => {
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      setResults([]);
+      lastQueriedRef.current = '';
+      return;
+    }
 
+    const timeoutId = setTimeout(() => searchLocations(trimmed), 500);
     return () => clearTimeout(timeoutId);
   }, [searchQuery, searchLocations]);
 
-  const handleSelectLocation = (item: LocationResult) => {
-    onSelectLocation({
-      lat: item.center[1],
-      lng: item.center[0],
-      address: item.place_name,
-    });
-    setSearchQuery('');
-    setResults([]);
-    onClose();
-  };
+  const handleSelectLocation = useCallback(
+    async (item: LocationResult) => {
+      setIsFetchingDetails(true);
+      try {
+        const url =
+          `${DETAILS_URL}` +
+          `?place_id=${item.place_id}` +
+          `&key=${GOOGLE_MAPS_API_KEY}` +
+          `&fields=geometry,formatted_address` + // only fetch what you need — saves cost
+          `&language=${currentLanguage}`;
 
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        opacity={0.5}
-      />
-    ),
-    [],
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.status === 'OK') {
+          const {lat, lng} = data.result.geometry.location;
+          onSelectLocation({
+            lat,
+            lng,
+            address: data.result.formatted_address ?? item.description,
+          });
+        } else {
+          console.warn('[Places] Details error:', data.status);
+        }
+      } catch (error) {
+        console.error('[Places] Details fetch failed:', error);
+      } finally {
+        setIsFetchingDetails(false);
+        resetState();
+        onClose();
+      }
+    },
+    [currentLanguage, onSelectLocation, onClose, resetState],
   );
 
-  const renderItem = ({item}: {item: LocationResult}) => (
-    <TouchableOpacity
-      style={styles.resultItem}
-      onPress={() => handleSelectLocation(item)}>
-      <AppText style={[styles.resultTitle, styles.rtlText]}>
-        {item.place_name}
-      </AppText>
-      <AppText style={[styles.resultSubtitle, styles.rtlText]}>
-        {item.text}
-      </AppText>
-    </TouchableOpacity>
-  );
+  // ── Dismiss ───────────────────────────────────────────────────────────────
 
   const handleDismiss = useCallback(() => {
-    console.log('👋 Bottom sheet dismissed');
-    setSearchQuery('');
-    setResults([]);
+    resetState();
     onClose();
-  }, [onClose]);
+  }, [resetState, onClose]);
 
-  console.log('🎨 Rendering BottomSheetModal, ref:', bottomSheetRef.current);
+  // ── Render item ───────────────────────────────────────────────────────────
+
+  const renderItem = useCallback(
+    ({item}: {item: LocationResult}) => (
+      <TouchableOpacity
+        style={styles.resultItem}
+        onPress={() => handleSelectLocation(item)}
+        disabled={isFetchingDetails}>
+        <AppText style={[styles.resultTitle, styles.rtlText]}>
+          {item.structured_formatting?.main_text ?? item.description}
+        </AppText>
+        {item.structured_formatting?.secondary_text ? (
+          <AppText style={[styles.resultSubtitle, styles.rtlText]}>
+            {item.structured_formatting.secondary_text}
+          </AppText>
+        ) : null}
+      </TouchableOpacity>
+    ),
+    [handleSelectLocation, isFetchingDetails],
+  );
+
+  // ── Derived state (avoids multiple condition blocks in JSX) ───────────────
+
+  const isBusy = isLoading || isFetchingDetails;
+  const showStartTyping = !isBusy && searchQuery.trim().length === 0;
+  const showNoResults =
+    !isBusy && searchQuery.trim().length > 0 && results.length === 0;
+
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
     <BottomSheetModal
@@ -155,7 +224,7 @@ export const LocationPickerBottomSheet: React.FC<
       enableDynamicSizing
       enablePanDownToClose
       onDismiss={handleDismiss}
-      backdropComponent={renderBackdrop}
+      backdropComponent={BottomSheetBackDropComponent}
       backgroundStyle={styles.bottomSheetBackground}
       handleIndicatorStyle={styles.handleIndicator}
       enableDismissOnClose>
@@ -168,31 +237,25 @@ export const LocationPickerBottomSheet: React.FC<
           <BottomSheetTextInput
             style={styles.searchInput}
             placeholder={t('CreateBusiness.searchLocation')}
-            placeholderTextColor={colors.textGray}
+            placeholderTextColor={colors.textBlack}
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoFocus
           />
         </View>
 
-        {isLoading && (
+        {isBusy && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.deepBlue} />
           </View>
         )}
 
-        {!isLoading && results.length === 0 && searchQuery.trim() !== '' && (
+        {(showStartTyping || showNoResults) && (
           <View style={styles.emptyContainer}>
             <AppText style={styles.emptyText}>
-              {t('CreateBusiness.noLocationsFound')}
-            </AppText>
-          </View>
-        )}
-
-        {!isLoading && results.length === 0 && searchQuery.trim() === '' && (
-          <View style={styles.emptyContainer}>
-            <AppText style={styles.emptyText}>
-              {t('CreateBusiness.startTypingToSearch')}
+              {showNoResults
+                ? t('CreateBusiness.noLocationsFound')
+                : t('CreateBusiness.startTypingToSearch')}
             </AppText>
           </View>
         )}
@@ -202,7 +265,7 @@ export const LocationPickerBottomSheet: React.FC<
           renderItem={renderItem}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.place_id}
           style={styles.resultsList}
           contentContainerStyle={styles.resultsListContent}
         />
@@ -261,7 +324,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: scale(14),
-    color: colors.textGray,
+    color: colors.textBlack,
     textAlign: 'center',
     ...primaryFont('400'),
   },
@@ -285,11 +348,11 @@ const styles = StyleSheet.create({
   },
   resultSubtitle: {
     fontSize: scale(14),
-    color: colors.textGray,
+    color: colors.textBlack,
     ...primaryFont('400'),
   },
   rtlText: {
-    textAlign: I18nManager.isRTL ? 'right' : 'left',
+    textAlign: 'left',
     writingDirection: I18nManager.isRTL ? 'rtl' : 'ltr',
   },
 });

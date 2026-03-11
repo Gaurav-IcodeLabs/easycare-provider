@@ -10,14 +10,12 @@ interface LocationPickerFieldProps {
   value: {lat: number; lng: number; address: string} | null | undefined;
   onChange: (location: {lat: number; lng: number; address: string}) => void;
   error?: string;
-  types?: string[]; // Mapbox location types to filter results
 }
 
 export const LocationPickerField: React.FC<LocationPickerFieldProps> = ({
   value,
   onChange,
   error,
-  types,
 }) => {
   const {t} = useTranslation();
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
@@ -73,7 +71,6 @@ export const LocationPickerField: React.FC<LocationPickerFieldProps> = ({
           setIsBottomSheetVisible(false);
         }}
         onSelectLocation={handleSelectLocation}
-        types={types}
       />
     </View>
   );
