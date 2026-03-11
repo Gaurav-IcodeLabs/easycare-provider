@@ -6,7 +6,7 @@ import defaultLocationSearches from './configDefaultLocationSearches';
 
 // Note: The mapboxAccessToken & googleMapsAPIKey come from map asset nowadays by default.
 //       To use this built-in configuration, you need to remove the overwrite from configHelper.js (mergeMapConfig func)
-export const mapboxAccessToken = process.env.MAPBOX_ACCESS_TOKEN;
+export const mapboxAccessToken = process.env.MAPBOX_ACCESS_TOKEN ?? '';
 export const googleMapsAPIKey = process.env.GOOGLE_MAPS_API_KEY;
 
 // Choose map provider: 'mapbox', 'googleMaps'
