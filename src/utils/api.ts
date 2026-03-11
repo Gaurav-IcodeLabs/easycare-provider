@@ -55,6 +55,11 @@ export const sendNotificationViaTemplate = (data: {
   custom_data: Object;
 }) => apiClient.post('/api/onesignal/send', {...data, fromApp: 'provider'});
 
+export const updateTransactionMetadata = (data: {
+  transactionId: string;
+  metadata: Object;
+}) => apiClient.post('/api/update-transaction-metadata', data);
+
 // admin api's
 export const createSearchCoordsInDBPerListing = (data: any) =>
   adminApiClient.post('/api/searchCollection', data);
