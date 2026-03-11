@@ -48,6 +48,13 @@ export const linkProductToService = (data: any) =>
 export const updatelinkedProductToService = (data: any) =>
   apiClient.post('/api/listing/update-linked-service', data);
 
+export const sendNotificationViaTemplate = (data: {
+  data: Object;
+  include_external_user_ids: string[];
+  template_id: string;
+  custom_data: Object;
+}) => apiClient.post('/api/onesignal/send', {...data, fromApp: 'provider'});
+
 // admin api's
 export const createSearchCoordsInDBPerListing = (data: any) =>
   adminApiClient.post('/api/searchCollection', data);
