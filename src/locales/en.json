@@ -660,5 +660,113 @@
     "titleLabel": "Title",
     "createdAtLabel": "Created at",
     "descriptionLabel": "Description"
+  },
+  "Orders": {
+    "heading": "Orders",
+    "noOrders": "No orders found for this provider",
+    "orderId": "Order #",
+    "customer": "Customer",
+    "total": "Total",
+    "start": "Start",
+    "end": "End",
+    "created": "Created",
+    "loading": "Loading orders...",
+    "loadingMore": "Loading more...",
+    "refresh": "Refresh",
+    "unknown": "Unknown"
+  },
+  "OrderStatus": {
+    "pendingPayment": "Pending Payment",
+    "preauthorized": "Payment Received",
+    "accepted": "Accepted",
+    "declined": "Declined",
+    "canceled": "Canceled",
+    "delivered": "Completed",
+    "reviewed": "Reviewed",
+    "reviewedByCustomer": "Customer Reviewed",
+    "reviewedByProvider": "Provider Reviewed",
+    "expired": "Expired",
+    "paymentExpired": "Payment Expired"
+  },
+  "OrdersPage": {
+    "default-booking": {
+      "initial": {
+        "status": "New Order"
+      },
+      "inquiry": {
+        "status": "Inquiry"
+      },
+      "pending-payment": {
+        "status": "Pending Payment"
+      },
+      "payment-expired": {
+        "status": "Payment Expired"
+      },
+      "preauthorized": {
+        "status": "Payment Received"
+      },
+      "declined": {
+        "status": "Declined"
+      },
+      "accepted": {
+        "status": "Accepted"
+      },
+      "expired": {
+        "status": "Expired"
+      },
+      "canceled": {
+        "status": "Canceled"
+      },
+      "delivered": {
+        "status": "Completed"
+      },
+      "reviewed": {
+        "status": "Reviewed"
+      },
+      "reviewed-by-customer": {
+        "status": "Customer Reviewed"
+      },
+      "reviewed-by-provider": {
+        "status": "You Reviewed"
+      }
+    },
+    "default-purchase": {
+      "initial": {
+        "status": "New Order"
+      },
+      "pending-payment": {
+        "status": "Pending Payment"
+      },
+      "payment-expired": {
+        "status": "Payment Expired"
+      },
+      "preauthorized": {
+        "status": "Payment Received"
+      },
+      "declined": {
+        "status": "Declined"
+      },
+      "accepted": {
+        "status": "Accepted"
+      },
+      "expired": {
+        "status": "Expired"
+      },
+      "canceled": {
+        "status": "Canceled"
+      },
+      "delivered": {
+        "status": "Completed"
+      },
+      "reviewed": {
+        "status": "Reviewed"
+      },
+      "reviewed-by-customer": {
+        "status": "Customer Reviewed"
+      },
+      "reviewed-by-provider": {
+        "status": "You Reviewed"
+      }
+    }
   }
 }

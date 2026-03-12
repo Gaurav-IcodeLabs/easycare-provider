@@ -10,3 +10,4 @@ export {default as createProduct} from './createProduct.slice';
 export {default as listings} from './listings.slice';
 export {default as createBusiness} from './createBusiness.slice';
 export {default as requests} from './requests.slice';
+export {default as orderSlice} from './orders.slice';
