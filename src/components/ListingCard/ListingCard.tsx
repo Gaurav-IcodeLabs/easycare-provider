@@ -145,7 +145,12 @@ export const ListingCard: React.FC<ListingCardProps> = ({
       )}
       <View style={styles.bottomSection}>
         <View style={styles.rowStyle}>
-          <AppText style={styles.title}>{title}</AppText>
+          <AppText
+            style={styles.title}
+            numberOfLines={1}
+            ellipsizeMode={'tail'}>
+            {title}
+          </AppText>
           <View style={styles.reviewSection}>
             <Image style={styles.icon} source={star} />
             <AppText style={styles.distance}>5.0</AppText>
@@ -197,6 +202,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(6),
     gap: scale(2),
     borderRadius: scale(10),
+    flexShrink: 0,
+    minWidth: scale(50),
   },
   badgeContainer: {
     position: 'absolute',
@@ -242,6 +249,7 @@ const styles = StyleSheet.create({
     color: colors.deepBlue,
     textAlign: 'left',
     fontWeight: '500',
+    maxWidth: '70%',
     ...secondaryFont('500'),
   },
   location: {
