@@ -83,7 +83,7 @@ interface ServiceData {
   title: string;
   description: string;
   price: string;
-  duration: string;
+  // duration: string;
   locationType: string;
   customAttributes: Record<string, any>;
 }
@@ -150,7 +150,7 @@ export const requestCreateService = createAsyncThunk<any, any, Thunk>(
         title,
         description,
         price,
-        duration,
+        // duration,
         locationType,
         images,
         customAttributes,
@@ -220,7 +220,7 @@ export const requestCreateService = createAsyncThunk<any, any, Thunk>(
         category: categoryId,
         subcategory: subcategoryId,
         subsubcategory: subsubcategoryId,
-        duration,
+        // duration,
         locationType,
         serviceConfig, // Store complete config for checkout calculations
       };
@@ -279,7 +279,7 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
         title,
         description,
         price,
-        duration,
+        // duration,
         locationType,
         images,
         customAttributes,
@@ -349,7 +349,7 @@ export const requestUpdateService = createAsyncThunk<any, any, Thunk>(
         category: categoryId,
         subcategory: subcategoryId,
         subsubcategory: subsubcategoryId,
-        duration,
+        // duration,
         locationType,
         serviceConfig,
       };
@@ -468,7 +468,7 @@ export const fetchServiceListing = createAsyncThunk<any, any, Thunk>(
           title: title || '',
           description: description || '',
           price: price ? (price.amount / 100).toString() : '',
-          duration: publicData?.duration?.toString() || '',
+          // duration: publicData?.duration?.toString() || '',
           locationType: publicData?.locationType || '',
           customAttributes,
           weeklySchedule,
@@ -486,7 +486,7 @@ export const fetchServiceListing = createAsyncThunk<any, any, Thunk>(
             title: title || '',
             description: description || '',
             price: price ? (price.amount / 100).toString() : '',
-            duration: publicData?.duration?.toString() || '',
+            // duration: publicData?.duration?.toString() || '',
             locationType: publicData?.locationType || '',
             customAttributes,
           },

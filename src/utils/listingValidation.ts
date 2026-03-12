@@ -38,18 +38,18 @@ export const isListingNotDeleted = (
   subsubcategoryKey: string,
   listingType: string,
 ): boolean => {
-  console.log('🔍 Checking listing deletion status:', {
-    categoryKey,
-    subcategoryKey,
-    subsubcategoryKey,
-    listingType,
-  });
+  // console.log('🔍 Checking listing deletion status:', {
+  //   categoryKey,
+  //   subcategoryKey,
+  //   subsubcategoryKey,
+  //   listingType,
+  // });
 
   if (listingType === 'service') {
     // Check service category level (level 1)
     const categoriesByKeys = categoriesByKeysSelector(state);
     const categoryData = categoriesByKeys[categoryKey];
-    console.log('📁 Service Category:', categoryData?.deleted);
+    // console.log('📁 Service Category:', categoryData?.deleted);
     if (categoryData?.deleted) {
       return false;
     }
@@ -57,7 +57,7 @@ export const isListingNotDeleted = (
     // Check service subcategory level (level 2)
     const subcategoriesByKeys = subcategoriesByKeysSelector(state);
     const subcategoryData = subcategoriesByKeys[subcategoryKey];
-    console.log('📂 Service Subcategory:', subcategoryData?.deleted);
+    // console.log('📂 Service Subcategory:', subcategoryData?.deleted);
     if (subcategoryData?.deleted) {
       return false;
     }
@@ -65,7 +65,7 @@ export const isListingNotDeleted = (
     // Check service subsubcategory level (level 3)
     const subsubcategoriesByKeys = subsubcategoriesByKeysSelector(state);
     const subsubcategoryData = subsubcategoriesByKeys[subsubcategoryKey];
-    console.log('📄 Service SubSubcategory:', subsubcategoryData?.deleted);
+    // console.log('📄 Service SubSubcategory:', subsubcategoryData?.deleted);
     if (subsubcategoryData?.deleted) {
       return false;
     }
@@ -73,7 +73,7 @@ export const isListingNotDeleted = (
     // Check product category level (level 1)
     const productCategoriesByKeys = productCategoriesByKeysSelector(state);
     const categoryData = productCategoriesByKeys[categoryKey];
-    console.log('📁 Product Category:', categoryData?.deleted);
+    // console.log('📁 Product Category:', categoryData?.deleted);
     if (categoryData?.deleted) {
       return false;
     }
@@ -82,7 +82,7 @@ export const isListingNotDeleted = (
     const productSubcategoriesByKeys =
       productSubcategoriesByKeysSelector(state);
     const subcategoryData = productSubcategoriesByKeys[subcategoryKey];
-    console.log('📂 Product Subcategory:', subcategoryData?.deleted);
+    // console.log('📂 Product Subcategory:', subcategoryData?.deleted);
     if (subcategoryData?.deleted) {
       return false;
     }
@@ -91,12 +91,12 @@ export const isListingNotDeleted = (
     const productSubsubcategoriesByKeys =
       productSubsubcategoriesByKeysSelector(state);
     const subsubcategoryData = productSubsubcategoriesByKeys[subsubcategoryKey];
-    console.log('📄 Product SubSubcategory:', subsubcategoryData?.deleted);
+    // console.log('📄 Product SubSubcategory:', subsubcategoryData?.deleted);
     if (subsubcategoryData?.deleted) {
       return false;
     }
   }
 
-  console.log('✅ Listing is NOT deleted');
+  // console.log('✅ Listing is NOT deleted');
   return true;
 };

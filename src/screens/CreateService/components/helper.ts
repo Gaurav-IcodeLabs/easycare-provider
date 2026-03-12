@@ -20,12 +20,12 @@ export const getServiceFormSchema = (t: TFunction) => {
       .refine(value => !isNaN(value) && value > 0, {
         message: t('CreateServiceForm.priceRequired'),
       }),
-    duration: z
-      .string()
-      .transform(value => Number(value))
-      .refine(value => !isNaN(value) && value > 0, {
-        message: t('CreateServiceForm.durationRequired'),
-      }),
+    // duration: z
+    //   .string()
+    //   .transform(value => Number(value))
+    //   .refine(value => !isNaN(value) && value > 0, {
+    //     message: t('CreateServiceForm.durationRequired'),
+    //   }),
     locationType: z.string().optional(),
     images: z.array(z.any()).optional(),
     customAttributes: z.record(z.any()).optional(),
@@ -40,7 +40,7 @@ export const getDefaultServiceValues = () => {
     title: '',
     description: '',
     price: '',
-    duration: '',
+    // duration: '',
     locationType: '',
     images: [],
     customAttributes: {},

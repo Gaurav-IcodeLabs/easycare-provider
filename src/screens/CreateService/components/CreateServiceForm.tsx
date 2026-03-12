@@ -217,10 +217,10 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
           // Only auto-fill price and duration if not in edit mode
           if (!initialValues) {
             setValue('price', subSubcategory.basePrice.toString());
-            setValue(
-              'duration',
-              subSubcategory.estimatedDuration.value.toString(),
-            );
+            // setValue(
+            //   'duration',
+            //   subSubcategory.estimatedDuration.value.toString(),
+            // );
             setValue('customAttributes', {});
           }
         }
@@ -346,7 +346,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             inputContainerStyles={styles.disabledInput}
           />
 
-          <TextInputField
+          {/* <TextInputField
             control={control}
             name="duration"
             labelKey="CreateServiceForm.duration"
@@ -354,7 +354,7 @@ export const CreateServiceForm: React.FC<CreateServiceFormProps> = props => {
             keyboardType="numeric"
             editable={false}
             inputContainerStyles={isEditMode ? styles.disabledInput : undefined}
-          />
+          /> */}
 
           {selectedSubSubcategory &&
             selectedSubSubcategory.locationTypes.length > 0 && (

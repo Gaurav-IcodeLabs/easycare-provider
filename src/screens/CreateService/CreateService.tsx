@@ -233,7 +233,7 @@ export const CreateService: FC = () => {
           title: initialValues.title,
           description: initialValues.description,
           price: initialValues.price,
-          duration: initialValues.duration,
+          // duration: initialValues.duration,
           locationType: initialValues.locationType,
           customAttributes: initialValues.customAttributes,
           // images: initialValues.images,
@@ -373,7 +373,7 @@ export const CreateService: FC = () => {
         title: stepOneFormData.title,
         description: stepOneFormData.description,
         price: parseFloat(stepOneFormData.price),
-        duration: parseInt(stepOneFormData.duration, 10),
+        // duration: parseInt(stepOneFormData.duration, 10),
         locationType: stepOneFormData.locationType,
         customAttributes: stepOneFormData.customAttributes || {},
         categoryConfig: selectedCategory,
@@ -485,7 +485,7 @@ export const CreateService: FC = () => {
                     description:
                       (initialValues || serviceData)?.description || '',
                     price: (initialValues || serviceData)?.price || '',
-                    duration: (initialValues || serviceData)?.duration || '',
+                    // duration: (initialValues || serviceData)?.duration || '',
                     locationType:
                       (initialValues || serviceData)?.locationType || '',
                     customAttributes:
