@@ -658,5 +658,113 @@
     "titleLabel": "العنوان",
     "createdAtLabel": "تاريخ الإنشاء",
     "descriptionLabel": "الوصف"
+  },
+  "Orders": {
+    "heading": "طلباتي",
+    "noOrders": "لا توجد طلبات لهذا المزود",
+    "orderId": "طلب #",
+    "customer": "العميل",
+    "total": "المجموع",
+    "start": "البداية",
+    "end": "النهاية",
+    "created": "تاريخ الإنشاء",
+    "loading": "جاري تحميل الطلبات...",
+    "loadingMore": "جاري تحميل المزيد...",
+    "refresh": "تحديث",
+    "unknown": "غير معروف"
+  },
+  "OrderStatus": {
+    "pendingPayment": "في انتظار الدفع",
+    "preauthorized": "تم استلام الدفع",
+    "accepted": "مقبول",
+    "declined": "مرفوض",
+    "canceled": "ملغى",
+    "delivered": "مكتمل",
+    "reviewed": "تمت المراجعة",
+    "reviewedByCustomer": "راجعه العميل",
+    "reviewedByProvider": "راجعه المزود",
+    "expired": "منتهي الصلاحية",
+    "paymentExpired": "انتهت صلاحية الدفع"
+  },
+  "OrdersPage": {
+    "default-booking": {
+      "initial": {
+        "status": "طلب جديد"
+      },
+      "inquiry": {
+        "status": "استفسار"
+      },
+      "pending-payment": {
+        "status": "في انتظار الدفع"
+      },
+      "payment-expired": {
+        "status": "انتهت صلاحية الدفع"
+      },
+      "preauthorized": {
+        "status": "تم استلام الدفع"
+      },
+      "declined": {
+        "status": "مرفوض"
+      },
+      "accepted": {
+        "status": "مقبول"
+      },
+      "expired": {
+        "status": "منتهي الصلاحية"
+      },
+      "canceled": {
+        "status": "ملغى"
+      },
+      "delivered": {
+        "status": "مكتمل"
+      },
+      "reviewed": {
+        "status": "تمت المراجعة"
+      },
+      "reviewed-by-customer": {
+        "status": "راجعه العميل"
+      },
+      "reviewed-by-provider": {
+        "status": "راجعته أنت"
+      }
+    },
+    "default-purchase": {
+      "initial": {
+        "status": "طلب جديد"
+      },
+      "pending-payment": {
+        "status": "في انتظار الدفع"
+      },
+      "payment-expired": {
+        "status": "انتهت صلاحية الدفع"
+      },
+      "preauthorized": {
+        "status": "تم استلام الدفع"
+      },
+      "declined": {
+        "status": "مرفوض"
+      },
+      "accepted": {
+        "status": "مقبول"
+      },
+      "expired": {
+        "status": "منتهي الصلاحية"
+      },
+      "canceled": {
+        "status": "ملغى"
+      },
+      "delivered": {
+        "status": "مكتمل"
+      },
+      "reviewed": {
+        "status": "تمت المراجعة"
+      },
+      "reviewed-by-customer": {
+        "status": "راجعه العميل"
+      },
+      "reviewed-by-provider": {
+        "status": "راجعته أنت"
+      }
+    }
   }
 }
